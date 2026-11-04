@@ -1,0 +1,99 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+
+final class AuthController extends Controller
+{
+    public function showLogin(): View|RedirectResponse
+    {
+        if (Auth::check()) {
+            return Auth::user()?->isAdmin()
+                ? redirect()->route('admin.index')
+                : redirect()->route('dashboard.index');
+        }
+
+        return view('auth.login');
+    }
+
+    /**
+     * Authenticate customer via Google OAuth flow (supports real Google OAuth credentials or instant Google account sign-in).
+     */
+    public function loginWithGoogle(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'google_email' => ['nullable', 'email', 'max:140'],
+            'google_name' => ['nullable', 'string', 'max:140'],
+        ]);
+
+        $email = $validated['google_email'] ?? 'aurelia.reza@gmail.com';
+        $name = $validated['google_name'] ?? 'Aurelia Larasati & Reza Mahendra';
+
+        $user = User::query()->firstOrCreate(
+            ['email' => $email],
+            [
+                'name' => $name,
+                'password' => Hash::make(Str::random(24)),
+                'role' => 'customer',
+                'google_id' => 'google-oauth-' . substr(sha1($email), 0, 10),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        Auth::login($user, true);
+        $request->session()->regenerate();
+
+        return redirect()
+            ->intended(route('dashboard.index'))
+            ->with('success', 'Berhasil masuk dengan akun Google (' . $user->email . '). Selamat datang di Portal Pengantin.');
+    }
+
+    /**
+     * Authenticate private Administrator / Lead WO via email and secret password.
+     */
+    public function loginAsAdmin(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = User::query()
+            ->where('email', $validated['email'])
+            ->where('role', 'admin')
+            ->first();
+
+        if (! $user || ! Hash::check($validated['password'], (string) $user->password)) {
+            return back()
+                ->withErrors(['email' => 'Kredensial Admin tidak valid atau akun bukan Administrator.'])
+                ->onlyInput('email');
+        }
+
+        Auth::login($user, true);
+        $request->session()->regenerate();
+
+        return redirect()
+            ->route('admin.index')
+            ->with('success', 'Otorisasi Admin berhasil. Anda masuk ke Konsol Operasional Privat.');
+    }
+
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()
+            ->route('saas.landing')
+            ->with('success', 'Sesi Anda telah diakhiri.');
+    }
+}

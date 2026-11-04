@@ -9,11 +9,12 @@ use App\Enums\TimelinePhase;
 use App\Enums\VendorBookingStatus;
 use App\Enums\WeddingCategory;
 use App\Models\BudgetItem;
+use App\Models\User;
 use App\Models\Vendor;
 use App\Models\WeddingProfile;
 use App\Models\WeddingTask;
 use Illuminate\Database\Seeder;
-
+use Illuminate\Support\Facades\Hash;
 final class WeddingPlannerSeeder extends Seeder
 {
     public function run(): void
@@ -22,7 +23,24 @@ final class WeddingPlannerSeeder extends Seeder
         BudgetItem::query()->delete();
         Vendor::query()->delete();
         WeddingProfile::query()->delete();
+        User::query()->delete();
 
+        User::query()->create([
+            'name' => 'Aurelia Larasati & Reza Mahendra',
+            'email' => 'aurelia.reza@gmail.com',
+            'password' => Hash::make('GoogleCustomer2026!'),
+            'role' => 'customer',
+            'google_id' => 'google-oauth-108291',
+            'email_verified_at' => now(),
+        ]);
+
+        User::query()->create([
+            'name' => 'M. Irsyad Fachryanto (Lead Admin)',
+            'email' => 'irsyad@ateliervow.id',
+            'password' => Hash::make('AtelierAdmin2026!'),
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]);
         $weddingDate = now()->addDays(138)->startOfDay();
 
         WeddingProfile::query()->create([

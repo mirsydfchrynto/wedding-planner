@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Services\WeddingMetricsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 final class SaasController extends Controller
@@ -16,6 +17,7 @@ final class SaasController extends Controller
     public function landing(): View
     {
         $summary = $this->metricsService->getDashboardSummary();
+        $targetRoute = Auth::check() ? route('dashboard.index') : route('login');
 
         $packages = [
             [
@@ -29,8 +31,8 @@ final class SaasController extends Controller
                     'Kalkulator alokasi 8 kategori pernikahan Indonesia',
                     'Ekspor & cetak ringkasan eksekutif untuk rapat keluarga',
                 ],
-                'cta_label' => 'Masuk Portal Pengantin',
-                'cta_route' => route('dashboard.index'),
+                'cta_label' => 'Mulai Gratis dengan Google',
+                'cta_route' => $targetRoute,
                 'featured' => false,
             ],
             [
@@ -44,8 +46,8 @@ final class SaasController extends Controller
                     'Pelacakan kontrak, termin DP, dan pengingat jatuh tempo WhatsApp vendor',
                     'Audit deviasi anggaran otomatis per kategori dan simulasi biaya per tamu',
                 ],
-                'cta_label' => 'Coba Workspace Keraton Royal',
-                'cta_route' => route('dashboard.index'),
+                'cta_label' => 'Pilih Paket Keraton Royal',
+                'cta_route' => $targetRoute,
                 'featured' => true,
             ],
             [
@@ -53,14 +55,14 @@ final class SaasController extends Controller
                 'audience' => 'Wedding Organizer & Venue (B2B)',
                 'price' => 'Rp 1.850.000',
                 'period' => 'Per bulan · hingga 25 pasangan aktif',
-                'description' => 'Konsol kendali operasional bagi biro Wedding Organizer untuk memantau seluruh klien, SLA vendor, dan arus kas.',
+                'description' => 'Ruang kerja terkelola bagi biro Wedding Organizer untuk memantau seluruh klien, SLA vendor, dan arus kas.',
                 'features' => [
-                    'Konsol Admin Backoffice multi-pasangan & verifikasi status kontrak vendor',
+                    'Workspace multi-pasangan & verifikasi status kontrak vendor',
                     'Eskalasi satu-klik untuk tugas yang melewati tenggat waktu (overdue)',
                     'Arsitektur Twelve-Factor siap pakai (SQLite/MySQL, CI/CD, tanpa vendor lock-in)',
                 ],
-                'cta_label' => 'Buka Konsol Admin WO',
-                'cta_route' => route('admin.index'),
+                'cta_label' => 'Masuk Akun Mitra WO',
+                'cta_route' => route('login'),
                 'featured' => false,
             ],
         ];

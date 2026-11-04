@@ -16,11 +16,11 @@
                 </p>
 
                 <div class="mt-6 flex flex-wrap items-center gap-3">
-                    <a href="{{ route('dashboard.index') }}" class="editorial-btn-primary">
-                        Buka Portal Pengantin (Live Demo)
+                    <a href="{{ auth()->check() ? route('dashboard.index') : route('login') }}" class="editorial-btn-primary">
+                        {{ auth()->check() ? 'Buka Dashboard Pernikahan' : 'Masuk dengan Google & Mulai Rencanakan' }}
                     </a>
-                    <a href="{{ route('admin.index') }}" class="editorial-btn-secondary">
-                        Buka Konsol Admin &amp; WO
+                    <a href="#simulasi-adat" class="editorial-btn-secondary">
+                        Simulasi Anggaran Nusantara
                     </a>
                 </div>
 
@@ -88,7 +88,7 @@
 
                     <div class="mt-4 flex items-center justify-between text-xs text-taupe">
                         <span>Arahkan kursor untuk melihat kedalaman spasial 3D</span>
-                        <a href="{{ route('dashboard.index') }}" class="font-semibold text-champagne hover:underline">Buka Layar Penuh</a>
+                        <a href="{{ auth()->check() ? route('dashboard.index') : route('login') }}" class="font-semibold text-champagne hover:underline">Masuk ke Workspace</a>
                     </div>
                 </div>
             </div>
@@ -97,6 +97,7 @@
 
     {{-- Section 2: "One Live Thing" — Interactive Nusantara Wedding Budget & Adat Simulator --}}
     <section
+        id="simulasi-adat"
         class="mt-12 editorial-card rounded-lg p-6 sm:p-8"
         x-data="{
             guests: 450,
@@ -211,67 +212,67 @@
         </div>
     </section>
 
-    {{-- Section 3: Dual-Surface Architecture (Customer Portal vs Admin Backoffice) --}}
-    <section class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
+    {{-- Section 3: 5 Integrated Modules & Nusantara Cultural Heritage --}}
+    <section id="fitur-platform" class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <article class="editorial-card rounded-lg p-6 sm:p-8">
             <div class="flex items-center justify-between border-b border-stone-line pb-4">
-                <h2 class="font-editorial text-2xl font-semibold text-espresso">1. Sisi Pengguna (Portal Calon Pengantin)</h2>
-                <x-ui.status-badge tone="sage" label="B2C · Pasangan & Keluarga" />
+                <h2 class="font-editorial text-2xl font-semibold text-espresso">1. Lima Modul Inti yang Saling Terhubung</h2>
+                <x-ui.status-badge tone="sage" label="Workspace Pengantin" />
             </div>
             <p class="mt-3 text-sm leading-relaxed text-charcoal">
-                Antarmuka yang tenang dan mudah dipindai bagi pasangan serta orang tua untuk memantau kesiapan acara tanpa kerumitan teknis.
+                Begitu masuk menggunakan akun Google, seluruh anggota keluarga inti dan pasangan bekerja pada satu sumber data yang sama.
             </p>
             <ul class="mt-4 space-y-2.5 text-xs text-charcoal">
                 <li class="flex items-start justify-between border-b border-stone-line/60 pb-2">
-                    <span>Hitung mundur waktu nyata menuju jam Akad Nikah</span>
-                    <a href="{{ route('dashboard.index') }}" class="font-semibold text-champagne hover:underline">Lihat Dashboard</a>
+                    <span>Executive Dashboard: Hitung mundur akad, indeks kesiapan, dan biaya per tamu</span>
+                    <span class="font-semibold text-champagne">Modul #5</span>
                 </li>
                 <li class="flex items-start justify-between border-b border-stone-line/60 pb-2">
-                    <span>Buku anggaran 8 kategori dengan indikator hemat / overbudget</span>
-                    <a href="{{ route('budget.index') }}" class="font-semibold text-champagne hover:underline">Lihat Anggaran</a>
+                    <span>Budget Planner: Plafon induk, 8 kategori pengeluaran, estimasi vs aktual</span>
+                    <span class="font-semibold text-champagne">Modul #1</span>
                 </li>
                 <li class="flex items-start justify-between border-b border-stone-line/60 pb-2">
-                    <span>Checklist tugas per PIC (Pengantin, Keluarga, WO) &amp; linimasa H-12 s/d Hari-H</span>
-                    <a href="{{ route('checklist.index') }}" class="font-semibold text-champagne hover:underline">Lihat Checklist</a>
+                    <span>Wedding Checklist &amp; Timeline: Daftar tugas PIC &amp; peta H-12 Bulan s/d Hari-H</span>
+                    <span class="font-semibold text-champagne">Modul #2 &amp; #3</span>
                 </li>
                 <li class="flex items-start justify-between">
-                    <span>Direktori vendor dengan tombol hubungi WhatsApp PIC satu-klik</span>
-                    <a href="{{ route('vendors.index') }}" class="font-semibold text-champagne hover:underline">Lihat Vendor</a>
+                    <span>Vendor Management: Kontrak mitra, pelacakan DP/lunas, dan WhatsApp PIC</span>
+                    <span class="font-semibold text-champagne">Modul #4</span>
                 </li>
             </ul>
         </article>
 
         <article class="editorial-card rounded-lg p-6 sm:p-8">
             <div class="flex items-center justify-between border-b border-stone-line pb-4">
-                <h2 class="font-editorial text-2xl font-semibold text-espresso">2. Sisi Admin (Konsol Operasional WO &amp; SaaS)</h2>
-                <x-ui.status-badge tone="champagne" label="B2B · Lead Planner & Admin" />
+                <h2 class="font-editorial text-2xl font-semibold text-espresso">2. Tata Adat Jawa &amp; Kendali Mitra WO</h2>
+                <x-ui.status-badge tone="champagne" label="Nusantara & Enterprise" />
             </div>
             <p class="mt-3 text-sm leading-relaxed text-charcoal">
-                Ruang kendali berdensitas tinggi bagi Lead Wedding Organizer dan administrator platform untuk mengaudit risiko biaya, keterlambatan, dan infrastruktur.
+                Dirancang khusus mengikuti alur pernikahan di Indonesia, mulai dari perhitungan Weton Jawa hingga pengawasan kontrak vendor bernilai ratusan juta rupiah.
             </p>
             <ul class="mt-4 space-y-2.5 text-xs text-charcoal">
                 <li class="flex items-start justify-between border-b border-stone-line/60 pb-2">
-                    <span>Eskalasi massal satu-klik untuk seluruh tugas yang melewati tenggat waktu</span>
-                    <a href="{{ route('admin.index') }}" class="font-semibold text-champagne hover:underline">Buka Konsol Admin</a>
+                    <span>Panduan kesiapan Siraman, Malam Midodareni, Ijab Qabul, dan Panggih</span>
+                    <span class="font-semibold text-sage">Tersedia</span>
                 </li>
                 <li class="flex items-start justify-between border-b border-stone-line/60 pb-2">
-                    <span>Verifikasi kontrak vendor &amp; audit pos biaya berisiko tinggi (&gt;Rp 20 Juta belum lunas)</span>
-                    <a href="{{ route('admin.index') }}" class="font-semibold text-champagne hover:underline">Audit Vendor</a>
+                    <span>Kalkulator Neptu Weton Jawa interaktif untuk hari &amp; pasaran mempelai</span>
+                    <span class="font-semibold text-sage">Tersedia</span>
                 </li>
                 <li class="flex items-start justify-between border-b border-stone-line/60 pb-2">
-                    <span>Pemantauan kepatuhan arsitektur Twelve-Factor App (Config, DB, Stateless, Parity)</span>
-                    <a href="{{ route('admin.index') }}" class="font-semibold text-champagne hover:underline">Cek 12-Factor</a>
+                    <span>Autentikasi Google OAuth satu-klik &amp; isolasi hak akses berbasis peran</span>
+                    <span class="font-semibold text-sage">Tersedia</span>
                 </li>
                 <li class="flex items-start justify-between">
-                    <span>Manajemen paket langganan SaaS &amp; kesiapan multi-cabang tim pengembang</span>
-                    <a href="{{ route('admin.index') }}" class="font-semibold text-champagne hover:underline">Lihat Diagnostik</a>
+                    <span>Cetak laporan eksekutif siap bawa ke pertemuan keluarga besar</span>
+                    <span class="font-semibold text-sage">Tersedia</span>
                 </li>
             </ul>
         </article>
     </section>
 
     {{-- Section 4: SaaS Pricing Plans --}}
-    <section class="mt-12">
+    <section id="paket-saas" class="mt-12">
         <div class="border-b border-stone-line pb-4">
             <h2 class="font-editorial text-3xl font-semibold text-espresso">Paket Layanan Software-as-a-Service (SaaS)</h2>
             <p class="mt-1 text-sm text-taupe">Pilihan ruang kerja untuk pasangan mandiri maupun biro Wedding Organizer profesional.</p>
