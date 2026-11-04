@@ -109,7 +109,7 @@
                     {{-- Tab 1: Dashboard Preview --}}
                     <div x-show="previewTab === 'dashboard'" class="mt-4">
                         {{-- deslop-ignore-next-line 28 --}}
-                        <div class="grid grid-cols-3 gap-2.5 text-xs">
+                        <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-3 text-xs">
                             <div class="rounded border border-stone-line bg-alabaster p-3">
                                 <span class="text-[11px] text-taupe">Plafon Induk</span>
                                 <p class="mt-1 tabular-nums text-sm font-bold text-espresso">{{ format_idr($summary['total_budget_cap']) }}</p>

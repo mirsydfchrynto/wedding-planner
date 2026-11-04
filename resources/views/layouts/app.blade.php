@@ -75,7 +75,7 @@
                     @if($isPublicPage)
                         <a href="{{ route('dashboard.index') }}" class="editorial-btn-primary !py-2 !px-3.5 !text-xs">
                             <x-ui.icon name="layout-dashboard" class="h-3.5 w-3.5" />
-                            <span>Buka Workspace ({{ auth()->user()->name }})</span>
+                            <span>Buka Workspace</span>
                         </a>
                     @else
                         @if(auth()->user()->isAdmin())

@@ -101,6 +101,12 @@
     }
 }
 
+@media (max-width: 639px) {
+    input, select, textarea {
+        font-size: 1rem !important;
+    }
+}
+
 .editorial-input:focus {
     outline: none;
     border-color: var(--color-champagne);
