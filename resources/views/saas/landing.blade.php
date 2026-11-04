@@ -186,7 +186,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:col-span-6">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-6">
                 <div class="rounded border border-stone-line bg-alabaster p-4">
                     <span class="text-xs text-taupe">Katering &amp; Jamuan (35%)</span>
                     <p class="mt-1.5 font-editorial tabular-nums text-xl font-semibold text-espresso" x-text="formatRupiah(totalEstimate() * 0.35)"></p>
