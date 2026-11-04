@@ -30,7 +30,7 @@
             </div>
 
             {{-- Primary Desktop Navigation across 5 Customer Modules --}}
-            <nav class="hidden md:flex items-center gap-1" aria-label="Navigasi Utama">
+            <nav class="hidden lg:flex items-center gap-1" aria-label="Navigasi Utama">
                 @php
                     $navItems = [
                         ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Dashboard'],
@@ -55,7 +55,7 @@
 
             {{-- Segmented Surface Switcher: Customer Portal | Admin Backoffice | SaaS Landing --}}
             <div class="flex items-center gap-2.5">
-                <div class="hidden sm:inline-flex items-center rounded-md border border-stone-line bg-ivory p-0.5 text-xs" role="group" aria-label="Mode Tampilan">
+                <div class="hidden lg:inline-flex items-center rounded-md border border-stone-line bg-ivory p-0.5 text-xs" role="group" aria-label="Mode Tampilan">
                     <a
                         href="{{ route('saas.landing') }}"
                         class="rounded px-2.5 py-1 font-medium transition {{ request()->routeIs('saas.*') ? 'bg-pearl text-espresso font-semibold' : 'text-taupe hover:text-espresso' }}"
@@ -87,7 +87,7 @@
                 <button
                     type="button"
                     @click="mobileNavOpen = !mobileNavOpen"
-                    class="inline-flex items-center justify-center rounded-md border border-stone-line bg-pearl p-2 text-charcoal md:hidden"
+                    class="inline-flex items-center justify-center rounded-md border border-stone-line bg-pearl p-2 text-charcoal lg:hidden"
                     aria-label="Buka menu navigasi"
                 >
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
@@ -98,7 +98,7 @@
         </div>
 
         {{-- Mobile Navigation Drawer --}}
-        <div x-show="mobileNavOpen" x-cloak class="border-t border-stone-line bg-pearl px-4 py-3 md:hidden">
+        <div x-show="mobileNavOpen" x-cloak class="border-t border-stone-line bg-pearl px-4 py-3 lg:hidden">
             <div class="flex flex-col gap-1">
                 @foreach($navItems as $item)
                     @php $active = request()->routeIs($item['pattern']); @endphp

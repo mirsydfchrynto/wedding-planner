@@ -296,7 +296,9 @@
                         <ul class="mt-4 space-y-2 border-t border-stone-line pt-4 text-xs text-charcoal">
                             @foreach($pkg['features'] as $feat)
                                 <li class="flex items-start gap-2">
-                                    <span class="font-bold text-sage">✓</span>
+                                    <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-sage" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5l3.5 3.5 7.5-7.5"/>
+                                    </svg>
                                     <span>{{ $feat }}</span>
                                 </li>
                             @endforeach

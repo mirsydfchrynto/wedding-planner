@@ -117,7 +117,9 @@
                                 class="flex h-5 w-5 items-center justify-center rounded border transition {{ $isDone ? 'border-sage bg-sage text-pearl' : 'border-stone-strong bg-alabaster text-transparent hover:border-champagne' }}"
                                 title="Ubah status selesai"
                             >
-                                ✓
+                                <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5l3.5 3.5 7.5-7.5"/>
+                                </svg>
                             </button>
                         </form>
 

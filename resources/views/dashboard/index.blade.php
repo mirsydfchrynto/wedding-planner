@@ -254,7 +254,9 @@
                                         class="flex h-5 w-5 items-center justify-center rounded border border-stone-strong bg-alabaster text-transparent hover:border-champagne"
                                         title="Tandai selesai"
                                     >
-                                        ✓
+                                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5l3.5 3.5 7.5-7.5"/>
+                                        </svg>
                                     </button>
                                 </form>
                                 <div>
@@ -343,6 +345,150 @@
                     </div>
                 </a>
             @endforeach
+        </div>
+    </section>
+
+    {{-- Nusantara Cultural Module: Prosesi Adat Jawa & Kalkulator Weton Neptu Pasangan --}}
+    <section
+        class="mt-8 editorial-card rounded-lg p-6"
+        x-data="{
+            hariWanita: 5,
+            pasaranWanita: 8,
+            hariPria: 4,
+            pasaranPria: 9,
+            totalNeptu() {
+                return Number(this.hariWanita) + Number(this.pasaranWanita) + Number(this.hariPria) + Number(this.pasaranPria);
+            },
+            maknaWeton() {
+                const mod = this.totalNeptu() % 8;
+                const map = {
+                    1: { nama: 'Pegat / Waspada Komunikasi', ket: 'Disarankan memilih jam akad pagi (08:00–09:30 WIB) dan doa selamatan keluarga.' },
+                    2: { nama: 'Ratu (Kemuliaan & Harmoni)', ket: 'Jodoh yang dihormati lingkungan, rukun, dan membawa ketenteraman rumah tangga.' },
+                    3: { nama: 'Jodoh (Selaras & Saling Melengkapi)', ket: 'Pasangan yang serasi dan saling menguatkan sejak awal berumah tangga.' },
+                    4: { nama: 'Topo (Tangguh & Berkah)', ket: 'Rumah tangga semakin matang, teduh, dan sejahtera seiring perjalanan waktu.' },
+                    5: { nama: 'Tinari (Murah Rezeki & Bahagia)', ket: 'Diberkahi kemudahan rezeki dan suasana keluarga yang hangat.' },
+                    6: { nama: 'Padu (Dinamis)', ket: 'Perlu musyawarah terbuka dalam pengelolaan anggaran dan keputusan keluarga.' },
+                    7: { nama: 'Sujanan (Saling Menjaga)', ket: 'Penting menjaga kepercayaan dan komunikasi antar keluarga besar.' },
+                    0: { nama: 'Pesthi (Tentram & Langgeng)', ket: 'Rumah tangga yang rukun, damai, dan harmonis hingga hari tua.' }
+                };
+                return map[mod] || map[3];
+            }
+        }"
+    >
+        <div class="flex flex-col justify-between gap-2 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
+            <div>
+                <h2 class="font-editorial text-2xl font-semibold text-espresso">Tata Upacara Adat Jawa &amp; Perhitungan Weton Neptu</h2>
+                <p class="text-xs text-taupe">Panduan kesiapan 4 prosesi sakral Keraton dan perhitungan kecocokan Neptu penanggalan Jawa</p>
+            </div>
+            <x-ui.status-badge tone="champagne" label="Warisan Budaya Nusantara" />
+        </div>
+
+        <div class="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-12">
+            {{-- 4 Tahapan Prosesi Adat Jawa --}}
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-7">
+                <div class="rounded border border-stone-line bg-alabaster p-4">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-semibold text-champagne">H-1 Pagi (09:00 WIB)</span>
+                        <span class="font-medium text-sage">Siap</span>
+                    </div>
+                    <h3 class="mt-1 font-editorial text-xl font-semibold text-espresso">1. Prosesi Siraman &amp; Sungkeman</h3>
+                    <p class="mt-1 text-xs leading-relaxed text-taupe">
+                        Pembersihan diri dengan air 7 sumber mata air (Tirta Perwitasari), potong rikmo, dan permohonan restu kedua orang tua.
+                    </p>
+                </div>
+                <div class="rounded border border-stone-line bg-alabaster p-4">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-semibold text-champagne">H-1 Malam (19:00 WIB)</span>
+                        <span class="font-medium text-sage">Siap</span>
+                    </div>
+                    <h3 class="mt-1 font-editorial text-xl font-semibold text-espresso">2. Malam Midodareni &amp; Jonggolan</h3>
+                    <p class="mt-1 text-xs leading-relaxed text-taupe">
+                        Silaturahmi keluarga mempelai pria, penyerahan peningset, dan doa bersama menjelang hari akad nikah.
+                    </p>
+                </div>
+                <div class="rounded border border-stone-line bg-alabaster p-4">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-semibold text-champagne">Hari-H Pagi (08:30 WIB)</span>
+                        <span class="font-medium text-ochre">Terjadwal</span>
+                    </div>
+                    <h3 class="mt-1 font-editorial text-xl font-semibold text-espresso">3. Ijab Qabul Akad Nikah</h3>
+                    <p class="mt-1 text-xs leading-relaxed text-taupe">
+                        Prosesi sakral janji suci pernikahan dipimpin penghulu KUA Menteng, penyerahan mahar, dan penandatanganan buku nikah.
+                    </p>
+                </div>
+                <div class="rounded border border-stone-line bg-alabaster p-4">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-semibold text-champagne">Hari-H Malam (18:30 WIB)</span>
+                        <span class="font-medium text-ochre">Terjadwal</span>
+                    </div>
+                    <h3 class="mt-1 font-editorial text-xl font-semibold text-espresso">4. Upacara Panggih &amp; Resepsi</h3>
+                    <p class="mt-1 text-xs leading-relaxed text-taupe">
+                        Balangan gantal, wiji dadi, sinduran, bobot timbang, kacar-kucur, dulangan, hingga kirab resepsi puncak.
+                    </p>
+                </div>
+            </div>
+
+            {{-- Kalkulator Weton & Neptu Jawa --}}
+            <div class="rounded border border-stone-line bg-alabaster p-5 lg:col-span-5">
+                <h3 class="font-editorial text-xl font-semibold text-espresso">Kalkulator Neptu Weton Mempelai</h3>
+                <p class="mt-0.5 text-xs text-taupe">Pilih hari lahir dan pasaran Jawa kedua mempelai</p>
+
+                <div class="mt-3 grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <label class="mb-1 block font-semibold text-charcoal">Hari Mempelai Wanita</label>
+                        <select x-model="hariWanita" class="editorial-input !py-1.5 !text-xs">
+                            <option value="5">Minggu (5)</option>
+                            <option value="4">Senin (4)</option>
+                            <option value="3">Selasa (3)</option>
+                            <option value="7">Rabu (7)</option>
+                            <option value="8">Kamis (8)</option>
+                            <option value="6">Jumat (6)</option>
+                            <option value="9">Sabtu (9)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="mb-1 block font-semibold text-charcoal">Pasaran Wanita</label>
+                        <select x-model="pasaranWanita" class="editorial-input !py-1.5 !text-xs">
+                            <option value="5">Legi (5)</option>
+                            <option value="9">Pahing (9)</option>
+                            <option value="7">Pon (7)</option>
+                            <option value="4">Wage (4)</option>
+                            <option value="8">Kliwon (8)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="mb-1 block font-semibold text-charcoal">Hari Mempelai Pria</label>
+                        <select x-model="hariPria" class="editorial-input !py-1.5 !text-xs">
+                            <option value="5">Minggu (5)</option>
+                            <option value="4">Senin (4)</option>
+                            <option value="3">Selasa (3)</option>
+                            <option value="7">Rabu (7)</option>
+                            <option value="8">Kamis (8)</option>
+                            <option value="6">Jumat (6)</option>
+                            <option value="9">Sabtu (9)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="mb-1 block font-semibold text-charcoal">Pasaran Pria</label>
+                        <select x-model="pasaranPria" class="editorial-input !py-1.5 !text-xs">
+                            <option value="5">Legi (5)</option>
+                            <option value="9">Pahing (9)</option>
+                            <option value="7">Pon (7)</option>
+                            <option value="4">Wage (4)</option>
+                            <option value="8">Kliwon (8)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-4 rounded border border-stone-line bg-pearl p-3.5 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-taupe">Total Neptu Gabungan</span>
+                        <span class="font-editorial tabular-nums text-xl font-bold text-champagne" x-text="totalNeptu() + ' Neptu'">26 Neptu</span>
+                    </div>
+                    <p class="mt-1 font-semibold text-espresso" x-text="maknaWeton().nama"></p>
+                    <p class="mt-0.5 text-taupe leading-relaxed" x-text="maknaWeton().ket"></p>
+                </div>
+            </div>
         </div>
     </section>
 
