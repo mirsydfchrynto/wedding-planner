@@ -24,12 +24,12 @@
         <table class="w-full border-collapse text-left text-xs">
             <thead>
                 <tr class="border-b border-slate-200 text-slate-500">
-                    <th class="py-2.5 pr-3 font-semibold">Mitra Vendor</th>
-                    <th class="px-2.5 py-2.5 font-semibold">Kategori</th>
-                    <th class="px-2.5 py-2.5 text-right font-semibold">Nilai Kontrak</th>
-                    <th class="px-2.5 py-2.5 text-right font-semibold">Sisa Tagihan</th>
-                    <th class="px-2.5 py-2.5 text-center font-semibold">Status SLA</th>
-                    <th class="py-2.5 pl-2.5 text-right font-semibold">Tindakan Cepat</th>
+                    <th scope="col" class="py-2.5 pr-3 font-semibold">Mitra Vendor</th>
+                    <th scope="col" class="px-2.5 py-2.5 font-semibold">Kategori</th>
+                    <th scope="col" class="px-2.5 py-2.5 text-right font-semibold">Nilai Kontrak</th>
+                    <th scope="col" class="px-2.5 py-2.5 text-right font-semibold">Sisa Tagihan</th>
+                    <th scope="col" class="px-2.5 py-2.5 text-center font-semibold">Status SLA</th>
+                    <th scope="col" class="py-2.5 pl-2.5 text-right font-semibold">Tindakan Cepat</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">

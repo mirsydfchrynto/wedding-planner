@@ -130,14 +130,14 @@
             <table class="w-full border-collapse text-left text-sm">
                 <thead>
                     <tr class="border-b border-stone-line text-xs font-semibold text-taupe">
-                        <th class="py-3 pr-4">Komponen &amp; Kategori</th>
-                        <th class="px-3 py-3">Mitra Vendor</th>
-                        <th class="px-3 py-3 text-right">Biaya Estimasi</th>
-                        <th class="px-3 py-3 text-right">Biaya Aktual</th>
-                        <th class="px-3 py-3 text-right">Sudah Dibayar</th>
-                        <th class="px-3 py-3 text-right">Sisa Tagihan</th>
-                        <th class="px-3 py-3 text-center">Status</th>
-                        <th class="py-3 pl-3 text-right no-print">Aksi</th>
+                        <th scope="col" class="py-3 pr-4">Komponen &amp; Kategori</th>
+                        <th scope="col" class="px-3 py-3">Mitra Vendor</th>
+                        <th scope="col" class="px-3 py-3 text-right">Biaya Estimasi</th>
+                        <th scope="col" class="px-3 py-3 text-right">Biaya Aktual</th>
+                        <th scope="col" class="px-3 py-3 text-right">Sudah Dibayar</th>
+                        <th scope="col" class="px-3 py-3 text-right">Sisa Tagihan</th>
+                        <th scope="col" class="px-3 py-3 text-center">Status</th>
+                        <th scope="col" class="py-3 pl-3 text-right no-print">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-line/70">
