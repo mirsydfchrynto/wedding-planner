@@ -228,14 +228,15 @@
                             alt="Suasana tenang persiapan acara di tepi air"
                             class="h-32 w-full object-cover"
                         >
-                        <img
-                            src="https://picsum.photos/id/989/600/450?grayscale"
-                            width="600"
-                            height="450"
-                            loading="lazy"
-                            alt="Lanskap tenang fajar menjelang prosesi pagi"
+                        <video
+                            src="/media/atelier-atmosphere.mp4"
+                            poster="/media/atelier-poster.jpg"
+                            autoplay
+                            loop
+                            muted
+                            playsinline
                             class="h-32 w-full object-cover"
-                        >
+                        ></video>
                         <img
                             src="https://picsum.photos/id/255/600/450?grayscale"
                             width="600"
@@ -258,9 +259,9 @@
         </div>
     </section>
 
-    {{-- CHAPTER 4: PRICING STATEMENT — PAKET LAYANAN SAAS (Deep Sage Chapter #264E3A with Horizontal Statement Rows) --}}
+    {{-- CHAPTER 4: PRICING STATEMENT — PAKET LAYANAN SAAS (Full-Bleed Alternating Bands) --}}
     <section id="paket-saas" class="w-full bg-sage text-alabaster">
-        <div class="mx-auto max-w-7xl px-6 py-16 lg:px-10 lg:py-24">
+        <div class="mx-auto max-w-7xl px-6 py-14 lg:px-10">
             <div class="max-w-3xl" data-reveal>
                 <h2 class="text-3xl font-bold leading-tight text-alabaster sm:text-4xl">
                     Paket layanan SaaS.
@@ -269,40 +270,40 @@
                     Strategi Kampanye Pemasaran &amp; Positioning Produk: dirancang untuk pasangan mandiri (B2C) maupun biro Wedding Organizer profesional (B2B) yang mengelola banyak pernikahan sekaligus.
                 </p>
             </div>
-
-            <div class="mt-10 space-y-4">
-                @foreach($packages as $idx => $pkg)
-                    <article
-                        data-reveal
-                        style="--delay: {{ $idx * 90 }}ms"
-                        class="grid grid-cols-1 gap-6 rounded p-6 lg:grid-cols-12 lg:items-center {{ $pkg['featured'] ? 'bg-alabaster text-espresso' : 'bg-espresso text-alabaster' }}"
-                    >
-                        <div class="lg:col-span-4">
-                            <h3 class="text-2xl font-bold">{{ $pkg['name'] }}</h3>
-                            <p class="mt-1 text-base font-medium {{ $pkg['featured'] ? 'text-champagne' : 'text-stone-strong' }}">
-                                {{ $pkg['audience'] }} · {{ $pkg['period'] }}
-                            </p>
-                        </div>
-
-                        <div class="lg:col-span-5">
-                            <p class="text-base leading-relaxed {{ $pkg['featured'] ? 'text-charcoal' : 'text-stone-line' }}">
-                                {{ $pkg['description'] }}
-                            </p>
-                        </div>
-
-                        <div class="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center lg:col-span-3 lg:justify-end">
-                            <p class="tabular-nums text-2xl font-bold">{{ $pkg['price'] }}</p>
-                            <a
-                                href="{{ $pkg['cta_route'] }}"
-                                class="inline-flex items-center justify-center rounded px-4 py-2.5 text-sm font-bold transition {{ $pkg['featured'] ? 'bg-espresso text-alabaster hover:bg-champagne' : 'bg-alabaster text-espresso hover:bg-ivory' }}"
-                            >
-                                {{ $pkg['cta_label'] }}
-                            </a>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
         </div>
+
+        @foreach($packages as $idx => $pkg)
+            <div class="w-full {{ $pkg['featured'] ? 'bg-alabaster text-espresso' : ($idx === 0 ? 'bg-espresso text-alabaster' : 'bg-charcoal text-alabaster') }}">
+                <div
+                    data-reveal
+                    style="--delay: {{ $idx * 90 }}ms"
+                    class="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-6 py-10 lg:grid-cols-12 lg:items-center lg:px-10"
+                >
+                    <div class="lg:col-span-4">
+                        <h3 class="text-2xl font-bold">{{ $pkg['name'] }}</h3>
+                        <p class="mt-1 text-base font-medium {{ $pkg['featured'] ? 'text-champagne' : 'text-stone-strong' }}">
+                            {{ $pkg['audience'] }} · {{ $pkg['period'] }}
+                        </p>
+                    </div>
+
+                    <div class="lg:col-span-5">
+                        <p class="text-base leading-relaxed {{ $pkg['featured'] ? 'text-charcoal' : 'text-stone-line' }}">
+                            {{ $pkg['description'] }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center lg:col-span-3 lg:justify-end">
+                        <p class="tabular-nums text-2xl font-bold">{{ $pkg['price'] }}</p>
+                        <a
+                            href="{{ $pkg['cta_route'] }}"
+                            class="inline-flex items-center justify-center rounded px-4 py-2.5 text-sm font-bold transition {{ $pkg['featured'] ? 'bg-espresso text-alabaster hover:bg-champagne' : 'bg-alabaster text-espresso hover:bg-ivory' }}"
+                        >
+                            {{ $pkg['cta_label'] }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     </section>
 
     {{-- CHAPTER 5: FAQ BANDS — A BAND PER QUESTION --}}

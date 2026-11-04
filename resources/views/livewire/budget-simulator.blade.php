@@ -33,26 +33,25 @@
 
                 <div>
                     <p class="mb-2.5 text-base font-semibold text-alabaster">Pilih Skala Prosesi Adat</p>
-                    {{-- deslop-ignore-next-line 28 --}}
-                    <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                    <div class="flex flex-wrap items-center gap-2.5">
                         <button
                             type="button"
                             wire:click="setScale('intimate')"
-                            class="rounded px-4 py-3 text-left text-sm font-semibold transition cursor-pointer {{ $adatScale === 'intimate' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
+                            class="rounded px-4 py-2.5 text-sm font-semibold transition cursor-pointer {{ $adatScale === 'intimate' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
                         >
                             Akad Intimate
                         </button>
                         <button
                             type="button"
                             wire:click="setScale('keraton')"
-                            class="rounded px-4 py-3 text-left text-sm font-semibold transition cursor-pointer {{ $adatScale === 'keraton' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
+                            class="rounded px-4 py-2.5 text-sm font-semibold transition cursor-pointer {{ $adatScale === 'keraton' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
                         >
                             Jawa Keraton
                         </button>
                         <button
                             type="button"
                             wire:click="setScale('grand')"
-                            class="rounded px-4 py-3 text-left text-sm font-semibold transition cursor-pointer {{ $adatScale === 'grand' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
+                            class="rounded px-4 py-2.5 text-sm font-semibold transition cursor-pointer {{ $adatScale === 'grand' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
                         >
                             Resepsi Agung
                         </button>
