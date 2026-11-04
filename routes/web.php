@@ -2,20 +2,40 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SaasController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Module #5: Executive Dashboard & Couple Profile (Lead: irsyad)
+| Module #5: Customer Portal — Executive Dashboard & Couple Profile (irsyad)
 |--------------------------------------------------------------------------
 */
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 Route::patch('/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.updateProfile');
+
+/*
+|--------------------------------------------------------------------------
+| SaaS Brand Landing Page & Marketing Campaign Showcase (irsyad)
+|--------------------------------------------------------------------------
+*/
+Route::get('/saas', [SaasController::class, 'landing'])->name('saas.landing');
+
+/*
+|--------------------------------------------------------------------------
+| Admin & Wedding Organizer (WO) Backoffice Console (irsyad)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('admin')->name('admin.')->group(function (): void {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
+    Route::post('/escalate-overdue', [AdminController::class, 'escalateOverdue'])->name('escalateOverdue');
+    Route::patch('/vendors/{vendor}/verify', [AdminController::class, 'verifyVendor'])->name('verifyVendor');
+});
 
 /*
 |--------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 @source '../**/*.js';
 
 @theme {
-    /* Vogue Bridal Editorial Color Palette */
+    /* Apple Tactile Surface x Nusantara Sogan Keraton Palette */
     --color-alabaster: #FAF8F5;
     --color-ivory: #F3EFEA;
     --color-pearl: #FFFFFF;
@@ -62,9 +62,38 @@
     border: 1px solid var(--color-stone-line);
 }
 
+/* Authentic Javanese Batik Kawung SVG Micro-Pattern */
+.batik-kawung-bg {
+    background-color: var(--color-pearl);
+    background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%238C6D46' stroke-width='0.75' stroke-opacity='0.14'%3E%3Cpath d='M24 0C30 10 38 18 48 24C38 30 30 38 24 48C18 38 10 30 0 24C10 18 18 10 24 0Z'/%3E%3Ccircle cx='24' cy='24' r='3'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* 2D & 3D Spatial Perspective Tilt Stage (Apple Vision / HIG Motion) */
+.stage-3d {
+    perspective: 1100px;
+}
+
+.tilt-card-3d {
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease;
+}
+
+.tilt-depth-layer {
+    transform: translateZ(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tilt-card-3d,
+    .tilt-depth-layer {
+        transform: none !important;
+        transition: opacity 150ms ease !important;
+    }
+}
+
 .editorial-input {
     width: 100%;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     border: 1px solid var(--color-stone-line);
     background-color: var(--color-alabaster);
     padding: 0.625rem 0.875rem;
@@ -84,14 +113,14 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     background-color: var(--color-espresso);
     color: var(--color-alabaster);
     padding: 0.625rem 1.125rem;
     font-size: 0.8125rem;
     font-weight: 600;
-    letter-spacing: 0.025em;
-    transition: background-color 150ms ease, transform 150ms ease;
+    letter-spacing: 0.015em;
+    transition: background-color 150ms ease, transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
     cursor: pointer;
 }
 
@@ -99,12 +128,16 @@
     background-color: var(--color-champagne);
 }
 
+.editorial-btn-primary:active {
+    transform: scale(0.98);
+}
+
 .editorial-btn-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     border: 1px solid var(--color-stone-line);
     background-color: var(--color-pearl);
     color: var(--color-charcoal);

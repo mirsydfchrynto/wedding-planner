@@ -184,4 +184,29 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->assertSame(0, $vendor->fresh()->remaining_balance);
         $this->assertSame(VendorBookingStatus::Paid, $vendor->fresh()->booking_status);
     }
+
+    public function test_saas_landing_page_renders_packages_simulator_and_marketing_campaign(): void
+    {
+        $this->get('/saas')
+            ->assertOk()
+            ->assertSee('Satu buku kerja untuk anggaran, vendor, dan adat pernikahan.')
+            ->assertSee('Simulasi Interaktif Anggaran & Adat Nusantara')
+            ->assertSee('Keraton Royal')
+            ->assertSee('Strategi Kampanye Pemasaran & Positioning Produk');
+    }
+
+    public function test_admin_console_renders_twelve_factor_matrix_and_executes_escalations(): void
+    {
+        $this->get('/admin')
+            ->assertOk()
+            ->assertSee('Konsol Admin & Operasional Wedding Organizer')
+            ->assertSee('Matriks Kepatuhan Arsitektur Twelve-Factor SaaS')
+            ->assertSee('12 / 12 Faktor Terverifikasi');
+
+        $this->post('/admin/escalate-overdue')->assertRedirect(route('admin.index'));
+
+        $vendor = Vendor::query()->where('booking_status', VendorBookingStatus::Contacted->value)->firstOrFail();
+        $this->patch("/admin/vendors/{$vendor->id}/verify")->assertRedirect(route('admin.index'));
+        $this->assertSame(VendorBookingStatus::Booked, $vendor->fresh()->booking_status);
+    }
 }

@@ -2,8 +2,9 @@
 
 @section('content')
     {{-- Editorial Hero: Couple Vow & Live Countdown --}}
-    <section class="editorial-card rounded-lg p-6 sm:p-8 lg:p-10">
-        <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
+    <section class="editorial-card batik-kawung-bg relative rounded-lg p-6 sm:p-8 lg:p-10">
+        <x-ui.batik-ornament variant="gunungan" class="absolute right-4 bottom-4 h-44 w-32 opacity-30" />
+        <div class="relative z-10 flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
             <div class="max-w-2xl">
                 {{-- deslop-ignore-next-line 11 --}}
                 <h1 class="font-editorial text-4xl font-semibold text-espresso sm:text-5xl">
@@ -59,6 +60,7 @@
             {{-- Live Countdown Block --}}
             <div
                 x-data="{
+                    ...spatialTilt(3),
                     target: new Date('{{ $summary['wedding_date_iso'] }}').getTime(),
                     days: {{ $summary['days_remaining'] }},
                     hours: {{ $summary['hours_remaining'] }},
@@ -71,7 +73,10 @@
                     }
                 }"
                 x-init="updateClock(); setInterval(() => updateClock(), 30000)"
-                class="rounded-lg border border-stone-line bg-alabaster p-5 sm:p-6 lg:min-w-[330px]"
+                @mousemove="handleMove($event)"
+                @mouseleave="handleLeave()"
+                :style="{ transform: transformStyle }"
+                class="tilt-card-3d rounded-lg border border-stone-line bg-alabaster p-5 sm:p-6 lg:min-w-[330px]"
             >
                 <p class="text-xs font-medium text-taupe">Hitung Mundur Menuju Hari-H</p>
                 {{-- deslop-ignore-next-line 28 --}}
