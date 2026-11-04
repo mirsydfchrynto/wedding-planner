@@ -1,11 +1,12 @@
 import Alpine from 'alpinejs';
 import Chart from 'chart.js/auto';
 
+document.documentElement.classList.add('js');
+
 window.Alpine = Alpine;
 window.Chart = Chart;
 
-// Motion Foundations: 2D/3D Spatial Tilt with Reduced-Motion & Low-End Hardware Guard
-Alpine.data('spatialTilt', (maxDeg = 5) => ({
+Alpine.data('spatialTilt', (maxDeg = 4) => ({
     transformStyle: 'perspective(1100px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
     prefersReduced: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     handleMove(event) {
@@ -23,3 +24,31 @@ Alpine.data('spatialTilt', (maxDeg = 5) => ({
 }));
 
 Alpine.start();
+
+// Scroll-triggered entrance choreography (fires once per element, respects reduced-motion)
+function initScrollReveals() {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+        document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-in'));
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in');
+                    observer.unobserve(entry.target);
+                }
+            }
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+    );
+
+    document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el));
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollReveals);
+} else {
+    initScrollReveals();
+}

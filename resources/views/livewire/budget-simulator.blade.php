@@ -1,88 +1,91 @@
-<section id="simulasi-adat" class="mt-10 editorial-card rounded-lg p-6 sm:p-8">
-    <div class="flex flex-col justify-between gap-4 border-b border-stone-line pb-5 lg:flex-row lg:items-center">
-        <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-md bg-champagne-light text-champagne">
-                <x-ui.icon name="sliders" class="h-5 w-5" />
-            </div>
-            <div>
-                <h2 class="text-xl font-bold text-espresso">Simulasi Interaktif Anggaran &amp; Adat Nusantara</h2>
-                <p class="text-xs text-taupe">Geser jumlah tamu untuk melihat pembagian biaya otomatis (Livewire Reactive)</p>
-            </div>
-        </div>
-        <div class="rounded-md border border-stone-line bg-alabaster px-4 py-2.5 text-left lg:text-right">
-            <span class="text-[11px] font-medium text-taupe">Rekomendasi Total Plafon</span>
-            <p class="tabular-nums text-2xl font-bold text-champagne">{{ format_idr($total) }}</p>
-        </div>
-    </div>
+<section id="simulasi-adat" class="w-full bg-espresso text-alabaster">
+    <div class="mx-auto grid min-h-[82svh] max-w-7xl grid-cols-1 gap-10 px-6 py-16 lg:grid-cols-12 lg:items-center lg:px-10 lg:py-24">
+        {{-- Left Half (Input Half on Dark Field) --}}
+        <div class="space-y-6 lg:col-span-5" data-reveal>
+            <h2 class="text-3xl font-bold leading-tight text-alabaster sm:text-4xl">
+                Simulasi anggaran Nusantara.
+            </h2>
+            <p class="text-lg leading-relaxed text-stone-line">
+                Sesuaikan jumlah tamu undangan dan skala rangkaian adat untuk menghitung rekomendasi plafon anggaran secara instan. Mengubah input di sebelah kiri langsung memperbarui lembar alokasi 8 kategori di sebelah kanan.
+            </p>
 
-    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center">
-        <div class="space-y-5 lg:col-span-5">
-            <div>
-                <div class="flex items-center justify-between text-xs font-semibold text-charcoal">
-                    <label for="lw-guests">Jumlah Undangan</label>
-                    <span class="tabular-nums rounded bg-ivory px-2 py-0.5 text-espresso">{{ $guests }} Tamu</span>
-                </div>
-                <input
-                    id="lw-guests"
-                    type="range"
-                    min="100"
-                    max="1000"
-                    step="50"
-                    wire:model.live="guests"
-                    class="mt-2 w-full accent-champagne cursor-pointer"
-                >
-                <div class="mt-1 flex justify-between text-[11px] text-taupe tabular-nums">
-                    <span>100</span>
-                    <span>500</span>
-                    <span>1.000 Tamu</span>
-                </div>
-            </div>
-
-            <div>
-                <span class="mb-2 block text-xs font-semibold text-charcoal">Skala Prosesi Adat</span>
-                {{-- deslop-ignore-next-line 28 --}}
-                <div class="grid grid-cols-3 gap-2">
-                    <button
-                        type="button"
-                        wire:click="setScale('intimate')"
-                        class="rounded border px-3 py-2 text-left text-xs font-semibold transition cursor-pointer {{ $adatScale === 'intimate' ? 'border-espresso bg-espresso text-alabaster' : 'border-stone-line bg-alabaster text-charcoal' }}"
-                    >
-                        Akad Intimate
-                    </button>
-                    <button
-                        type="button"
-                        wire:click="setScale('keraton')"
-                        class="rounded border px-3 py-2 text-left text-xs font-semibold transition cursor-pointer {{ $adatScale === 'keraton' ? 'border-espresso bg-espresso text-alabaster' : 'border-stone-line bg-alabaster text-charcoal' }}"
-                    >
-                        Jawa Keraton
-                    </button>
-                    <button
-                        type="button"
-                        wire:click="setScale('grand')"
-                        class="rounded border px-3 py-2 text-left text-xs font-semibold transition cursor-pointer {{ $adatScale === 'grand' ? 'border-espresso bg-espresso text-alabaster' : 'border-stone-line bg-alabaster text-charcoal' }}"
-                    >
-                        Resepsi Agung
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-7">
-            @foreach($allocations as $alloc)
-                <div class="rounded border border-stone-line bg-alabaster p-4">
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="inline-flex items-center gap-1.5 font-semibold text-charcoal">
-                            <x-ui.icon :name="$alloc['icon']" class="h-4 w-4 text-champagne" />
-                            <span>{{ $alloc['label'] }}</span>
-                        </span>
-                        <span class="tabular-nums font-bold text-champagne">{{ $alloc['percent'] }}%</span>
+            <div class="space-y-5 pt-2">
+                <div>
+                    <div class="flex items-center justify-between text-base font-semibold text-alabaster">
+                        <label for="lw-guests">Jumlah Tamu Undangan</label>
+                        <span class="tabular-nums rounded bg-charcoal px-3 py-1 text-base text-alabaster">{{ $guests }} Tamu</span>
                     </div>
-                    <p class="mt-2 tabular-nums text-lg font-bold text-espresso">{{ format_idr($alloc['amount']) }}</p>
-                    <div class="mt-2">
-                        <x-ui.progress-bar size="sm" :percent="$alloc['percent'] * 2" tone="champagne" />
+                    <input
+                        id="lw-guests"
+                        type="range"
+                        min="100"
+                        max="1000"
+                        step="50"
+                        wire:model.live="guests"
+                        class="mt-3 w-full accent-champagne cursor-pointer"
+                    >
+                    <div class="mt-1.5 flex justify-between text-sm text-stone-strong tabular-nums">
+                        <span>100 Tamu</span>
+                        <span>500 Tamu</span>
+                        <span>1.000 Tamu</span>
                     </div>
                 </div>
-            @endforeach
+
+                <div>
+                    <p class="mb-2.5 text-base font-semibold text-alabaster">Pilih Skala Prosesi Adat</p>
+                    {{-- deslop-ignore-next-line 28 --}}
+                    <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                        <button
+                            type="button"
+                            wire:click="setScale('intimate')"
+                            class="rounded px-4 py-3 text-left text-sm font-semibold transition cursor-pointer {{ $adatScale === 'intimate' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
+                        >
+                            Akad Intimate
+                        </button>
+                        <button
+                            type="button"
+                            wire:click="setScale('keraton')"
+                            class="rounded px-4 py-3 text-left text-sm font-semibold transition cursor-pointer {{ $adatScale === 'keraton' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
+                        >
+                            Jawa Keraton
+                        </button>
+                        <button
+                            type="button"
+                            wire:click="setScale('grand')"
+                            class="rounded px-4 py-3 text-left text-sm font-semibold transition cursor-pointer {{ $adatScale === 'grand' ? 'bg-alabaster text-espresso' : 'bg-charcoal text-stone-line hover:bg-taupe' }}"
+                        >
+                            Resepsi Agung
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Right Half (Output Half — True-Size Interface Fragment #2 marked data-ui) --}}
+        <div class="lg:col-span-7" data-ui data-reveal style="--delay: 120ms">
+            <div class="rounded-lg bg-alabaster p-6 text-espresso sm:p-8">
+                <div class="flex flex-col justify-between gap-2 pb-5 sm:flex-row sm:items-end">
+                    <div>
+                        <p class="text-lg font-bold text-espresso">Simulasi Interaktif Anggaran &amp; Adat Nusantara</p>
+                        <p class="text-sm text-taupe">Rekomendasi Alokasi Otomatis ({{ $guests }} Tamu)</p>
+                    </div>
+                    <p class="tabular-nums text-2xl font-bold text-champagne sm:text-3xl">{{ format_idr($total) }}</p>
+                </div>
+
+                <div class="space-y-3">
+                    @foreach($allocations as $alloc)
+                        <div class="rounded bg-pearl p-4">
+                            <div class="flex items-center justify-between text-base">
+                                <span class="font-bold text-espresso">{{ $alloc['label'] }} ({{ $alloc['percent'] }}%)</span>
+                                <span class="tabular-nums font-bold text-champagne">{{ format_idr($alloc['amount']) }}</span>
+                            </div>
+                            <div class="mt-2">
+                                <x-ui.progress-bar size="sm" :percent="$alloc['percent'] * 2" tone="champagne" />
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </div>
 </section>
