@@ -1,0 +1,46 @@
+name: Laravel Feature Tests & Vite Build
+
+on:
+  push:
+    branches: [ main, irsyad, marsha, adam, dinda ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, json, pdo_sqlite
+          coverage: none
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare environment & SQLite database
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.sqlite
+          php artisan migrate:fresh --seed --force
+
+      - name: Build frontend assets (Tailwind v4 + Vite)
+        run: |
+          npm ci
+          npm run build
+
+      - name: Execute PHPUnit test suite
+        run: php artisan test

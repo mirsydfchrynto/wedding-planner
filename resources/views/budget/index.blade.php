@@ -1,0 +1,384 @@
+@extends('layouts.app', ['title' => 'Budget Planner'])
+
+@section('content')
+    <x-ui.section-header
+        eyebrow="Modul #1 · Manajemen Keuangan Pernikahan"
+        title="Buku Anggaran & Realisasi Biaya"
+        subtitle="Kelola plafon anggaran induk, pantau deviasi estimasi terhadap kontrak aktual, dan kendalikan arus kas pembayaran vendor."
+    >
+        <x-slot:actions>
+            <button
+                type="button"
+                @click="$dispatch('open-modal', 'update-budget-cap-modal')"
+                class="editorial-btn-secondary"
+            >
+                Ubah Plafon Induk
+            </button>
+            <button
+                type="button"
+                @click="$dispatch('open-modal', 'create-budget-item-modal')"
+                class="editorial-btn-primary"
+            >
+                + Tambah Pos Anggaran
+            </button>
+        </x-slot:actions>
+    </x-ui.section-header>
+
+    {{-- Financial Summary Strip --}}
+    <section class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <x-ui.stat-card
+            label="Plafon Anggaran Induk"
+            :value="format_idr($summary['total_budget_cap'])"
+            :subtitle="'Target untuk ' . number_format($profile->guest_target, 0, ',', '.') . ' tamu undangan'"
+            badge="Target Utama"
+            badgeTone="champagne"
+        />
+
+        <x-ui.stat-card
+            label="Total Estimasi Perencanaan"
+            :value="format_idr($summary['total_estimated'])"
+            :subtitle="round(($summary['total_estimated'] / max(1, $summary['total_budget_cap'])) * 100) . '% dari plafon anggaran induk'"
+        />
+
+        <x-ui.stat-card
+            label="Total Realisasi Aktual"
+            :value="format_idr($summary['total_actual'])"
+            :subtitle="'Terbayar: ' . format_idr($summary['total_paid'])"
+            :badge="$summary['variance_amount'] >= 0 ? 'Hemat ' . format_idr($summary['variance_amount']) : 'Over ' . format_idr(abs($summary['variance_amount']))"
+            :badgeTone="$summary['variance_amount'] >= 0 ? 'sage' : 'wine'"
+        />
+
+        <x-ui.stat-card
+            label="Sisa Plafon Anggaran"
+            :value="format_idr($summary['remaining_budget'])"
+            :subtitle="'Tagihan belum dibayar: ' . format_idr(max(0, $summary['total_actual'] - $summary['total_paid']))"
+            :badge="$summary['remaining_budget'] >= 0 ? 'Anggaran Sehat' : 'Melebihi Plafon'"
+            :badgeTone="$summary['remaining_budget'] >= 0 ? 'sage' : 'wine'"
+        />
+    </section>
+
+    {{-- Category Allocation Progress Grid --}}
+    <section class="mt-6 editorial-card rounded-2xl p-6">
+        <div class="flex flex-col justify-between gap-2 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
+            <div>
+                <h2 class="font-editorial text-2xl font-semibold text-espresso">Alokasi per Kategori Pengeluaran</h2>
+                <p class="text-xs text-taupe">Klik salah satu kategori untuk menyaring tabel pos anggaran di bawah</p>
+            </div>
+            @if($selectedCategory || $selectedStatus)
+                <a href="{{ route('budget.index') }}" class="text-xs font-semibold text-champagne hover:underline">
+                    Reset Filter Kategori
+                </a>
+            @endif
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            @foreach($summary['category_breakdown'] as $cat)
+                @php $isSelected = $selectedCategory === $cat['key']; @endphp
+                <a
+                    href="{{ route('budget.index', ['category' => $isSelected ? null : $cat['key']]) }}"
+                    class="rounded-xl border p-4 transition {{ $isSelected ? 'border-champagne bg-champagne-light/60' : 'border-stone-line bg-alabaster hover:border-champagne/60 hover:bg-pearl' }}"
+                >
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-semibold text-espresso">{{ $cat['label'] }}</span>
+                        <span class="tabular-nums text-[11px] font-medium text-taupe">{{ $cat['share_percent'] }}%</span>
+                    </div>
+                    <p class="mt-2 font-editorial tabular-nums text-xl font-semibold text-espresso">
+                        {{ format_idr($cat['actual']) }}
+                    </p>
+                    <p class="mt-0.5 tabular-nums text-[11px] text-taupe">
+                        Estimasi: {{ format_idr($cat['estimated']) }}
+                    </p>
+                    <div class="mt-2.5">
+                        <x-ui.progress-bar
+                            size="sm"
+                            :percent="$cat['utilization_percent']"
+                            :tone="$cat['is_overbudget'] ? 'wine' : 'champagne'"
+                        />
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </section>
+
+    {{-- Filter Bar & Budget Ledger Table --}}
+    <section class="mt-6 editorial-card rounded-2xl p-6">
+        <div class="flex flex-col justify-between gap-4 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
+            <div>
+                <h2 class="font-editorial text-2xl font-semibold text-espresso">Rincian Buku Besar Anggaran ({{ $items->count() }} Komponen)</h2>
+                <p class="text-xs text-taupe">Setiap baris mencatat biaya estimasi, kontrak aktual, nominal terbayar, dan mitra vendor terkait</p>
+            </div>
+
+            <form method="GET" action="{{ route('budget.index') }}" class="flex flex-wrap items-center gap-2 no-print">
+                <select name="category" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                    <option value="">Semua Kategori</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->value }}" @selected($selectedCategory === $category->value)>
+                            {{ $category->label() }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <select name="status" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                    <option value="">Semua Status</option>
+                    <option value="paid" @selected($selectedStatus === 'paid')>Lunas</option>
+                    <option value="unpaid" @selected($selectedStatus === 'unpaid')>Belum Lunas / DP</option>
+                    <option value="overbudget" @selected($selectedStatus === 'overbudget')>Overbudget</option>
+                </select>
+            </form>
+        </div>
+
+        <div class="mt-4 overflow-x-auto">
+            <table class="w-full border-collapse text-left text-sm">
+                <thead>
+                    <tr class="border-b border-stone-line text-xs font-semibold text-taupe">
+                        <th class="py-3 pr-4">Komponen &amp; Kategori</th>
+                        <th class="px-3 py-3">Mitra Vendor</th>
+                        <th class="px-3 py-3 text-right">Biaya Estimasi</th>
+                        <th class="px-3 py-3 text-right">Biaya Aktual</th>
+                        <th class="px-3 py-3 text-right">Sudah Dibayar</th>
+                        <th class="px-3 py-3 text-right">Sisa Tagihan</th>
+                        <th class="px-3 py-3 text-center">Status</th>
+                        <th class="py-3 pl-3 text-right no-print">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-line/70">
+                    @forelse($items as $item)
+                        <tr class="group hover:bg-alabaster/70" x-data="{ editing: false }">
+                            <td class="py-3.5 pr-4">
+                                <p class="font-semibold text-espresso">{{ $item->title }}</p>
+                                <div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-taupe">
+                                    <span class="font-medium text-champagne">{{ $item->category->label() }}</span>
+                                    @if($item->due_date)
+                                        <span>· Jatuh tempo {{ $item->due_date->format('d M Y') }}</span>
+                                    @endif
+                                </div>
+                                @if($item->notes)
+                                    <p class="mt-1 text-xs text-taupe">{{ $item->notes }}</p>
+                                @endif
+                            </td>
+                            <td class="px-3 py-3.5 text-xs text-charcoal">
+                                @if($item->vendor)
+                                    <a href="{{ route('vendors.index', ['category' => $item->category->value]) }}" class="font-medium text-espresso hover:text-champagne hover:underline">
+                                        {{ $item->vendor->name }}
+                                    </a>
+                                @else
+                                    <span class="text-taupe">Mandiri / Internal</span>
+                                @endif
+                            </td>
+                            <td class="px-3 py-3.5 text-right tabular-nums text-xs text-charcoal">
+                                {{ format_idr($item->estimated_cost) }}
+                            </td>
+                            <td class="px-3 py-3.5 text-right tabular-nums text-xs font-semibold text-espresso">
+                                {{ format_idr($item->actual_cost) }}
+                                @if($item->is_overbudget)
+                                    <span class="block text-[11px] font-normal text-wine">
+                                        +{{ format_idr(abs($item->variance_amount)) }}
+                                    </span>
+                                @elseif($item->variance_amount > 0 && $item->actual_cost > 0)
+                                    <span class="block text-[11px] font-normal text-sage">
+                                        Hemat {{ format_idr($item->variance_amount) }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-3 py-3.5 text-right tabular-nums text-xs text-sage font-medium">
+                                {{ format_idr($item->paid_amount) }}
+                            </td>
+                            <td class="px-3 py-3.5 text-right tabular-nums text-xs font-semibold {{ $item->remaining_balance > 0 ? 'text-ochre' : 'text-taupe' }}">
+                                {{ format_idr($item->remaining_balance) }}
+                            </td>
+                            <td class="px-3 py-3.5 text-center">
+                                <x-ui.status-badge :tone="$item->payment_status_tone" :label="$item->payment_status_label" />
+                            </td>
+                            <td class="py-3.5 pl-3 text-right no-print">
+                                <div class="inline-flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        @click="$dispatch('open-modal', 'edit-budget-{{ $item->id }}')"
+                                        class="text-xs font-semibold text-champagne hover:underline"
+                                    >
+                                        Edit
+                                    </button>
+                                    <form method="POST" action="{{ route('budget.destroy', $item) }}" onsubmit="return confirm('Hapus pos anggaran ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-xs font-medium text-wine hover:underline">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+
+                                {{-- Per-Row Edit Modal --}}
+                                <x-ui.modal name="edit-budget-{{ $item->id }}" :title="'Edit Pos: ' . $item->title" subtitle="Perbarui rincian biaya estimasi, kontrak aktual, dan nominal terbayar">
+                                    <form method="POST" action="{{ route('budget.update', $item) }}" class="space-y-4 text-left">
+                                        @csrf
+                                        @method('PUT')
+
+                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                            <div>
+                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
+                                                <select name="category" required class="editorial-input">
+                                                    @foreach($categories as $category)
+                                                        <option value="{{ $category->value }}" @selected($item->category === $category)>
+                                                            {{ $category->label() }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Mitra Vendor (Opsional)</label>
+                                                <select name="vendor_id" class="editorial-input">
+                                                    <option value="">-- Tanpa Vendor --</option>
+                                                    @foreach($vendors as $vendor)
+                                                        <option value="{{ $vendor->id }}" @selected($item->vendor_id === $vendor->id)>
+                                                            {{ $vendor->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Komponen Biaya</label>
+                                            <input type="text" name="title" value="{{ $item->title }}" required class="editorial-input">
+                                        </div>
+
+                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                            <div>
+                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Estimasi (Rp)</label>
+                                                <input type="number" name="estimated_cost" value="{{ $item->estimated_cost }}" min="0" required class="editorial-input tabular-nums">
+                                            </div>
+                                            <div>
+                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Aktual (Rp)</label>
+                                                <input type="number" name="actual_cost" value="{{ $item->actual_cost }}" min="0" required class="editorial-input tabular-nums">
+                                            </div>
+                                            <div>
+                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Sudah Dibayar (Rp)</label>
+                                                <input type="number" name="paid_amount" value="{{ $item->paid_amount }}" min="0" required class="editorial-input tabular-nums">
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                            <div>
+                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Jatuh Tempo</label>
+                                                <input type="date" name="due_date" value="{{ $item->due_date?->format('Y-m-d') }}" class="editorial-input tabular-nums">
+                                            </div>
+                                            <div>
+                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan</label>
+                                                <input type="text" name="notes" value="{{ $item->notes }}" class="editorial-input">
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
+                                            <button type="button" @click="$dispatch('close-modal', 'edit-budget-{{ $item->id }}')" class="editorial-btn-secondary">
+                                                Batal
+                                            </button>
+                                            <button type="submit" class="editorial-btn-primary">
+                                                Simpan Perubahan
+                                            </button>
+                                        </div>
+                                    </form>
+                                </x-ui.modal>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="py-8 text-center text-sm text-taupe">
+                                Tidak ada komponen anggaran pada filter yang dipilih.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {{-- Modal: Create Budget Item --}}
+    <x-ui.modal name="create-budget-item-modal" title="Tambah Komponen Anggaran Baru" subtitle="Catat rencana pengeluaran baru beserta estimasi, biaya kontrak aktual, dan vendor">
+        <form method="POST" action="{{ route('budget.store') }}" class="space-y-4">
+            @csrf
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori Pengeluaran</label>
+                    <select name="category" required class="editorial-input">
+                        @foreach($categories as $category)
+                            <option value="{{ $category->value }}">{{ $category->label() }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Mitra Vendor (Opsional)</label>
+                    <select name="vendor_id" class="editorial-input">
+                        <option value="">-- Mandiri / Belum Ada Vendor --</option>
+                        @foreach($vendors as $vendor)
+                            <option value="{{ $vendor->id }}">{{ $vendor->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Komponen Biaya</label>
+                <input type="text" name="title" placeholder="Contoh: Paket Dekorasi Lorong & Lighting Resepsi" required class="editorial-input">
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Estimasi (Rp)</label>
+                    <input type="number" name="estimated_cost" value="15000000" min="0" step="100000" required class="editorial-input tabular-nums">
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Aktual (Rp)</label>
+                    <input type="number" name="actual_cost" value="0" min="0" step="100000" class="editorial-input tabular-nums">
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Sudah Dibayar (Rp)</label>
+                    <input type="number" name="paid_amount" value="0" min="0" step="100000" class="editorial-input tabular-nums">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Jatuh Tempo</label>
+                    <input type="date" name="due_date" class="editorial-input tabular-nums">
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Tambahan</label>
+                    <input type="text" name="notes" placeholder="Keterangan termin pembayaran..." class="editorial-input">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
+                <button type="button" @click="$dispatch('close-modal', 'create-budget-item-modal')" class="editorial-btn-secondary">
+                    Batal
+                </button>
+                <button type="submit" class="editorial-btn-primary">
+                    Simpan Komponen Anggaran
+                </button>
+            </div>
+        </form>
+    </x-ui.modal>
+
+    {{-- Modal: Update Master Budget Cap --}}
+    <x-ui.modal name="update-budget-cap-modal" title="Ubah Plafon Total Anggaran" subtitle="Sesuaikan batas anggaran induk pernikahan" maxWidth="max-w-md">
+        <form method="POST" action="{{ route('budget.updateCap') }}" class="space-y-4">
+            @csrf
+            @method('PATCH')
+
+            <div>
+                <label class="mb-1 block text-xs font-semibold text-charcoal">Plafon Total Anggaran Baru (Rp)</label>
+                <input type="number" name="total_budget" value="{{ $profile->total_budget }}" min="1000000" step="1000000" required class="editorial-input tabular-nums">
+                <p class="mt-1 text-xs text-taupe">Saat ini: {{ format_idr($profile->total_budget) }}</p>
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
+                <button type="button" @click="$dispatch('close-modal', 'update-budget-cap-modal')" class="editorial-btn-secondary">
+                    Batal
+                </button>
+                <button type="submit" class="editorial-btn-primary">
+                    Simpan Plafon Anggaran
+                </button>
+            </div>
+        </form>
+    </x-ui.modal>
+@endsection

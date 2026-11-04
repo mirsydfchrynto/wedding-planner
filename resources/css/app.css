@@ -1,0 +1,134 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    /* Vogue Bridal Editorial Color Palette */
+    --color-alabaster: #FAF8F5;
+    --color-ivory: #F3EFEA;
+    --color-pearl: #FFFFFF;
+    --color-stone-line: #E6E0D6;
+    --color-stone-strong: #D4C9B8;
+    --color-espresso: #181512;
+    --color-charcoal: #2C2623;
+    --color-taupe: #78716C;
+    --color-champagne: #8C6D46;
+    --color-champagne-dark: #6E5332;
+    --color-champagne-light: #F5EFE6;
+    --color-sage: #2E5A44;
+    --color-sage-bg: #EAF2EE;
+    --color-ochre: #B45309;
+    --color-ochre-bg: #FEF3C7;
+    --color-wine: #991B1B;
+    --color-wine-bg: #FEE2E2;
+
+    /* Editorial Typography */
+    --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+    html {
+        background-color: var(--color-alabaster);
+        color: var(--color-espresso);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        min-height: 100vh;
+        background-color: var(--color-alabaster);
+        color: var(--color-espresso);
+    }
+
+    h1, h2, h3, .font-editorial {
+        font-family: var(--font-serif);
+        letter-spacing: -0.015em;
+    }
+}
+
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+.editorial-card {
+    background-color: var(--color-pearl);
+    border: 1px solid var(--color-stone-line);
+    box-shadow: 0 1px 2px rgba(24, 21, 18, 0.03), 0 8px 24px -12px rgba(24, 21, 18, 0.06);
+}
+
+.editorial-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-stone-line);
+    background-color: var(--color-alabaster);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: var(--color-espresso);
+    transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.editorial-input:focus {
+    outline: none;
+    border-color: var(--color-champagne);
+    background-color: var(--color-pearl);
+}
+
+.editorial-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--color-espresso);
+    color: var(--color-alabaster);
+    padding: 0.625rem 1.125rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    transition: background-color 150ms ease, transform 150ms ease;
+    cursor: pointer;
+}
+
+.editorial-btn-primary:hover {
+    background-color: var(--color-champagne);
+}
+
+.editorial-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-stone-line);
+    background-color: var(--color-pearl);
+    color: var(--color-charcoal);
+    padding: 0.5rem 0.95rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: border-color 150ms ease, background-color 150ms ease;
+    cursor: pointer;
+}
+
+.editorial-btn-secondary:hover {
+    border-color: var(--color-champagne);
+    background-color: var(--color-champagne-light);
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    body {
+        background: #ffffff !important;
+    }
+}
