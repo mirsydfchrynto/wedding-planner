@@ -15,6 +15,9 @@
     @livewireStyles
 </head>
 <body class="min-h-dvh bg-slate-100 font-sans text-slate-900 antialiased" x-data="{ sidebarOpen: false }">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded focus:bg-slate-900 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white">
+        Lewati ke konten utama
+    </a>
 
     <div class="flex min-h-dvh">
         {{-- Standard Breeze / Backoffice Dark Slate Sidebar --}}
@@ -130,7 +133,7 @@
                 </div>
             @endif
 
-            <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+            <main id="main-content" class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
                 @yield('content')
             </main>
         </div>

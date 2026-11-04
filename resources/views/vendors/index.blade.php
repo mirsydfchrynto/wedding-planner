@@ -53,7 +53,7 @@
     <section class="mt-6 editorial-card rounded-lg p-5">
         <form method="GET" action="{{ route('vendors.index') }}" class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div class="flex flex-wrap items-center gap-2">
-                <select name="category" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                <select name="category" aria-label="Filter Kategori Vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
                     <option value="">Semua Kategori Vendor</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->value }}" @selected($selectedCategory === $category->value)>
@@ -62,7 +62,7 @@
                     @endforeach
                 </select>
 
-                <select name="booking_status" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                <select name="booking_status" aria-label="Filter Status Booking Vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
                     <option value="">Semua Status Booking</option>
                     @foreach($bookingStatuses as $status)
                         <option value="{{ $status->value }}" @selected($selectedStatus === $status->value)>

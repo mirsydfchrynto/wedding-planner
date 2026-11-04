@@ -26,6 +26,9 @@
     ];
 @endphp
 <body class="bg-alabaster text-espresso antialiased selection:bg-champagne/20 selection:text-espresso" x-data="{ mobileNavOpen: false }">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded focus:bg-espresso focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-alabaster">
+        Lewati ke konten utama
+    </a>
 
     {{-- Top Navigation Bar: Tone-separated on Landing Page (no hairline border), bordered on internal Workspace --}}
     <header class="sticky top-0 z-30 {{ $isLandingPage ? 'bg-alabaster' : 'border-b border-stone-line bg-pearl' }}">
@@ -185,11 +188,11 @@
     @endif
 
     @if($isLandingPage)
-        <main class="w-full">
+        <main id="main-content" class="w-full">
             @yield('content')
         </main>
     @else
-        <main class="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
+        <main id="main-content" class="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
             @yield('content')
         </main>
     @endif

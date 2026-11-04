@@ -79,7 +79,7 @@
                     <input type="hidden" name="category" value="{{ $selectedCategory }}">
                 @endif
 
-                <select name="status" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                <select name="status" aria-label="Filter Status Tugas" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
                     <option value="">Semua Status</option>
                     @foreach($statuses as $status)
                         <option value="{{ $status->value }}" @selected($selectedStatus === $status->value)>
@@ -88,7 +88,7 @@
                     @endforeach
                 </select>
 
-                <select name="assigned_to" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                <select name="assigned_to" aria-label="Filter Penanggung Jawab PIC" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
                     <option value="">Semua PIC</option>
                     @foreach($assignees as $pic)
                         <option value="{{ $pic }}" @selected($selectedPic === $pic)>{{ $pic }}</option>

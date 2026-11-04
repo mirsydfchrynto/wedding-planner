@@ -108,7 +108,7 @@
             </div>
 
             <form method="GET" action="{{ route('budget.index') }}" class="flex flex-wrap items-center gap-2 no-print">
-                <select name="category" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                <select name="category" aria-label="Filter Kategori Anggaran" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
                     <option value="">Semua Kategori</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->value }}" @selected($selectedCategory === $category->value)>
@@ -117,7 +117,7 @@
                     @endforeach
                 </select>
 
-                <select name="status" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                <select name="status" aria-label="Filter Status Pembayaran Anggaran" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
                     <option value="">Semua Status</option>
                     <option value="paid" @selected($selectedStatus === 'paid')>Lunas</option>
                     <option value="unpaid" @selected($selectedStatus === 'unpaid')>Belum Lunas / DP</option>

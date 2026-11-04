@@ -11,7 +11,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <select wire:model.live="statusFilter" class="rounded-md border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700">
+            <select wire:model.live="statusFilter" aria-label="Filter Status SLA Vendor" class="rounded-md border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700">
                 <option value="">Semua Status ({{ $vendors->count() }})</option>
                 @foreach($statuses as $st)
                     <option value="{{ $st->value }}">{{ $st->label() }}</option>
