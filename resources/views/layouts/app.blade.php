@@ -4,80 +4,80 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ isset($title) ? $title . ' — Atelier Vow Nusantara' : 'Atelier Vow — Sasmita Janji Nusantara' }}</title>
+    <title>{{ isset($title) ? $title . ' — Atelier Vow' : 'Atelier Vow — Wedding Planner SaaS' }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {{-- deslop-ignore-next-line 33 --}}
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 <body class="bg-alabaster text-espresso antialiased selection:bg-champagne/20 selection:text-espresso" x-data="{ mobileNavOpen: false }">
 
-    {{-- Top Apple-Tactile x Nusantara Ribbon --}}
+    {{-- Minimalist Startup Top Bar --}}
     <header class="sticky top-0 z-30 border-b border-stone-line bg-alabaster">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-8">
             <div class="flex items-center gap-3">
-                <a href="{{ auth()->check() ? route('dashboard.index') : route('saas.landing') }}" class="group flex items-center gap-3">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-md border border-champagne/40 bg-champagne-light font-editorial text-lg font-bold text-champagne">
+                <a href="{{ auth()->check() ? route('dashboard.index') : route('saas.landing') }}" class="group flex items-center gap-2.5">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-md border border-champagne/40 bg-champagne-light text-xs font-bold text-champagne">
                         AV
                     </div>
-                    <div>
-                        <span class="font-editorial text-xl font-semibold tracking-tight text-espresso">Atelier Vow</span>
-                        <span class="hidden text-xs text-taupe xl:inline-block xl:ml-1.5">Sasmita Janji Nusantara</span>
-                    </div>
+                    <span class="text-base font-bold tracking-tight text-espresso">Atelier Vow</span>
                 </a>
             </div>
 
             @php
                 $navItems = [
-                    ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Dashboard'],
-                    ['route' => 'budget.index', 'pattern' => 'budget.*', 'label' => 'Budget Planner'],
-                    ['route' => 'checklist.index', 'pattern' => 'checklist.*', 'label' => 'Checklist'],
-                    ['route' => 'timeline.index', 'pattern' => 'timeline.*', 'label' => 'Timeline'],
-                    ['route' => 'vendors.index', 'pattern' => 'vendors.*', 'label' => 'Vendor'],
+                    ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
+                    ['route' => 'budget.index', 'pattern' => 'budget.*', 'label' => 'Budget', 'icon' => 'wallet'],
+                    ['route' => 'checklist.index', 'pattern' => 'checklist.*', 'label' => 'Checklist', 'icon' => 'check-circle'],
+                    ['route' => 'timeline.index', 'pattern' => 'timeline.*', 'label' => 'Timeline', 'icon' => 'calendar'],
+                    ['route' => 'vendors.index', 'pattern' => 'vendors.*', 'label' => 'Vendor', 'icon' => 'building'],
                 ];
             @endphp
 
-            {{-- Desktop Navigation: Public Marketing Links for Guests vs 5 Workspace Modules for Logged-in Users --}}
             @auth
                 <nav class="hidden lg:flex items-center gap-1" aria-label="Navigasi Utama">
                     @foreach($navItems as $item)
                         @php $active = request()->routeIs($item['pattern']); @endphp
                         <a
                             href="{{ route($item['route']) }}"
-                            class="rounded-md px-3 py-1.5 text-xs font-semibold transition {{ $active ? 'bg-espresso text-alabaster' : 'text-charcoal hover:bg-ivory hover:text-espresso' }}"
+                            class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition {{ $active ? 'bg-espresso text-alabaster' : 'text-charcoal hover:bg-ivory hover:text-espresso' }}"
                             @if($active) aria-current="page" @endif
                         >
-                            {{ $item['label'] }}
+                            <x-ui.icon :name="$item['icon']" class="h-3.5 w-3.5" />
+                            <span>{{ $item['label'] }}</span>
                         </a>
                     @endforeach
                 </nav>
             @else
-                <nav class="hidden lg:flex items-center gap-5 text-xs font-semibold text-charcoal" aria-label="Navigasi Publik">
-                    <a href="{{ route('saas.landing') }}#simulasi-adat" class="hover:text-champagne">Simulasi Anggaran &amp; Adat</a>
-                    <a href="{{ route('saas.landing') }}#fitur-platform" class="hover:text-champagne">Arsitektur 5 Modul</a>
-                    <a href="{{ route('saas.landing') }}#paket-saas" class="hover:text-champagne">Paket Layanan SaaS</a>
+                <nav class="hidden lg:flex items-center gap-6 text-xs font-semibold text-charcoal" aria-label="Navigasi Publik">
+                    <a href="{{ route('saas.landing') }}#fitur-platform" class="hover:text-champagne">5 Modul Utama</a>
+                    <a href="{{ route('saas.landing') }}#simulasi-adat" class="hover:text-champagne">Kalkulator Anggaran</a>
+                    <a href="{{ route('saas.landing') }}#paket-saas" class="hover:text-champagne">Harga Paket</a>
                 </nav>
             @endauth
 
-            {{-- Right Actions: Google Login for Guests vs User Session & Hidden Admin Console for Admins --}}
             <div class="flex items-center gap-2.5">
                 @auth
                     @if(auth()->user()->isAdmin())
                         <a
                             href="{{ route('admin.index') }}"
-                            class="hidden lg:inline-flex items-center rounded-md px-3 py-1.5 text-xs font-semibold transition {{ request()->routeIs('admin.*') ? 'bg-wine text-alabaster' : 'border border-wine/30 bg-wine-bg text-wine hover:bg-wine hover:text-alabaster' }}"
+                            class="hidden lg:inline-flex items-center gap-1.5 rounded-md border border-wine/30 bg-wine-bg px-3 py-1.5 text-xs font-semibold text-wine hover:bg-wine hover:text-alabaster"
                         >
-                            Konsol Admin Privat
+                            <x-ui.icon name="shield-check" class="h-3.5 w-3.5" />
+                            <span>Konsol Admin Privat</span>
                         </a>
                     @endif
 
                     <div class="hidden xl:flex items-center gap-2 rounded-md border border-stone-line bg-pearl px-3 py-1.5 text-xs">
-                        <span class="font-medium text-espresso">{{ auth()->user()->name }}</span>
+                        <x-ui.icon name="users" class="h-3.5 w-3.5 text-champagne" />
+                        <span class="font-semibold text-espresso">{{ auth()->user()->name }}</span>
                         @if(isset($globalProfile))
                             <span class="h-3 w-px bg-stone-line"></span>
-                            <span class="tabular-nums font-medium text-champagne">H-{{ $globalProfile->days_remaining }} Hari</span>
+                            <span class="tabular-nums font-semibold text-champagne">H-{{ $globalProfile->days_remaining }}</span>
                         @endif
                     </div>
 
@@ -106,7 +106,6 @@
             </div>
         </div>
 
-        {{-- Mobile Navigation Drawer --}}
         <div x-show="mobileNavOpen" x-cloak class="border-t border-stone-line bg-pearl px-4 py-3 lg:hidden">
             @auth
                 <div class="flex flex-col gap-1">
@@ -114,9 +113,10 @@
                         @php $active = request()->routeIs($item['pattern']); @endphp
                         <a
                             href="{{ route($item['route']) }}"
-                            class="rounded-md px-3 py-2 text-sm font-medium {{ $active ? 'bg-espresso text-alabaster' : 'text-charcoal hover:bg-ivory' }}"
+                            class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium {{ $active ? 'bg-espresso text-alabaster' : 'text-charcoal hover:bg-ivory' }}"
                         >
-                            {{ $item['label'] }}
+                            <x-ui.icon :name="$item['icon']" class="h-4 w-4" />
+                            <span>{{ $item['label'] }}</span>
                         </a>
                     @endforeach
                     @if(auth()->user()->isAdmin())
@@ -133,21 +133,15 @@
                 </div>
             @else
                 <div class="flex flex-col gap-2">
-                    <a href="{{ route('saas.landing') }}#simulasi-adat" class="rounded-md px-3 py-2 text-sm font-medium text-charcoal hover:bg-ivory">
-                        Simulasi Anggaran &amp; Adat
-                    </a>
-                    <a href="{{ route('saas.landing') }}#paket-saas" class="rounded-md px-3 py-2 text-sm font-medium text-charcoal hover:bg-ivory">
-                        Paket Layanan SaaS
-                    </a>
-                    <a href="{{ route('login') }}" class="editorial-btn-primary w-full text-center">
-                        Masuk dengan Google
-                    </a>
+                    <a href="{{ route('saas.landing') }}#fitur-platform" class="rounded-md px-3 py-2 text-sm font-medium text-charcoal">5 Modul Utama</a>
+                    <a href="{{ route('saas.landing') }}#simulasi-adat" class="rounded-md px-3 py-2 text-sm font-medium text-charcoal">Kalkulator Anggaran</a>
+                    <a href="{{ route('saas.landing') }}#paket-saas" class="rounded-md px-3 py-2 text-sm font-medium text-charcoal">Harga Paket</a>
+                    <a href="{{ route('login') }}" class="editorial-btn-primary w-full text-center">Masuk dengan Google</a>
                 </div>
             @endauth
         </div>
     </header>
 
-    {{-- Flash Notification Toast --}}
     @if(session('success'))
         <div
             x-data="{ show: true }"
@@ -157,18 +151,18 @@
             class="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8 no-print"
             role="status"
         >
-            <div class="flex items-center justify-between gap-3 rounded-lg border border-sage/30 bg-sage-bg px-4 py-3 text-sm text-sage">
-                <span class="font-medium">{{ session('success') }}</span>
-                <button type="button" @click="show = false" class="text-xs font-semibold underline">Tutup</button>
+            <div class="flex items-center justify-between gap-3 rounded-lg border border-sage/30 bg-sage-bg px-4 py-3 text-xs font-medium text-sage">
+                <span>{{ session('success') }}</span>
+                <button type="button" @click="show = false" class="font-semibold underline">Tutup</button>
             </div>
         </div>
     @endif
 
     @if($errors->any())
         <div class="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8 no-print" role="alert">
-            <div class="rounded-lg border border-wine/30 bg-wine-bg px-4 py-3 text-sm text-wine">
+            <div class="rounded-lg border border-wine/30 bg-wine-bg px-4 py-3 text-xs text-wine">
                 <p class="font-semibold">Periksa kembali isian formulir berikut:</p>
-                <ul class="mt-1 list-disc pl-5 text-xs">
+                <ul class="mt-1 list-disc pl-5">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -177,23 +171,20 @@
         </div>
     @endif
 
-    {{-- Main Content Canvas --}}
-    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <main class="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
         @yield('content')
     </main>
 
-    {{-- Nusantara Batik Editorial Footer --}}
-    <footer class="mt-16 border-t border-stone-line bg-ivory/60 py-8 no-print">
+    <footer class="mt-14 border-t border-stone-line bg-ivory/60 py-6 no-print">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <x-ui.batik-ornament class="mb-5" />
             <div class="flex flex-col items-center justify-between gap-3 text-xs text-taupe sm:flex-row">
                 <div class="flex flex-wrap items-center gap-3">
-                    <span class="font-editorial text-sm font-semibold text-espresso">Atelier Vow Nusantara</span>
+                    <span class="font-bold text-espresso">Atelier Vow</span>
                     <span>·</span>
-                    <a href="{{ route('saas.landing') }}" class="hover:text-espresso hover:underline">Halaman Utama SaaS</a>
+                    <a href="{{ route('saas.landing') }}" class="hover:text-espresso hover:underline">Beranda SaaS</a>
                     @auth
                         <span>·</span>
-                        <a href="{{ route('dashboard.index') }}" class="hover:text-espresso hover:underline">Dashboard Pengantin</a>
+                        <a href="{{ route('dashboard.index') }}" class="hover:text-espresso hover:underline">Dashboard</a>
                         @if(auth()->user()->isAdmin())
                             <span>·</span>
                             <a href="{{ route('admin.index') }}" class="font-semibold text-wine hover:underline">Konsol Admin Privat</a>
@@ -205,13 +196,14 @@
                 </div>
                 @if(isset($globalProfile))
                     <div class="tabular-nums">
-                        {{ $globalProfile->venue_name }}, {{ $globalProfile->city }} · {{ $globalProfile->guest_target }} Tamu
+                        {{ $globalProfile->venue_name }} · {{ $globalProfile->guest_target }} Tamu
                     </div>
                 @endif
             </div>
         </div>
     </footer>
 
+    @livewireScripts
     @stack('scripts')
 </body>
 </html>
