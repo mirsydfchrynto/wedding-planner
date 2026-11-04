@@ -30,9 +30,9 @@
             @endif
         </div>
     @endif
-    <div class="w-full overflow-hidden rounded-full bg-ivory {{ $heightClass }}">
+    <div class="w-full overflow-hidden rounded-sm bg-ivory {{ $heightClass }}">
         <div
-            class="{{ $heightClass }} rounded-full transition-all duration-500 {{ $barColor }}"
+            class="{{ $heightClass }} rounded-sm transition-[width] duration-200 {{ $barColor }}"
             style="width: {{ $clamped }}%"
             role="progressbar"
             aria-valuenow="{{ $clamped }}"

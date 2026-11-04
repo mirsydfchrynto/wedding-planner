@@ -6,7 +6,7 @@
     'badgeTone' => 'neutral',
 ])
 
-<article {{ $attributes->merge(['class' => 'editorial-card flex flex-col justify-between rounded-xl p-5 sm:p-6']) }}>
+<article {{ $attributes->merge(['class' => 'editorial-card flex flex-col justify-between rounded-lg p-5 sm:p-6']) }}>
     <div class="flex items-start justify-between gap-3">
         <p class="text-xs font-medium text-taupe">{{ $label }}</p>
         @if($badge)

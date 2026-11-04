@@ -8,14 +8,14 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-alabaster text-espresso antialiased selection:bg-champagne/20 selection:text-espresso" x-data="{ mobileNavOpen: false }">
 
     {{-- Top Editorial Ribbon --}}
-    <header class="sticky top-0 z-30 border-b border-stone-line bg-alabaster/95 backdrop-blur-md">
+    <header class="sticky top-0 z-30 border-b border-stone-line bg-alabaster">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
             <div class="flex items-center gap-6">
                 <a href="{{ route('dashboard.index') }}" class="group flex items-center gap-3">
@@ -56,7 +56,7 @@
             {{-- Live Couple & Countdown Pill --}}
             <div class="flex items-center gap-3">
                 @if(isset($globalProfile))
-                    <div class="hidden lg:flex items-center gap-3 rounded-full border border-stone-line bg-pearl px-3.5 py-1.5 text-xs">
+                    <div class="hidden lg:flex items-center gap-3 rounded-md border border-stone-line bg-pearl px-3.5 py-1.5 text-xs">
                         <span class="font-editorial text-sm font-semibold text-espresso">{{ $globalProfile->couple_names }}</span>
                         <span class="h-3 w-px bg-stone-line"></span>
                         <span class="tabular-nums font-medium text-champagne">H-{{ $globalProfile->days_remaining }} Hari</span>
@@ -102,11 +102,8 @@
             class="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8 no-print"
             role="status"
         >
-            <div class="flex items-center justify-between gap-3 rounded-xl border border-sage/30 bg-sage-bg px-4 py-3 text-sm text-sage">
-                <div class="flex items-center gap-2.5">
-                    <span class="h-2 w-2 rounded-full bg-sage"></span>
-                    <span class="font-medium">{{ session('success') }}</span>
-                </div>
+            <div class="flex items-center justify-between gap-3 rounded-lg border border-sage/30 bg-sage-bg px-4 py-3 text-sm text-sage">
+                <span class="font-medium">{{ session('success') }}</span>
                 <button type="button" @click="show = false" class="text-xs font-semibold underline">Tutup</button>
             </div>
         </div>
@@ -114,7 +111,7 @@
 
     @if($errors->any())
         <div class="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8 no-print" role="alert">
-            <div class="rounded-xl border border-wine/30 bg-wine-bg px-4 py-3 text-sm text-wine">
+            <div class="rounded-lg border border-wine/30 bg-wine-bg px-4 py-3 text-sm text-wine">
                 <p class="font-semibold">Mohon periksa kembali data yang dimasukkan:</p>
                 <ul class="mt-1 list-disc pl-5 text-xs">
                     @foreach($errors->all() as $error)

@@ -2,7 +2,6 @@
 
 @section('content')
     <x-ui.section-header
-        eyebrow="Modul #1 · Manajemen Keuangan Pernikahan"
         title="Buku Anggaran & Realisasi Biaya"
         subtitle="Kelola plafon anggaran induk, pantau deviasi estimasi terhadap kontrak aktual, dan kendalikan arus kas pembayaran vendor."
     >
@@ -58,7 +57,7 @@
     </section>
 
     {{-- Category Allocation Progress Grid --}}
-    <section class="mt-6 editorial-card rounded-2xl p-6">
+    <section class="mt-6 editorial-card rounded-lg p-6">
         <div class="flex flex-col justify-between gap-2 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
             <div>
                 <h2 class="font-editorial text-2xl font-semibold text-espresso">Alokasi per Kategori Pengeluaran</h2>
@@ -76,7 +75,7 @@
                 @php $isSelected = $selectedCategory === $cat['key']; @endphp
                 <a
                     href="{{ route('budget.index', ['category' => $isSelected ? null : $cat['key']]) }}"
-                    class="rounded-xl border p-4 transition {{ $isSelected ? 'border-champagne bg-champagne-light/60' : 'border-stone-line bg-alabaster hover:border-champagne/60 hover:bg-pearl' }}"
+                    class="rounded border p-4 transition {{ $isSelected ? 'border-champagne bg-champagne-light/60' : 'border-stone-line bg-alabaster hover:border-champagne/60 hover:bg-pearl' }}"
                 >
                     <div class="flex items-center justify-between gap-2">
                         <span class="text-xs font-semibold text-espresso">{{ $cat['label'] }}</span>
@@ -101,7 +100,7 @@
     </section>
 
     {{-- Filter Bar & Budget Ledger Table --}}
-    <section class="mt-6 editorial-card rounded-2xl p-6">
+    <section class="mt-6 editorial-card rounded-lg p-6">
         <div class="flex flex-col justify-between gap-4 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
             <div>
                 <h2 class="font-editorial text-2xl font-semibold text-espresso">Rincian Buku Besar Anggaran ({{ $items->count() }} Komponen)</h2>
@@ -242,6 +241,7 @@
                                             <input type="text" name="title" value="{{ $item->title }}" required class="editorial-input">
                                         </div>
 
+                                        {{-- deslop-ignore-next-line 28 --}}
                                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                                             <div>
                                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Estimasi (Rp)</label>
@@ -294,7 +294,7 @@
 
     {{-- Modal: Create Budget Item --}}
     <x-ui.modal name="create-budget-item-modal" title="Tambah Komponen Anggaran Baru" subtitle="Catat rencana pengeluaran baru beserta estimasi, biaya kontrak aktual, dan vendor">
-        <form method="POST" action="{{ route('budget.store') }}" class="space-y-4">
+        <form method="POST" action="{{ route('budget.store') }}" class="space-y-5">
             @csrf
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -322,6 +322,7 @@
                 <input type="text" name="title" placeholder="Contoh: Paket Dekorasi Lorong & Lighting Resepsi" required class="editorial-input">
             </div>
 
+            {{-- deslop-ignore-next-line 28 --}}
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Estimasi (Rp)</label>

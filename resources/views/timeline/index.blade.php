@@ -2,7 +2,6 @@
 
 @section('content')
     <x-ui.section-header
-        eyebrow="Modul #3 · Peta Kronologis & Milestone"
         title="Linimasa Persiapan Pernikahan (H-12 Bulan — Hari-H)"
         subtitle="Visualisasi urutan kerja persiapan pernikahan dari tahap penguncian tanggal hingga prosesi akad dan resepsi puncak."
     >
@@ -27,7 +26,7 @@
     <section class="mt-6 flex flex-wrap items-center gap-2">
         <a
             href="{{ route('timeline.index', ['milestone_only' => $milestoneOnly ? 1 : null]) }}"
-            class="rounded-full px-3.5 py-1.5 text-xs font-semibold transition {{ !$selectedPhase ? 'bg-espresso text-alabaster' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
+            class="rounded-md px-3.5 py-1.5 text-xs font-semibold transition {{ !$selectedPhase ? 'bg-espresso text-alabaster' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
         >
             Seluruh Fase (H-12 s/d Hari-H)
         </a>
@@ -35,7 +34,7 @@
             @php $activePhase = $selectedPhase === $phase->value; @endphp
             <a
                 href="{{ route('timeline.index', ['phase' => $phase->value, 'milestone_only' => $milestoneOnly ? 1 : null]) }}"
-                class="rounded-full px-3.5 py-1.5 text-xs font-medium transition {{ $activePhase ? 'bg-champagne text-pearl' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
+                class="rounded-md px-3.5 py-1.5 text-xs font-medium transition {{ $activePhase ? 'bg-champagne text-pearl' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
             >
                 {{ $phase->value }}
             </a>
@@ -46,11 +45,11 @@
     <section class="mt-8 space-y-6">
         @foreach($phases as $phaseGroup)
             @if(!$selectedPhase || $selectedPhase === $phaseGroup['name'])
-                <div class="editorial-card rounded-2xl p-6">
+                <div class="editorial-card rounded-lg p-6">
                     <div class="flex flex-col justify-between gap-4 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
                         <div>
                             <div class="flex items-center gap-3">
-                                <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-champagne-light font-editorial text-sm font-bold text-champagne">
+                                <span class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-champagne-light font-editorial text-sm font-bold text-champagne">
                                     {{ $phaseGroup['enum']->order() }}
                                 </span>
                                 <h2 class="font-editorial text-2xl font-semibold text-espresso">
@@ -83,7 +82,8 @@
                                     default => 'bg-pearl border-champagne',
                                 };
                             @endphp
-                            <div class="relative rounded-xl border border-stone-line bg-alabaster/70 p-4 transition hover:bg-pearl">
+                            <div class="relative rounded border border-stone-line bg-alabaster/70 p-4 transition hover:bg-pearl">
+                                {{-- deslop-ignore-next-line 19 --}}
                                 <span class="absolute -left-[31px] top-5 h-3.5 w-3.5 rounded-full border-2 {{ $dotColor }}"></span>
 
                                 <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
@@ -184,6 +184,7 @@
                 </div>
             </div>
 
+            {{-- deslop-ignore-next-line 28 --}}
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Target</label>

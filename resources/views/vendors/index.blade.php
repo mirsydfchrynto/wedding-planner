@@ -2,7 +2,6 @@
 
 @section('content')
     <x-ui.section-header
-        eyebrow="Modul #4 · Direktori Mitra & Kontrak"
         title="Manajemen Vendor & Status Pembayaran"
         subtitle="Kelola kurasi vendor pernikahan, rincian kontak PIC, nilai kontrak kerja, pembayaran DP/termin, dan sisa pelunasan."
     >
@@ -51,7 +50,7 @@
     </section>
 
     {{-- Filter Controls --}}
-    <section class="mt-6 editorial-card rounded-2xl p-5">
+    <section class="mt-6 editorial-card rounded-lg p-5">
         <form method="GET" action="{{ route('vendors.index') }}" class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div class="flex flex-wrap items-center gap-2">
                 <select name="category" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
@@ -88,7 +87,7 @@
     {{-- Vendor Editorial Directory Grid --}}
     <section class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
         @forelse($vendors as $vendor)
-            <article class="editorial-card flex flex-col justify-between rounded-2xl p-6">
+            <article class="editorial-card flex flex-col justify-between rounded-lg p-6">
                 <div>
                     <div class="flex items-start justify-between gap-3">
                         <div>
@@ -98,7 +97,7 @@
                         <x-ui.status-badge :tone="$vendor->booking_status->badgeTone()" :label="$vendor->booking_status->label()" />
                     </div>
 
-                    <div class="mt-3 grid grid-cols-1 gap-2 rounded-xl border border-stone-line bg-alabaster p-3.5 text-xs sm:grid-cols-2">
+                    <div class="mt-3 grid grid-cols-1 gap-2 rounded border border-stone-line bg-alabaster p-3.5 text-xs sm:grid-cols-2">
                         <div>
                             <span class="text-taupe">Kontak PIC:</span>
                             <p class="font-semibold text-espresso">{{ $vendor->contact_person }}</p>
@@ -271,7 +270,7 @@
                 </x-ui.modal>
             </article>
         @empty
-            <div class="col-span-full editorial-card rounded-2xl p-10 text-center">
+            <div class="col-span-full editorial-card rounded-lg p-10 text-center">
                 <p class="text-sm text-taupe">Belum ada vendor pada kategori atau status yang dipilih.</p>
             </div>
         @endforelse

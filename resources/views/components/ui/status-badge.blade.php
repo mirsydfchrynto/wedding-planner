@@ -13,7 +13,6 @@
     };
 @endphp
 
-<span {{ $attributes->merge(['class' => "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium {$classes}"]) }}>
-    <span class="h-1.5 w-1.5 rounded-full bg-current opacity-75"></span>
+<span {{ $attributes->merge(['class' => "inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium {$classes}"]) }}>
     {{ $label ?: $slot }}
 </span>

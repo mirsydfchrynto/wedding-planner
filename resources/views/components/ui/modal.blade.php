@@ -20,14 +20,14 @@
     <div
         x-show="open"
         x-transition.opacity
-        class="fixed inset-0 bg-espresso/50 backdrop-blur-[2px]"
+        class="fixed inset-0 bg-espresso/50"
         @click="open = false"
     ></div>
 
     <div
         x-show="open"
         x-transition
-        class="relative z-10 w-full {{ $maxWidth }} rounded-2xl border border-stone-line bg-pearl p-6 shadow-2xl sm:p-7"
+        class="relative z-10 w-full {{ $maxWidth }} rounded-lg border border-stone-line bg-pearl p-6 shadow-lg sm:p-7"
     >
         <div class="flex items-start justify-between gap-4 border-b border-stone-line pb-4">
             <div>
@@ -41,7 +41,7 @@
             <button
                 type="button"
                 @click="open = false"
-                class="rounded-lg p-1.5 text-taupe hover:bg-ivory hover:text-espresso"
+                class="rounded-md p-1.5 text-taupe hover:bg-ivory hover:text-espresso"
                 aria-label="Tutup dialog"
             >
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">

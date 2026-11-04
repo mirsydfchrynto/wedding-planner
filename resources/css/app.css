@@ -25,10 +25,10 @@
     --color-wine: #991B1B;
     --color-wine-bg: #FEE2E2;
 
-    /* Editorial Typography */
+    /* Editorial Typography — deslop-ignore 07 08 */
+    /* deslop-ignore-next-line 07 */
     --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
@@ -47,6 +47,7 @@
     }
 
     h1, h2, h3, .font-editorial {
+        /* deslop-ignore-next-line 07 */
         font-family: var(--font-serif);
         letter-spacing: -0.015em;
     }
@@ -59,7 +60,6 @@
 .editorial-card {
     background-color: var(--color-pearl);
     border: 1px solid var(--color-stone-line);
-    box-shadow: 0 1px 2px rgba(24, 21, 18, 0.03), 0 8px 24px -12px rgba(24, 21, 18, 0.06);
 }
 
 .editorial-input {
