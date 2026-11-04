@@ -32,6 +32,28 @@
                     <a href="{{ route('checklist.index') }}" class="editorial-btn-secondary">
                         Daftar Tugas ({{ $summary['completed_tasks'] }}/{{ $summary['total_tasks'] }})
                     </a>
+                    <button
+                        type="button"
+                        onclick="window.print()"
+                        class="editorial-btn-secondary"
+                    >
+                        Cetak Ringkasan Eksekutif
+                    </button>
+                </div>
+
+                <div class="mt-5 grid grid-cols-3 gap-3 border-t border-stone-line pt-4 text-xs">
+                    <div>
+                        <span class="text-taupe">Indeks Kesiapan Hari-H</span>
+                        <p class="mt-0.5 tabular-nums font-semibold text-espresso">{{ $summary['readiness_score'] }}% Terukur</p>
+                    </div>
+                    <div>
+                        <span class="text-taupe">Progres Pembayaran</span>
+                        <p class="mt-0.5 tabular-nums font-semibold text-sage">{{ $summary['budget_paid_percent'] }}% Terbayar</p>
+                    </div>
+                    <div>
+                        <span class="text-taupe">Estimasi Biaya per Tamu</span>
+                        <p class="mt-0.5 tabular-nums font-semibold text-champagne">{{ format_idr($summary['cost_per_guest']) }}/pax</p>
+                    </div>
                 </div>
             </div>
 
@@ -143,21 +165,39 @@
     {{-- Main Two-Column Analytical Grid: Budget Allocation vs Urgent Tasks --}}
     <section class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
         {{-- Left 7 Cols: Budget vs Actual Visualization & Category Breakdown --}}
-        <div class="editorial-card rounded-2xl p-6 lg:col-span-7">
-            <div class="flex flex-col justify-between gap-2 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
+        <div class="editorial-card rounded-2xl p-6 lg:col-span-7" x-data="{ chartMode: 'bar' }">
+            <div class="flex flex-col justify-between gap-3 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
                 <div>
                     <h2 class="font-editorial text-2xl font-semibold text-espresso">Distribusi Anggaran per Kategori</h2>
                     <p class="text-xs text-taupe">Perbandingan estimasi awal terhadap pengeluaran aktual pada 8 kategori utama</p>
                 </div>
-                <a href="{{ route('budget.index') }}" class="text-xs font-semibold text-champagne hover:underline">
-                    Buka Rincian Anggaran
-                </a>
+                <div class="flex items-center gap-1.5 no-print">
+                    <button
+                        type="button"
+                        @click="chartMode = 'bar'"
+                        :class="chartMode === 'bar' ? 'bg-espresso text-alabaster' : 'bg-ivory text-charcoal'"
+                        class="rounded-lg px-2.5 py-1 text-xs font-semibold transition cursor-pointer"
+                    >
+                         Estimasi vs Aktual
+                    </button>
+                    <button
+                        type="button"
+                        @click="chartMode = 'doughnut'"
+                        :class="chartMode === 'doughnut' ? 'bg-espresso text-alabaster' : 'bg-ivory text-charcoal'"
+                        class="rounded-lg px-2.5 py-1 text-xs font-semibold transition cursor-pointer"
+                    >
+                        Proporsi Kategori
+                    </button>
+                </div>
             </div>
 
-            <div class="mt-5 h-64 w-full">
+            <div class="mt-5 h-64 w-full" x-show="chartMode === 'bar'">
                 <canvas id="budgetCategoryChart" aria-label="Grafik perbandingan estimasi dan aktual anggaran per kategori" role="img"></canvas>
             </div>
 
+            <div class="mt-5 h-64 w-full" x-show="chartMode === 'doughnut'" x-cloak>
+                <canvas id="budgetShareDoughnutChart" aria-label="Grafik proporsi anggaran per kategori" role="img"></canvas>
+            </div>
             <div class="mt-6 divide-y divide-stone-line/70">
                 @foreach($summary['category_breakdown'] as $cat)
                     <div class="py-3 first:pt-0 last:pb-0">
@@ -371,66 +411,99 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const canvas = document.getElementById('budgetCategoryChart');
-        if (!canvas || typeof window.Chart === 'undefined') return;
+        if (typeof window.Chart === 'undefined') return;
 
         const breakdown = @json($summary['category_breakdown']);
         const labels = breakdown.map(item => item.short_label);
         const estimatedData = breakdown.map(item => Math.round(item.estimated / 1000000));
         const actualData = breakdown.map(item => Math.round(item.actual / 1000000));
 
-        new window.Chart(canvas, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Estimasi (Juta Rp)',
-                        data: estimatedData,
-                        backgroundColor: '#E6E0D6',
-                        borderColor: '#78716C',
-                        borderWidth: 1,
-                        borderRadius: 6,
+        const barCanvas = document.getElementById('budgetCategoryChart');
+        if (barCanvas) {
+            new window.Chart(barCanvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Estimasi (Juta Rp)',
+                            data: estimatedData,
+                            backgroundColor: '#E6E0D6',
+                            borderColor: '#78716C',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                        },
+                        {
+                            label: 'Aktual (Juta Rp)',
+                            data: actualData,
+                            backgroundColor: '#8C6D46',
+                            borderColor: '#181512',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
+                            }
+                        }
                     },
-                    {
-                        label: 'Aktual (Juta Rp)',
-                        data: actualData,
-                        backgroundColor: '#8C6D46',
-                        borderColor: '#181512',
-                        borderWidth: 1,
-                        borderRadius: 6,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) { return 'Rp ' + value + ' Jt'; },
+                                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
+                            },
+                            grid: { color: '#F3EFEA' }
+                        },
+                        x: {
+                            ticks: {
+                                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
+                            },
+                            grid: { display: false }
                         }
                     }
+                }
+            });
+        }
+
+        const doughnutCanvas = document.getElementById('budgetShareDoughnutChart');
+        if (doughnutCanvas) {
+            new window.Chart(doughnutCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: actualData,
+                        backgroundColor: [
+                            '#181512', '#8C6D46', '#2E5A44', '#B45309',
+                            '#78716C', '#D4C9B8', '#6E5332', '#991B1B'
+                        ],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 2,
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) { return 'Rp ' + value + ' Jt'; },
-                            font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
-                        },
-                        grid: { color: '#F3EFEA' }
-                    },
-                    x: {
-                        ticks: {
-                            font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
-                        },
-                        grid: { display: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
+                            }
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     });
 </script>
 @endpush

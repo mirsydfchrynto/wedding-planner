@@ -138,6 +138,19 @@ final class WeddingMetricsService
             ->take(5)
             ->values();
 
+        $budgetPaidPercent = $effectiveCommitted > 0
+            ? (int) min(100, round(($totalPaid / $effectiveCommitted) * 100))
+            : 0;
+        $vendorBookingPercent = $totalVendors > 0
+            ? (int) round(($bookedVendors / $totalVendors) * 100)
+            : 0;
+        $readinessScore = (int) round(
+            ($completionPercent * 0.40) + ($vendorBookingPercent * 0.35) + ($budgetPaidPercent * 0.25)
+        );
+        $costPerGuest = $profile->guest_target > 0
+            ? (int) round($effectiveCommitted / $profile->guest_target)
+            : 0;
+
         return [
             'profile' => $profile,
             'couple_names' => $profile->couple_names,
@@ -165,6 +178,10 @@ final class WeddingMetricsService
             'booked_vendors' => $bookedVendors,
             'unpaid_balance' => $unpaidVendorBalance,
             'upcoming_vendor_payments' => $upcomingVendorPayments,
+            'budget_paid_percent' => $budgetPaidPercent,
+            'vendor_booking_percent' => $vendorBookingPercent,
+            'readiness_score' => $readinessScore,
+            'cost_per_guest' => $costPerGuest,
         ];
     }
 }
