@@ -26,13 +26,12 @@ Platform Software-as-a-Service (SaaS) manajemen perencanaan pernikahan Indonesia
 
 Setiap anggota tim bekerja pada *branch* dan berkas masing-masing sehingga bebas dari bentrokan kode (*zero merge conflicts*):
 
-| Anggota Tim | Branch Git | Peran & Modul yang Dikerjakan | Berkas Utama (*File Ownership*) |
-| :--- | :--- | :--- | :--- |
-| **M. Irsyad Fachryanto** | `irsyad` | **Lead Architecture, SaaS Landing Page (`/`), Google Auth & Private Admin (`/admin`), serta Modul #5: Executive Dashboard (`/dashboard`)** | `app/Http/Controllers/{Saas,Auth,Admin,Dashboard}Controller.php`<br>`app/Http/Middleware/EnsureAdminAccess.php`<br>`resources/views/{saas,auth,admin,dashboard}/*`<br>`resources/views/layouts/app.blade.php` & `components/ui/*` |
-| **Marsha Dwi Lucyana** | `marsha` | **Modul #1: Budget Planner (`/budget`)** | `app/Http/Controllers/BudgetController.php`<br>`app/Http/Requests/*BudgetItemRequest.php`<br>`resources/views/budget/index.blade.php` |
-| **Septiyan Adam Maulana** | `adam` | **Modul #3: Wedding Timeline (`/timeline`) & Modul #4: Vendor Management (`/vendors`)** | `app/Http/Controllers/TimelineController.php`<br>`app/Http/Controllers/VendorController.php`<br>`resources/views/timeline/index.blade.php`<br>`resources/views/vendors/index.blade.php` |
-| **Adinda Aulia Sabrina Arumsari** | `dinda` | **Modul #2: Wedding Checklist (`/checklist`)** | `app/Http/Controllers/ChecklistController.php`<br>`resources/views/checklist/index.blade.php` |
-
+| Anggota Tim | Akun GitHub | Branch Git | Peran & Modul yang Dikerjakan | Berkas Utama (*File Ownership*) |
+| :--- | :--- | :--- | :--- | :--- |
+| **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` | **Lead Architecture, SaaS Landing Page (`/`), Google Auth & Private Admin (`/admin`), serta Modul #5: Executive Dashboard (`/dashboard`)** | `app/Http/Controllers/{Saas,Auth,Admin,Dashboard}Controller.php`<br>`app/Http/Middleware/EnsureAdminAccess.php`<br>`resources/views/{saas,auth,admin,dashboard}/*`<br>`resources/views/layouts/app.blade.php` & `components/ui/*` |
+| **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Modul #1: Budget Planner (`/budget`)** | `app/Http/Controllers/BudgetController.php`<br>`app/Http/Requests/*BudgetItemRequest.php`<br>`resources/views/budget/index.blade.php` |
+| **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Modul #3: Wedding Timeline (`/timeline`) & Modul #4: Vendor Management (`/vendors`)** | `app/Http/Controllers/TimelineController.php`<br>`app/Http/Controllers/VendorController.php`<br>`resources/views/timeline/index.blade.php`<br>`resources/views/vendors/index.blade.php` |
+| **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Modul #2: Wedding Checklist (`/checklist`)** | `app/Http/Controllers/ChecklistController.php`<br>`resources/views/checklist/index.blade.php` |
 ---
 
 ## Panduan Instalasi Cepat (30 Detik)

@@ -15,13 +15,12 @@ Dokumen ini menjadi acuan kerja resmi untuk 4 anggota tim pengembang **Atelier V
 
 ## 2. Peta Kepemilikan Modul & Branch Git
 
-| No | Nama Lengkap | Branch Git | Modul & Tanggung Jawab Utama |
-| :-: | :--- | :--- | :--- |
-| 1 | **M. Irsyad Fachryanto** | `irsyad` | **Arsitektur Utama, SaaS Landing Page (`/`), Google Auth (`/login`), Private Admin Console (`/admin`), & Modul #5: Executive Dashboard (`/dashboard`)** |
-| 2 | **Marsha Dwi Lucyana** | `marsha` | **Modul #1: Budget Planner (`/budget` — Perencanaan & Realisasi Anggaran)** |
-| 3 | **Septiyan Adam Maulana** | `adam` | **Modul #3: Wedding Timeline (`/timeline`) & Modul #4: Vendor Management (`/vendors`)** |
-| 4 | **Adinda Aulia Sabrina Arumsari** | `dinda` | **Modul #2: Wedding Checklist (`/checklist` — Manajemen Tugas Persiapan)** |
-
+| No | Nama Lengkap | Akun GitHub | Branch Git | Modul & Tanggung Jawab Utama |
+| :-: | :--- | :--- | :--- | :--- |
+| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` | **Arsitektur Utama, SaaS Landing Page (`/`), Google Auth (`/login`), Private Admin Console (`/admin`), & Modul #5: Executive Dashboard (`/dashboard`)** |
+| 2 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Modul #1: Budget Planner (`/budget` — Perencanaan & Realisasi Anggaran)** |
+| 3 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Modul #3: Wedding Timeline (`/timeline`) & Modul #4: Vendor Management (`/vendors`)** |
+| 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Modul #2: Wedding Checklist (`/checklist` — Manajemen Tugas Persiapan)** |
 ---
 
 ## 3. Rincian Tugas & Batas Berkas (*File Ownership*) per Anggota
