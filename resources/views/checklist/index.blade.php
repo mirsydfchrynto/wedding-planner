@@ -58,7 +58,7 @@
         <div class="flex flex-col justify-between gap-4 border-b border-stone-line pb-4 lg:flex-row lg:items-center">
             <div class="flex flex-wrap items-center gap-1.5">
                 <a
-                    href="{{ route('checklist.index', ['status' => $selectedStatus, 'assigned_to' => $selectedPic]) }}"
+                    href="{{ route('checklist.index', ['status' => $selectedStatus, 'assigned_to' => $selectedPic, 'search' => $selectedSearch, 'priority' => $selectedPriority]) }}"
                     class="rounded-md px-3 py-1.5 text-xs font-semibold transition {{ !$selectedCategory ? 'bg-espresso text-alabaster' : 'bg-ivory text-charcoal hover:bg-stone-line' }}"
                 >
                     Semua Kategori
@@ -66,7 +66,7 @@
                 @foreach($categories as $category)
                     @php $activeCat = $selectedCategory === $category->value; @endphp
                     <a
-                        href="{{ route('checklist.index', ['category' => $category->value, 'status' => $selectedStatus, 'assigned_to' => $selectedPic]) }}"
+                        href="{{ route('checklist.index', ['category' => $category->value, 'status' => $selectedStatus, 'assigned_to' => $selectedPic, 'search' => $selectedSearch, 'priority' => $selectedPriority]) }}"
                         class="rounded-md px-3 py-1.5 text-xs font-medium transition {{ $activeCat ? 'bg-champagne text-pearl' : 'bg-alabaster border border-stone-line text-charcoal hover:border-champagne' }}"
                     >
                         {{ $category->shortLabel() }}
@@ -78,6 +78,26 @@
                 @if($selectedCategory)
                     <input type="hidden" name="category" value="{{ $selectedCategory }}">
                 @endif
+
+                <input
+                    type="search"
+                    name="search"
+                    value="{{ $selectedSearch }}"
+                    placeholder="Cari judul tugas..."
+                    aria-label="Cari judul tugas"
+                    class="editorial-input !w-48 !py-1.5 !text-xs"
+                >
+
+                <button type="submit" class="editorial-btn-secondary !py-1.5 !text-xs">
+                    Cari
+                </button>
+
+                <select name="priority" aria-label="Filter Prioritas Tugas" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                    <option value="">Semua Prioritas</option>
+                    <option value="high" @selected($selectedPriority === 'high')>Prioritas Tinggi</option>
+                    <option value="medium" @selected($selectedPriority === 'medium')>Penting</option>
+                    <option value="low" @selected($selectedPriority === 'low')>Standar</option>
+                </select>
 
                 <select name="status" aria-label="Filter Status Tugas" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
                     <option value="">Semua Status</option>
@@ -95,7 +115,7 @@
                     @endforeach
                 </select>
 
-                @if($selectedCategory || $selectedStatus || $selectedPic)
+                @if($selectedCategory || $selectedStatus || $selectedPic || $selectedSearch !== '' || $selectedPriority !== '')
                     <a href="{{ route('checklist.index') }}" class="text-xs font-semibold text-champagne hover:underline">
                         Reset
                     </a>
