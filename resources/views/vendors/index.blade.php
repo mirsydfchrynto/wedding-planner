@@ -49,10 +49,19 @@
         />
     </section>
 
-    {{-- Filter Controls --}}
+    {{-- Filter, Search & Sort Controls --}}
     <section class="mt-6 editorial-card rounded-lg p-5">
-        <form method="GET" action="{{ route('vendors.index') }}" class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <form method="GET" action="{{ route('vendors.index') }}" class="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
             <div class="flex flex-wrap items-center gap-2">
+                <input
+                    type="search"
+                    name="search"
+                    value="{{ $searchQuery ?? '' }}"
+                    placeholder="Cari nama vendor atau PIC..."
+                    aria-label="Cari Nama Vendor atau PIC"
+                    class="editorial-input !w-full sm:!w-56 !py-1.5 !text-xs"
+                >
+
                 <select name="category" aria-label="Filter Kategori Vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
                     <option value="">Semua Kategori Vendor</option>
                     @foreach($categories as $category)
@@ -71,7 +80,19 @@
                     @endforeach
                 </select>
 
-                @if($selectedCategory || $selectedStatus)
+                <select name="sort" aria-label="Urutkan Daftar Vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                    <option value="">Urutan Default (Kategori)</option>
+                    <option value="contract_desc" @selected(($selectedSort ?? null) === 'contract_desc')>Nilai Kontrak Terbesar</option>
+                    <option value="contract_asc" @selected(($selectedSort ?? null) === 'contract_asc')>Nilai Kontrak Terkecil</option>
+                    <option value="due_date_asc" @selected(($selectedSort ?? null) === 'due_date_asc')>Terdekat Jatuh Tempo</option>
+                    <option value="remaining_desc" @selected(($selectedSort ?? null) === 'remaining_desc')>Sisa Tagihan Terbesar</option>
+                </select>
+
+                <button type="submit" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">
+                    Cari
+                </button>
+
+                @if($selectedCategory || $selectedStatus || ($searchQuery ?? '') !== '' || $selectedSort)
                     <a href="{{ route('vendors.index') }}" class="text-xs font-semibold text-champagne hover:underline">
                         Reset Filter
                     </a>
@@ -94,7 +115,12 @@
                             <span class="text-xs font-semibold text-champagne">{{ $vendor->category->label() }}</span>
                             <h2 class="mt-0.5 font-editorial text-2xl font-semibold text-espresso">{{ $vendor->name }}</h2>
                         </div>
-                        <x-ui.status-badge :tone="$vendor->booking_status->badgeTone()" :label="$vendor->booking_status->label()" />
+                        <div class="flex flex-wrap items-center justify-end gap-1.5">
+                            @if($vendor->is_payment_overdue)
+                                <x-ui.status-badge tone="wine" label="Jatuh Tempo Terlewat" />
+                            @endif
+                            <x-ui.status-badge :tone="$vendor->booking_status->badgeTone()" :label="$vendor->booking_status->label()" />
+                        </div>
                     </div>
 
                     <div class="mt-3 grid grid-cols-1 gap-2 rounded border border-stone-line bg-alabaster p-3.5 text-xs sm:grid-cols-2">
@@ -163,6 +189,14 @@
                         </span>
 
                         <div class="flex items-center gap-3">
+                            <a
+                                href="{{ $vendor->whatsapp_url }}"
+                                target="_blank"
+                                rel="noopener"
+                                class="font-semibold text-sage hover:underline"
+                            >
+                                WhatsApp PIC
+                            </a>
                             <button
                                 type="button"
                                 @click="$dispatch('open-modal', 'edit-vendor-{{ $vendor->id }}')"

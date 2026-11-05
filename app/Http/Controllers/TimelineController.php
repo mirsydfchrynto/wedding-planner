@@ -10,6 +10,7 @@ use App\Enums\WeddingCategory;
 use App\Models\Vendor;
 use App\Models\WeddingTask;
 use App\Services\WeddingMetricsService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -23,18 +24,42 @@ final class TimelineController extends Controller
 
     public function index(Request $request): View
     {
-        $selectedPhase = $request->query('phase');
+        $selectedPhase = is_string($request->query('phase')) ? $request->query('phase') : null;
         $milestoneOnly = $request->boolean('milestone_only');
+        $searchQuery = is_string($request->query('search')) ? trim($request->query('search')) : '';
+        $selectedSort = is_string($request->query('sort')) ? $request->query('sort') : null;
 
-        $query = WeddingTask::query()->with('vendor')->orderBy('due_date')->orderBy('id');
+        $query = WeddingTask::query()->with('vendor');
 
-        if (is_string($selectedPhase) && $selectedPhase !== '') {
+        if ($selectedPhase !== null && $selectedPhase !== '') {
             $query->where('phase', $selectedPhase);
         }
 
         if ($milestoneOnly) {
             $query->where('is_milestone', true);
         }
+
+        if ($searchQuery !== '') {
+            $keyword = '%' . $searchQuery . '%';
+            $query->where(function (Builder $subQuery) use ($keyword): void {
+                $subQuery
+                    ->where('title', 'like', $keyword)
+                    ->orWhere('description', 'like', $keyword)
+                    ->orWhere('assigned_to', 'like', $keyword)
+                    ->orWhereHas('vendor', function (Builder $vendorQuery) use ($keyword): void {
+                        $vendorQuery->where('name', 'like', $keyword);
+                    });
+            });
+        }
+
+        match ($selectedSort) {
+            'due_date_desc' => $query->orderByDesc('due_date')->orderBy('id'),
+            'priority_desc' => $query
+                ->orderByRaw("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END ASC")
+                ->orderBy('due_date')
+                ->orderBy('id'),
+            default => $query->orderBy('due_date')->orderBy('id'),
+        };
 
         $tasks = $query->get();
         $summary = $this->metricsService->getDashboardSummary();
@@ -65,6 +90,8 @@ final class TimelineController extends Controller
             'vendors' => $vendors,
             'selectedPhase' => $selectedPhase,
             'milestoneOnly' => $milestoneOnly,
+            'searchQuery' => $searchQuery,
+            'selectedSort' => $selectedSort,
         ]);
     }
 

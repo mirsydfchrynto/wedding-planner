@@ -7,7 +7,7 @@
     >
         <x-slot:actions>
             <a
-                href="{{ route('timeline.index', ['phase' => $selectedPhase, 'milestone_only' => $milestoneOnly ? null : 1]) }}"
+                href="{{ route('timeline.index', ['phase' => $selectedPhase, 'milestone_only' => $milestoneOnly ? null : 1, 'search' => $searchQuery ?: null, 'sort' => $selectedSort]) }}"
                 class="editorial-btn-secondary"
             >
                 {{ $milestoneOnly ? 'Tampilkan Semua Agenda' : 'Hanya Milestone Utama' }}
@@ -22,23 +22,61 @@
         </x-slot:actions>
     </x-ui.section-header>
 
-    {{-- Phase Selector Strip --}}
-    <section class="mt-6 flex flex-wrap items-center gap-2">
-        <a
-            href="{{ route('timeline.index', ['milestone_only' => $milestoneOnly ? 1 : null]) }}"
-            class="rounded-md px-3.5 py-1.5 text-xs font-semibold transition {{ !$selectedPhase ? 'bg-espresso text-alabaster' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
-        >
-            Seluruh Fase (H-12 s/d Hari-H)
-        </a>
-        @foreach($allPhases as $phase)
-            @php $activePhase = $selectedPhase === $phase->value; @endphp
-            <a
-                href="{{ route('timeline.index', ['phase' => $phase->value, 'milestone_only' => $milestoneOnly ? 1 : null]) }}"
-                class="rounded-md px-3.5 py-1.5 text-xs font-medium transition {{ $activePhase ? 'bg-champagne text-pearl' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
-            >
-                {{ $phase->value }}
-            </a>
-        @endforeach
+    {{-- Phase Selector Strip & Search/Sort Controls --}}
+    <section class="mt-6 editorial-card rounded-lg p-5">
+        <div class="flex flex-col justify-between gap-4 border-b border-stone-line pb-4 lg:flex-row lg:items-center">
+            <div class="flex flex-wrap items-center gap-2">
+                <a
+                    href="{{ route('timeline.index', ['milestone_only' => $milestoneOnly ? 1 : null, 'search' => $searchQuery ?: null, 'sort' => $selectedSort]) }}"
+                    class="rounded-md px-3.5 py-1.5 text-xs font-semibold transition {{ !$selectedPhase ? 'bg-espresso text-alabaster' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
+                >
+                    Seluruh Fase (H-12 s/d Hari-H)
+                </a>
+                @foreach($allPhases as $phase)
+                    @php $activePhase = $selectedPhase === $phase->value; @endphp
+                    <a
+                        href="{{ route('timeline.index', ['phase' => $phase->value, 'milestone_only' => $milestoneOnly ? 1 : null, 'search' => $searchQuery ?: null, 'sort' => $selectedSort]) }}"
+                        class="rounded-md px-3.5 py-1.5 text-xs font-medium transition {{ $activePhase ? 'bg-champagne text-pearl' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
+                    >
+                        {{ $phase->value }}
+                    </a>
+                @endforeach
+            </div>
+
+            <form method="GET" action="{{ route('timeline.index') }}" class="flex flex-wrap items-center gap-2 no-print">
+                @if($selectedPhase)
+                    <input type="hidden" name="phase" value="{{ $selectedPhase }}">
+                @endif
+                @if($milestoneOnly)
+                    <input type="hidden" name="milestone_only" value="1">
+                @endif
+
+                <input
+                    type="search"
+                    name="search"
+                    value="{{ $searchQuery ?? '' }}"
+                    placeholder="Cari agenda, PIC, atau vendor..."
+                    aria-label="Cari Agenda atau Milestone Linimasa"
+                    class="editorial-input !w-full sm:!w-52 !py-1.5 !text-xs"
+                >
+
+                <select name="sort" aria-label="Urutkan Agenda Linimasa" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+                    <option value="" @selected(!$selectedSort || $selectedSort === 'due_date_asc')>Terdekat Jatuh Tempo</option>
+                    <option value="priority_desc" @selected($selectedSort === 'priority_desc')>Prioritas Tertinggi</option>
+                    <option value="due_date_desc" @selected($selectedSort === 'due_date_desc')>Tenggat Paling Akhir</option>
+                </select>
+
+                <button type="submit" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">
+                    Cari
+                </button>
+
+                @if($selectedPhase || $milestoneOnly || ($searchQuery ?? '') !== '' || $selectedSort)
+                    <a href="{{ route('timeline.index') }}" class="text-xs font-semibold text-champagne hover:underline">
+                        Reset
+                    </a>
+                @endif
+            </form>
+        </div>
     </section>
 
     {{-- Chronological Vertical Roadmap --}}
