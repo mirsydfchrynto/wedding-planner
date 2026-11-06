@@ -1,27 +1,51 @@
 @extends('layouts.app', ['title' => 'Wedding Timeline'])
 
 @section('content')
+<div x-data="{ currentTab: '{{ $activeTab }}' }">
     <x-ui.section-header
         title="Linimasa & Jadwal"
     >
         <x-slot:actions>
-            <a
-                href="{{ route('timeline.index', ['phase' => $selectedPhase, 'milestone_only' => $milestoneOnly ? null : 1, 'search' => $searchQuery ?: null, 'sort' => $selectedSort]) }}"
-                class="editorial-btn-secondary"
-            >
-                {{ $milestoneOnly ? 'Tampilkan Semua Agenda' : 'Hanya Milestone Utama' }}
-            </a>
+            <div class="inline-flex rounded-xl bg-pearl border border-black/[0.06] p-1 shadow-sm">
+                <button
+                    type="button"
+                    @click="currentTab = 'timeline'"
+                    :class="currentTab === 'timeline' ? 'bg-espresso text-alabaster shadow-sm' : 'text-taupe hover:text-espresso'"
+                    class="rounded-lg px-3 py-1.5 text-xs font-semibold transition cursor-pointer"
+                >
+                    Linimasa Persiapan
+                </button>
+                <button
+                    type="button"
+                    @click="currentTab = 'rundown'"
+                    :class="currentTab === 'rundown' ? 'bg-espresso text-alabaster shadow-sm' : 'text-taupe hover:text-espresso'"
+                    class="rounded-lg px-3 py-1.5 text-xs font-semibold transition cursor-pointer"
+                >
+                    Rundown Hari-H ({{ $rundowns->count() }})
+                </button>
+            </div>
             <button
                 type="button"
+                x-show="currentTab === 'timeline'"
                 @click="$dispatch('open-modal', 'create-timeline-modal')"
                 class="editorial-btn-primary"
             >
-                + Jadwalkan Agenda Linimasa
+                + Agenda Linimasa
+            </button>
+            <button
+                type="button"
+                x-show="currentTab === 'rundown'"
+                x-cloak
+                @click="$dispatch('open-modal', 'create-rundown-modal')"
+                class="editorial-btn-primary"
+            >
+                + Sesi Rundown
             </button>
         </x-slot:actions>
     </x-ui.section-header>
 
     {{-- Phase Selector Strip & Search/Sort Controls --}}
+    <div x-show="currentTab === 'timeline'">
     <section class="mt-6 editorial-card rounded-lg p-5">
         <div class="flex flex-col justify-between gap-4 border-b border-stone-line pb-4 lg:flex-row lg:items-center">
             <div class="flex flex-wrap items-center gap-2">
@@ -186,6 +210,122 @@
             @endif
         @endforeach
     </section>
+    </div>
+
+    {{-- Rundown Hari-H Tab Content --}}
+    <div x-show="currentTab === 'rundown'" x-cloak class="mt-6">
+        <section class="editorial-card p-6">
+            <div class="flex items-center justify-between border-b border-stone-line pb-4">
+                <div>
+                    <h2 class="font-editorial text-2xl font-semibold text-espresso">Jadwal Menit-demi-Menit Hari Pernikahan</h2>
+                    <p class="text-xs text-taupe">Rundown operasional resmi yang digunakan oleh panitia, WO, dan vendor lapangan</p>
+                </div>
+                <a href="{{ route('print.masterGuide') }}" target="_blank" class="editorial-btn-secondary !text-xs !py-1.5">
+                    <x-ui.icon name="printer" class="h-3.5 w-3.5" />
+                    <span>Format Cetak A4</span>
+                </a>
+            </div>
+
+            <div class="mt-4 overflow-x-auto">
+                <table class="w-full border-collapse text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-stone-line text-taupe font-semibold">
+                            <th scope="col" class="py-3 pr-3 w-32">Waktu (WIB)</th>
+                            <th scope="col" class="px-3 py-3 w-44">Sesi Acara</th>
+                            <th scope="col" class="px-3 py-3">Aktivitas &amp; Detail</th>
+                            <th scope="col" class="px-3 py-3 w-40">Lokasi</th>
+                            <th scope="col" class="pl-3 py-3 w-44">PIC &amp; Kontak</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-line/70">
+                        @forelse($rundowns as $rundown)
+                            <tr class="hover:bg-alabaster/60">
+                                <td class="py-3.5 pr-3 font-mono font-bold text-espresso whitespace-nowrap">
+                                    {{ $rundown->start_time }} - {{ $rundown->end_time }}
+                                </td>
+                                <td class="px-3 py-3.5 font-semibold text-espresso">
+                                    {{ $rundown->session_name }}
+                                </td>
+                                <td class="px-3 py-3.5 text-charcoal">
+                                    <p class="font-medium text-espresso">{{ $rundown->activity }}</p>
+                                    @if($rundown->notes)
+                                        <p class="mt-0.5 text-[11px] text-taupe">{{ $rundown->notes }}</p>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-3.5 text-taupe">
+                                    {{ $rundown->location ?? '-' }}
+                                </td>
+                                <td class="pl-3 py-3.5 text-espresso">
+                                    <p class="font-semibold">{{ $rundown->pic_name ?? 'Tim WO' }}</p>
+                                    @if($rundown->pic_phone)
+                                        <a href="tel:{{ $rundown->pic_phone }}" class="font-mono text-[11px] text-champagne hover:underline">
+                                            {{ $rundown->pic_phone }}
+                                        </a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-taupe">Belum ada agenda rundown Hari-H.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+
+    {{-- Modal Tambah Sesi Rundown Hari-H --}}
+    <x-ui.modal name="create-rundown-modal" title="Tambah Sesi Rundown Hari-H">
+        <form method="POST" action="{{ route('timeline.storeRundown') }}" class="space-y-4">
+            @csrf
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Jam Mulai (WIB)</label>
+                    <input type="text" name="start_time" placeholder="Contoh: 08:00" required class="editorial-input">
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Jam Selesai (WIB)</label>
+                    <input type="text" name="end_time" placeholder="Contoh: 09:30" required class="editorial-input">
+                </div>
+            </div>
+            <div>
+                <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Sesi Acara</label>
+                <input type="text" name="session_name" placeholder="Contoh: Akad Nikah / Kirab Pengantin" required class="editorial-input">
+            </div>
+            <div>
+                <label class="mb-1 block text-xs font-semibold text-charcoal">Rincian Aktivitas</label>
+                <textarea name="activity" rows="2" placeholder="Deskripsi tahapan acara..." required class="editorial-input !min-h-0"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Lokasi / Ruangan</label>
+                    <input type="text" name="location" placeholder="Contoh: Pendopo Utama" class="editorial-input">
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nama PIC</label>
+                    <input type="text" name="pic_name" placeholder="Contoh: Lead WO Irsyad" class="editorial-input">
+                </div>
+            </div>
+            <div>
+                <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor Telepon PIC (WhatsApp)</label>
+                <input type="text" name="pic_phone" placeholder="Contoh: 08123456789" class="editorial-input">
+            </div>
+            <div>
+                <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Khusus (Opsional)</label>
+                <input type="text" name="notes" placeholder="Contoh: Gamelan standby 15 menit sebelum kirab" class="editorial-input">
+            </div>
+            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
+                <button type="button" @click="$dispatch('close-modal', 'create-rundown-modal')" class="editorial-btn-secondary">
+                    Batal
+                </button>
+                <button type="submit" class="editorial-btn-primary">
+                    Simpan Rundown
+                </button>
+            </div>
+        </form>
+    </x-ui.modal>
 
     {{-- Modal: Schedule Timeline Milestone --}}
     <x-ui.modal name="create-timeline-modal" title="Jadwalkan Milestone Linimasa Baru" subtitle="Tambahkan agenda penting ke dalam peta persiapan H-12 Bulan hingga Hari-H">

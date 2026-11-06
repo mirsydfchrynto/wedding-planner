@@ -25,7 +25,7 @@ final class BudgetController extends Controller
         $selectedCategory = $request->query('category');
         $selectedStatus = $request->query('status');
 
-        $query = BudgetItem::query()->with('vendor')->orderBy('category')->orderBy('id');
+        $query = BudgetItem::query()->with('vendor.payments')->orderBy('category')->orderBy('id');
 
         if (is_string($selectedCategory) && $selectedCategory !== '') {
             $query->where('category', $selectedCategory);
@@ -55,6 +55,20 @@ final class BudgetController extends Controller
             'vendors' => $vendors,
             'selectedCategory' => $selectedCategory,
             'selectedStatus' => $selectedStatus,
+            'presets' => [
+                'jawa' => [
+                    'name' => 'Adat Jawa Paes Ageng',
+                    'allocations' => ['venue' => 25, 'catering' => 35, 'attire' => 18, 'decoration' => 12, 'documentation' => 6, 'other' => 4],
+                ],
+                'sunda' => [
+                    'name' => 'Adat Sunda Siger',
+                    'allocations' => ['venue' => 22, 'catering' => 38, 'attire' => 16, 'decoration' => 14, 'documentation' => 6, 'other' => 4],
+                ],
+                'modern' => [
+                    'name' => 'Modern Intimate Editorial',
+                    'allocations' => ['venue' => 30, 'catering' => 30, 'attire' => 12, 'decoration' => 14, 'documentation' => 10, 'other' => 4],
+                ],
+            ],
         ]);
     }
 

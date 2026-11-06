@@ -6,12 +6,12 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 
 ## 1. Peta Kepemilikan Modul & Branch Git
 
-| No | Nama Lengkap | Akun GitHub | Branch Git | Modul & Tanggung Jawab Utama | Status Pengerjaan |
+| No | Nama Lengkap | Akun GitHub | Branch Git | Modul & Tanggung Jawab Utama | Status Final (100% Siap Pakai) |
 |:---|:---|:---|:---|:---|:---|
-| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` (Lead) | **Arsitektur Inti, Multi-Tenancy, Master Guide Print A4 (`/print/master-guide`), & Docker Deployment** | **100% SELESAI (Aktif di `main`)** |
-| 2 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Modul #1: Budget Planner (`/budget`) & Multi-Termin Payment Breakdown** | *Siap Dikerjakan (Skema Siap)* |
-| 3 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Modul #3: Timeline & Live Rundown Hari-H (`/timeline`), Modul #4: Vendor SLA (`/vendors`)** | *Siap Dikerjakan (Skema Siap)* |
-| 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Modul #2: Wedding Checklist (`/checklist`) & Modul Buku Tamu Digital / RSVP (`/guests`)** | *Siap Dikerjakan (Skema Siap)* |
+| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` (Lead) | **Arsitektur Inti, Multi-Tenancy, Master Guide Print A4 (`/print/master-guide`), & Docker Deployment** | **100% Selesai & Teruji** |
+| 2 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Modul #1: Budget Planner (`/budget`), Smart Adat Allocator & Multi-Termin Breakdown** | **100% Selesai & Teruji** |
+| 3 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Modul #3: Timeline & Live Rundown Hari-H (`/timeline`), Modul #4: Vendor SLA & Bukti Termin (`/vendors`)** | **100% Selesai & Teruji** |
+| 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Modul #2: Wedding Checklist (`/checklist`), Buku Tamu Digital & WhatsApp RSVP (`/guests`)** | **100% Selesai & Teruji** |
 
 ---
 

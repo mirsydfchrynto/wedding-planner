@@ -28,6 +28,7 @@ final class VendorController extends Controller
 
         $vendors = Vendor::query()
             ->withCount(['budgetItems', 'tasks'])
+            ->with('payments')
             ->filterAndSort($selectedCategory, $selectedStatus, $searchQuery, $selectedSort)
             ->get();
 
@@ -122,5 +123,28 @@ final class VendorController extends Controller
         return redirect()
             ->route('vendors.index')
             ->with('success', 'Vendor "' . $name . '" telah dihapus dari direktori.');
+    }
+
+    public function storePayment(Request $request, Vendor $vendor): RedirectResponse
+    {
+        $validated = $request->validate([
+            'payment_stage' => ['required', 'string', 'max:60'],
+            'amount' => ['required', 'integer', 'min:1000'],
+            'paid_date' => ['required', 'date'],
+            'receipt_ref' => ['nullable', 'string', 'max:100'],
+            'notes' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $vendor->payments()->create($validated);
+        $vendor->increment('paid_amount', $validated['amount']);
+
+        if ($vendor->fresh()->remaining_balance === 0) {
+            $vendor->update(['booking_status' => VendorBookingStatus::Paid]);
+        } elseif ($vendor->booking_status === VendorBookingStatus::Contacted) {
+            $vendor->update(['booking_status' => VendorBookingStatus::DpPaid]);
+        }
+
+        return redirect()->route('vendors.index')
+            ->with('success', 'Bukti pembayaran termin berhasil dicatat.');
     }
 }

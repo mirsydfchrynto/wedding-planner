@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\SaasController;
@@ -73,6 +74,7 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
         Route::get('/', [TimelineController::class, 'index'])->name('index');
         Route::post('/', [TimelineController::class, 'store'])->name('store');
         Route::patch('/{weddingTask}/status', [TimelineController::class, 'updateStatus'])->name('updateStatus');
+        Route::post('/rundowns', [TimelineController::class, 'storeRundown'])->name('storeRundown');
     });
 
     // Module #4: Vendor Management (Owner: adam)
@@ -82,7 +84,11 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
         Route::put('/{vendor}', [VendorController::class, 'update'])->name('update');
         Route::patch('/{vendor}/payment', [VendorController::class, 'updatePayment'])->name('updatePayment');
         Route::delete('/{vendor}', [VendorController::class, 'destroy'])->name('destroy');
+        Route::post('/{vendor}/payments', [VendorController::class, 'storePayment'])->name('storePayment');
     });
+
+    // Module #6: Buku Tamu Digital & RSVP (Owner: dinda)
+    Route::resource('guests', GuestController::class)->except(['create', 'show', 'edit']);
 });
 
 /*

@@ -194,7 +194,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->actingAs($this->customerUser)
             ->get('/timeline')
             ->assertOk()
-            ->assertSee('Linimasa &amp; Jadwal', false)
+            ->assertSee('Linimasa & Jadwal')
             ->assertSee('H-12 Bulan')
             ->assertSee('Hari-H');
 
@@ -281,5 +281,62 @@ final class WeddingPlannerModulesTest extends TestCase
         $response->assertSee('Rundown Acara Menit-demi-Menit');
         $response->assertSee('Plataran Menteng Heritage Venue');
         $response->assertSee('Daftar Tamu Kehormatan (VIP) &amp; Penataan Meja', false);
+    }
+
+    public function test_guest_list_module_creates_and_renders_rsvp_invitations(): void
+    {
+        $response = $this->actingAs($this->customerUser)->get('/guests');
+        $response->assertOk();
+        $response->assertSee('Buku Tamu &amp; RSVP', false);
+        $response->assertSee('Anies Rasyid Baswedan');
+
+        $this->actingAs($this->customerUser)->post('/guests', [
+            'name' => 'Prof. Dr. Mahfud MD',
+            'category' => 'Tamu VIP Kehormatan',
+            'pax' => 2,
+            'session' => 'Akad & Resepsi Malam',
+            'rsvp_status' => 'confirmed',
+            'table_number' => 'VIP-03',
+            'whatsapp_number' => '081233445566',
+            'notes' => 'Tamu kehormatan',
+        ])->assertRedirect(route('guests.index'));
+
+        $this->assertDatabaseHas('wedding_guests', [
+            'name' => 'Prof. Dr. Mahfud MD',
+            'table_number' => 'VIP-03',
+        ]);
+    }
+
+    public function test_timeline_rundown_and_vendor_payments_can_be_recorded(): void
+    {
+        $this->actingAs($this->customerUser)->post('/timeline/rundowns', [
+            'start_time' => '13:00',
+            'end_time' => '14:30',
+            'session_name' => 'Briefing Panitia & Vendor Malam',
+            'activity' => 'Koordinasi teknis tim dokumentasi dan catering',
+            'location' => 'Lobby VIP',
+            'pic_name' => 'Adam Maulana',
+            'pic_phone' => '081234567890',
+            'notes' => 'Standby di lokasi',
+        ])->assertRedirect(route('timeline.index', ['tab' => 'rundown']));
+
+        $this->assertDatabaseHas('wedding_rundowns', [
+            'session_name' => 'Briefing Panitia & Vendor Malam',
+            'pic_name' => 'Adam Maulana',
+        ]);
+
+        $vendor = Vendor::query()->firstOrFail();
+        $this->actingAs($this->customerUser)->post("/vendors/{$vendor->id}/payments", [
+            'payment_stage' => 'Termin Tambahan',
+            'amount' => 5000000,
+            'paid_date' => now()->toDateString(),
+            'receipt_ref' => 'REF-ADD-001',
+            'notes' => 'Pembayaran via transfer bank',
+        ])->assertRedirect(route('vendors.index'));
+
+        $this->assertDatabaseHas('vendor_payments', [
+            'vendor_id' => $vendor->id,
+            'receipt_ref' => 'REF-ADD-001',
+        ]);
     }
 }

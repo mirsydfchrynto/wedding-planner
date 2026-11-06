@@ -68,6 +68,67 @@
                 </a>
             @endif
         </div>
+        {{-- Smart Budget Allocator (Preset Konsep & Adat) --}}
+        <div x-data="{ activePreset: 'jawa', totalCap: {{ $summary['total_budget_cap'] }} }" class="mt-4 rounded-xl border border-stone-line bg-pearl p-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <x-ui.icon name="sparkles" class="h-4 w-4 text-champagne" />
+                    <span class="text-xs font-bold uppercase tracking-wider text-espresso">Smart Allocator Adat</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5 text-xs">
+                    <button
+                        type="button"
+                        @click="activePreset = 'jawa'"
+                        :class="activePreset === 'jawa' ? 'bg-espresso text-alabaster shadow-sm' : 'bg-alabaster text-charcoal hover:bg-stone-line/50'"
+                        class="rounded-lg px-3 py-1.5 font-semibold transition cursor-pointer"
+                    >
+                        Jawa Paes Ageng
+                    </button>
+                    <button
+                        type="button"
+                        @click="activePreset = 'sunda'"
+                        :class="activePreset === 'sunda' ? 'bg-espresso text-alabaster shadow-sm' : 'bg-alabaster text-charcoal hover:bg-stone-line/50'"
+                        class="rounded-lg px-3 py-1.5 font-semibold transition cursor-pointer"
+                    >
+                        Sunda Siger
+                    </button>
+                    <button
+                        type="button"
+                        @click="activePreset = 'modern'"
+                        :class="activePreset === 'modern' ? 'bg-espresso text-alabaster shadow-sm' : 'bg-alabaster text-charcoal hover:bg-stone-line/50'"
+                        class="rounded-lg px-3 py-1.5 font-semibold transition cursor-pointer"
+                    >
+                        Modern Intimate
+                    </button>
+                </div>
+            </div>
+            <div class="mt-3 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+                <div class="rounded-lg bg-alabaster/80 p-2.5">
+                    <span class="text-taupe">Venue</span>
+                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.25 : (activePreset === 'sunda' ? 0.22 : 0.30))).toLocaleString('id-ID')"></p>
+                </div>
+                <div class="rounded-lg bg-alabaster/80 p-2.5">
+                    <span class="text-taupe">Catering</span>
+                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.35 : (activePreset === 'sunda' ? 0.38 : 0.30))).toLocaleString('id-ID')"></p>
+                </div>
+                <div class="rounded-lg bg-alabaster/80 p-2.5">
+                    <span class="text-taupe">Busana &amp; Rias</span>
+                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.18 : (activePreset === 'sunda' ? 0.16 : 0.12))).toLocaleString('id-ID')"></p>
+                </div>
+                <div class="rounded-lg bg-alabaster/80 p-2.5">
+                    <span class="text-taupe">Dekorasi</span>
+                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.12 : (activePreset === 'sunda' ? 0.14 : 0.14))).toLocaleString('id-ID')"></p>
+                </div>
+                <div class="rounded-lg bg-alabaster/80 p-2.5">
+                    <span class="text-taupe">Dokumentasi</span>
+                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.06 : (activePreset === 'sunda' ? 0.06 : 0.10))).toLocaleString('id-ID')"></p>
+                </div>
+                <div class="rounded-lg bg-alabaster/80 p-2.5">
+                    <span class="text-taupe">Lainnya / Cadangan</span>
+                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * 0.04).toLocaleString('id-ID')"></p>
+                </div>
+            </div>
+        </div>
 
         <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             @foreach($summary['category_breakdown'] as $cat)
@@ -159,6 +220,15 @@
                                     <a href="{{ route('vendors.index', ['category' => $item->category->value]) }}" class="font-medium text-espresso hover:text-champagne hover:underline">
                                         {{ $item->vendor->name }}
                                     </a>
+                                    @if($item->vendor->payments->isNotEmpty())
+                                        <div class="mt-1 flex flex-wrap gap-1">
+                                            @foreach($item->vendor->payments->take(2) as $pay)
+                                                <span class="inline-flex items-center rounded bg-forest/10 px-1.5 py-0.2 text-[10px] font-semibold text-forest" title="{{ $pay->notes }}">
+                                                    {{ $pay->payment_stage }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 @else
                                     <span class="text-taupe">Mandiri / Internal</span>
                                 @endif

@@ -24,6 +24,7 @@
         ['route' => 'checklist.index', 'pattern' => 'checklist.*', 'label' => 'Checklist', 'icon' => 'check-circle'],
         ['route' => 'timeline.index', 'pattern' => 'timeline.*', 'label' => 'Timeline', 'icon' => 'calendar'],
         ['route' => 'vendors.index', 'pattern' => 'vendors.*', 'label' => 'Vendor', 'icon' => 'building'],
+        ['route' => 'guests.index', 'pattern' => 'guests.*', 'label' => 'Buku Tamu', 'icon' => 'users'],
     ];
 @endphp
 <body class="bg-alabaster text-espresso antialiased selection:bg-champagne/20 selection:text-espresso" x-data="{ mobileNavOpen: false }">

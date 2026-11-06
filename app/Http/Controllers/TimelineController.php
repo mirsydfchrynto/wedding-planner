@@ -8,6 +8,7 @@ use App\Enums\TaskStatus;
 use App\Enums\TimelinePhase;
 use App\Enums\WeddingCategory;
 use App\Models\Vendor;
+use App\Models\WeddingRundown;
 use App\Models\WeddingTask;
 use App\Services\WeddingMetricsService;
 use Illuminate\Database\Eloquent\Builder;
@@ -64,6 +65,7 @@ final class TimelineController extends Controller
         $tasks = $query->get();
         $summary = $this->metricsService->getDashboardSummary();
         $vendors = Vendor::query()->orderBy('name')->get();
+        $rundowns = WeddingRundown::query()->orderBy('sort_order')->orderBy('start_time')->get();
 
         $phases = collect(TimelinePhase::cases())->map(function (TimelinePhase $phase) use ($tasks): array {
             $phaseTasks = $tasks->where('phase', $phase->value)->values();
@@ -92,6 +94,8 @@ final class TimelineController extends Controller
             'milestoneOnly' => $milestoneOnly,
             'searchQuery' => $searchQuery,
             'selectedSort' => $selectedSort,
+            'rundowns' => $rundowns,
+            'activeTab' => $request->query('tab', 'timeline'),
         ]);
     }
 
@@ -133,5 +137,24 @@ final class TimelineController extends Controller
         return redirect()
             ->route('timeline.index')
             ->with('success', 'Progres linimasa "' . $weddingTask->title . '" berhasil diperbarui.');
+    }
+
+    public function storeRundown(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'start_time' => ['required', 'string', 'max:10'],
+            'end_time' => ['required', 'string', 'max:10'],
+            'session_name' => ['required', 'string', 'max:80'],
+            'activity' => ['required', 'string', 'max:200'],
+            'location' => ['nullable', 'string', 'max:160'],
+            'pic_name' => ['nullable', 'string', 'max:120'],
+            'pic_phone' => ['nullable', 'string', 'max:40'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        WeddingRundown::query()->create($validated);
+
+        return redirect()->route('timeline.index', ['tab' => 'rundown'])
+            ->with('success', 'Agenda rundown Hari-H berhasil ditambahkan.');
     }
 }

@@ -181,6 +181,19 @@
                             :meta="$vendor->payment_due_date ? 'Jatuh tempo ' . $vendor->payment_due_date->format('d M Y') : 'Tanpa tenggat tetap'"
                         />
                     </div>
+                    @if($vendor->payments->isNotEmpty())
+                        <div class="mt-3 rounded-lg border border-black/[0.06] bg-alabaster/60 p-2.5 text-[11px]">
+                            <p class="font-bold text-espresso uppercase tracking-wider text-[10px]">Riwayat Termin ({{ $vendor->payments->count() }})</p>
+                            <div class="mt-1.5 space-y-1">
+                                @foreach($vendor->payments as $p)
+                                    <div class="flex items-center justify-between text-taupe">
+                                        <span>{{ $p->payment_stage }} &bull; {{ $p->paid_date->format('d/m/Y') }}</span>
+                                        <span class="font-mono font-bold text-forest">{{ format_idr($p->amount) }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-stone-line/60 pt-3 text-xs no-print">
                         <span class="text-taupe">
@@ -198,10 +211,17 @@
                             </a>
                             <button
                                 type="button"
-                                @click="$dispatch('open-modal', 'edit-vendor-{{ $vendor->id }}')"
-                                class="font-semibold text-champagne hover:underline"
+                                @click="$dispatch('open-modal', 'add-payment-{{ $vendor->id }}')"
+                                class="font-semibold text-forest hover:underline cursor-pointer"
                             >
-                                Edit Kontrak &amp; Pembayaran
+                                + Catat Termin
+                            </button>
+                            <button
+                                type="button"
+                                @click="$dispatch('open-modal', 'edit-vendor-{{ $vendor->id }}')"
+                                class="font-semibold text-champagne hover:underline cursor-pointer"
+                            >
+                                Edit
                             </button>
                             <form method="POST" action="{{ route('vendors.destroy', $vendor) }}" onsubmit="return confirm('Hapus vendor ini dari direktori?')">
                                 @csrf
@@ -214,6 +234,42 @@
                     </div>
                 </div>
 
+                {{-- Modal: Catat Termin Pembayaran --}}
+                <x-ui.modal name="add-payment-{{ $vendor->id }}" :title="'Catat Termin: ' . $vendor->name">
+                    <form method="POST" action="{{ route('vendors.storePayment', $vendor) }}" class="space-y-4 text-left">
+                        @csrf
+                        <div>
+                            <label class="mb-1 block text-xs font-semibold text-charcoal">Tahap Termin</label>
+                            <input type="text" name="payment_stage" placeholder="Contoh: DP 30% / Termin 2 / Pelunasan" required class="editorial-input">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="mb-1 block text-xs font-semibold text-charcoal">Nominal Dibayar (Rp)</label>
+                                <input type="number" name="amount" min="1000" placeholder="25000000" required class="editorial-input">
+                            </div>
+                            <div>
+                                <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Bayar</label>
+                                <input type="date" name="paid_date" value="{{ now()->toDateString() }}" required class="editorial-input">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor Referensi Kwitansi / Transfer</label>
+                            <input type="text" name="receipt_ref" placeholder="Contoh: BCA-TRF-99018" class="editorial-input">
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Transaksi</label>
+                            <input type="text" name="notes" placeholder="Contoh: Diserahkan via transfer rekening bendahara" class="editorial-input">
+                        </div>
+                        <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
+                            <button type="button" @click="$dispatch('close-modal', 'add-payment-{{ $vendor->id }}')" class="editorial-btn-secondary">
+                                Batal
+                            </button>
+                            <button type="submit" class="editorial-btn-primary">
+                                Simpan Bukti Pembayaran
+                            </button>
+                        </div>
+                    </form>
+                </x-ui.modal>
                 {{-- Modal: Edit Vendor --}}
                 <x-ui.modal name="edit-vendor-{{ $vendor->id }}" :title="'Edit Vendor: ' . $vendor->name" subtitle="Perbarui rincian kontak, status kontrak, dan progres pembayaran">
                     <form method="POST" action="{{ route('vendors.update', $vendor) }}" class="space-y-4 text-left">
