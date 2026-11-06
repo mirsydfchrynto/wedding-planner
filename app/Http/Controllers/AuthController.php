@@ -40,16 +40,18 @@ final class AuthController extends Controller
         $email = $validated['google_email'] ?? 'aurelia.reza@gmail.com';
         $name = $validated['google_name'] ?? 'Aurelia Larasati & Reza Mahendra';
 
-        $user = User::query()->firstOrCreate(
-            ['email' => $email],
-            [
-                'name' => $name,
-                'password' => Hash::make(Str::random(24)),
-                'role' => 'customer',
-                'google_id' => 'google-oauth-' . substr(sha1($email), 0, 10),
-                'email_verified_at' => now(),
-            ]
-        );
+        $user = User::query()
+            ->where('role', 'customer')
+            ->firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $name,
+                    'password' => Hash::make(Str::random(24)),
+                    'role' => 'customer',
+                    'google_id' => 'google-oauth-' . substr(sha1($email), 0, 10),
+                    'email_verified_at' => now(),
+                ]
+            );
 
         Auth::login($user, true);
         $request->session()->regenerate();
