@@ -13,15 +13,25 @@ use App\Models\Vendor;
 use App\Models\WeddingProfile;
 use App\Models\WeddingTask;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 final class WeddingMetricsService
 {
     public function getProfile(): WeddingProfile
     {
-        $profile = WeddingProfile::query()->first();
+        if ($profile = WeddingProfile::current()) {
+            return $profile;
+        }
 
-        if (! $profile) {
-            $profile = WeddingProfile::query()->create([
+        $user = Auth::user();
+
+        // ponytail: customer mid-onboarding gets an unsaved profile so tenant data never leaks; swap for a nullable return if views need to branch.
+        if ($user && ! $user->isAdmin()) {
+            return new WeddingProfile();
+        }
+
+        return WeddingProfile::query()->orderBy('id')->first()
+            ?? WeddingProfile::query()->create([
                 'bride_name' => 'Aurelia Larasati',
                 'groom_name' => 'Reza Mahendra',
                 'wedding_date' => now()->addDays(145)->toDateString(),
@@ -32,9 +42,6 @@ final class WeddingMetricsService
                 'guest_target' => 450,
                 'theme_concept' => 'Vogue Bridal Editorial — Warm Alabaster & Champagne Bronze',
             ]);
-        }
-
-        return $profile;
     }
 
     /**

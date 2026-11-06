@@ -6,13 +6,14 @@ namespace App\Models;
 
 use App\Enums\TaskStatus;
 use App\Enums\WeddingCategory;
+use App\Models\Concerns\BelongsToWeddingProfile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class WeddingTask extends Model
 {
-    use HasFactory;
+    use BelongsToWeddingProfile, HasFactory;
 
     protected $fillable = [
         'title',

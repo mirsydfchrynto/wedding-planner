@@ -7,10 +7,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\SaasController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\VendorController;
 use App\Http\Middleware\EnsureAdminAccess;
+use App\Http\Middleware\EnsureWeddingProfile;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,10 +30,20 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated Customer Workspace: 5 Core Wedding Modules
+| Customer Onboarding: Create the wedding profile before workspace access
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function (): void {
+    Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding.index');
+    Route::post('/onboarding', [OnboardingController::class, 'store'])->name('onboarding.store');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Customer Workspace: 5 Core Wedding Modules
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): void {
     // Module #5: Executive Dashboard & Couple Profile (Lead: irsyad)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::patch('/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.updateProfile');

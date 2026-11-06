@@ -6,12 +6,37 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 final class WeddingProfile extends Model
 {
     use HasFactory;
 
+    private static ?int $tenancyOverride = null;
+
+    public static function useTenancy(?int $profileId): void
+    {
+        self::$tenancyOverride = $profileId;
+    }
+
+    public static function currentId(): ?int
+    {
+        return self::$tenancyOverride ?? Auth::user()?->weddingProfile?->id;
+    }
+
+    public static function current(): ?self
+    {
+        return Auth::user()?->weddingProfile;
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     protected $fillable = [
+        'user_id',
         'groom_name',
         'bride_name',
         'wedding_date',
@@ -39,7 +64,11 @@ final class WeddingProfile extends Model
 
     public function getDaysRemainingAttribute(): int
     {
-        $days = (int) now()->startOfDay()->diffInDays($this->wedding_date->startOfDay(), false);
+        if (! $this->wedding_date) {
+            return 0;
+        }
+
+        $days = (int) now()->startOfDay()->diffInDays($this->wedding_date->copy()->startOfDay(), false);
 
         return max(0, $days);
     }

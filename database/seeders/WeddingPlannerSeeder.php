@@ -25,7 +25,7 @@ final class WeddingPlannerSeeder extends Seeder
         WeddingProfile::query()->delete();
         User::query()->delete();
 
-        User::query()->create([
+        $customer = User::query()->create([
             'name' => 'Aurelia Larasati & Reza Mahendra',
             'email' => 'aurelia.reza@gmail.com',
             'password' => Hash::make('GoogleCustomer2026!'),
@@ -43,7 +43,8 @@ final class WeddingPlannerSeeder extends Seeder
         ]);
         $weddingDate = now()->addDays(138)->startOfDay();
 
-        WeddingProfile::query()->create([
+        $profile = WeddingProfile::query()->create([
+            'user_id' => $customer->id,
             'bride_name' => 'Aurelia Larasati',
             'groom_name' => 'Reza Mahendra',
             'wedding_date' => $weddingDate->toDateString(),
@@ -54,6 +55,8 @@ final class WeddingPlannerSeeder extends Seeder
             'guest_target' => 450,
             'theme_concept' => 'Vogue Bridal Editorial — Warm Alabaster & Champagne Bronze',
         ]);
+
+        WeddingProfile::useTenancy($profile->id);
 
         // 1. Seed 8 Curated Luxury Vendors
         $vendorPlataran = Vendor::query()->create([
@@ -544,5 +547,6 @@ final class WeddingPlannerSeeder extends Seeder
         foreach ($taskRows as $row) {
             WeddingTask::query()->create($row);
         }
+        WeddingProfile::useTenancy(null);
     }
 }

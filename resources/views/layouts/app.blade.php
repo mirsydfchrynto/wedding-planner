@@ -17,6 +17,7 @@
 @php
     $isLandingPage = request()->routeIs('saas.*') || request()->is('/');
     $isPublicPage = $isLandingPage || request()->routeIs('login');
+    $hasProfile = isset($globalProfile) && $globalProfile->exists;
     $workspaceItems = [
         ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
         ['route' => 'budget.index', 'pattern' => 'budget.*', 'label' => 'Budget Planner', 'icon' => 'wallet'],
@@ -50,6 +51,7 @@
                     <a href="{{ route('saas.landing') }}#faq-section" class="hover:text-champagne">FAQ</a>
                 </nav>
             @else
+                @if($hasProfile)
                 <nav class="hidden lg:flex items-center gap-1 rounded-md border border-stone-line bg-alabaster p-1" aria-label="Navigasi Workspace Pengantin">
                     @foreach($workspaceItems as $item)
                         @php $active = request()->routeIs($item['pattern']); @endphp
@@ -63,6 +65,7 @@
                         </a>
                     @endforeach
                 </nav>
+                @endif
             @endif
 
             <div class="flex items-center gap-3">
@@ -137,6 +140,7 @@
                 </div>
             @else
                 <div class="flex flex-col gap-1">
+                    @if($hasProfile)
                     @foreach($workspaceItems as $item)
                         @php $active = request()->routeIs($item['pattern']); @endphp
                         <a
@@ -147,6 +151,7 @@
                             <span>{{ $item['label'] }}</span>
                         </a>
                     @endforeach
+                    @endif
                     <form method="POST" action="{{ route('logout') }}" class="mt-2 pt-2">
                         @csrf
                         <button type="submit" class="w-full rounded bg-pearl px-3 py-2.5 text-center text-sm font-semibold text-charcoal">

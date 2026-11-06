@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'google' => [
+        // Demo sign-in creates/logs in a user from a posted email with no password.
+        // ponytail: disabled by default in production; wire real Google OAuth credentials before enabling there.
+        'demo_login' => env('GOOGLE_DEMO_LOGIN', env('APP_ENV') !== 'production'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

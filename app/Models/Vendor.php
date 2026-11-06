@@ -7,13 +7,14 @@ namespace App\Models;
 use App\Enums\VendorBookingStatus;
 use App\Enums\WeddingCategory;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\BelongsToWeddingProfile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Vendor extends Model
 {
-    use HasFactory;
+    use BelongsToWeddingProfile, HasFactory;
 
     protected $fillable = [
         'name',

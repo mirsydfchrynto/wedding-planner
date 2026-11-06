@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\WeddingCategory;
+use App\Models\Concerns\BelongsToWeddingProfile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class BudgetItem extends Model
 {
-    use HasFactory;
+    use BelongsToWeddingProfile, HasFactory;
 
     protected $fillable = [
         'category',

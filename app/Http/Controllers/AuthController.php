@@ -30,6 +30,8 @@ final class AuthController extends Controller
      */
     public function loginWithGoogle(Request $request): RedirectResponse
     {
+        abort_unless(config('services.google.demo_login'), 403, 'Google Sign-In belum dikonfigurasi pada lingkungan ini.');
+
         $validated = $request->validate([
             'google_email' => ['nullable', 'email', 'max:140'],
             'google_name' => ['nullable', 'string', 'max:140'],

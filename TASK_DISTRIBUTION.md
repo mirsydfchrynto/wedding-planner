@@ -10,6 +10,7 @@ Dokumen ini menjadi acuan kerja resmi untuk 4 anggota tim pengembang **Atelier V
 2. **Gerbang Autentikasi (`GET /login`)**:
    - **Customer (Calon Pengantin)**: Klik **"Lanjutkan dengan Akun Google"** (`aurelia.reza@gmail.com`) untuk masuk ke workspace utama (`/dashboard`, `/budget`, `/checklist`, `/timeline`, `/vendors`).
    - **Administrator & Lead WO (Privat & Tersembunyi)**: Klik tautan bawah **"Otorisasi Privat Administrator & Lead WO"** lalu masukkan email `irsyad@ateliervow.id` dan kunci `AtelierAdmin2026!` untuk membuka `/admin`. Pelanggan biasa tidak dapat melihat maupun mengakses `/admin` (`403 Forbidden`).
+3. **Onboarding Pengantin Baru (`GET /onboarding`)**: Akun yang baru masuk dan belum punya profil pernikahan otomatis diarahkan ke form onboarding. Setelah profil dibuat, seluruh data modul terkunci pada profil tersebut (`wedding_profile_id`), sehingga tidak ada kebocoran data antar akun.
 
 ---
 
@@ -30,6 +31,7 @@ Dokumen ini menjadi acuan kerja resmi untuk 4 anggota tim pengembang **Atelier V
   - `app/Http/Controllers/{SaasController,AuthController,AdminController,DashboardController}.php`
   - `app/Http/Middleware/EnsureAdminAccess.php`
   - `app/Services/WeddingMetricsService.php`
+  - `app/Models/Concerns/BelongsToWeddingProfile.php`, `app/Http/Controllers/OnboardingController.php`, `app/Http/Middleware/EnsureWeddingProfile.php`, `database/migrations/2026_11_06_000001_add_tenant_ownership_columns.php`, `resources/views/onboarding/*`, `tests/Feature/TenancyTest.php`
   - `resources/views/{saas,auth,admin,dashboard}/*`
   - `resources/views/layouts/app.blade.php` & `resources/views/components/ui/*`
   - `resources/css/app.css` & `resources/js/app.js`

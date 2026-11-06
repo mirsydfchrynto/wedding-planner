@@ -8,6 +8,7 @@ Platform Software-as-a-Service (SaaS) manajemen perencanaan pernikahan Indonesia
 
 1. **Web Utama Publik — Branding, Marketing & SaaS Landing Page (`GET /`)**
    - Halaman utama ketika pengunjung membuka aplikasi: menampilkan nilai jual SaaS, pratinjau ruang kerja interaktif 3D (`spatialTilt`), **Simulasi Interaktif Anggaran & Adat Nusantara** (`100`–`1.000` tamu), 3 paket berlangganan (*Akad Intimate*, *Keraton Royal*, *Atelier Enterprise WO*), dan strategi kampanye pemasaran.
+   - Isolasi data per akun: setiap pengantin hanya melihat anggaran, checklist, timeline, dan vendor miliknya sendiri (`WeddingProfile` global scope).
 2. **Gerbang Login Google OAuth & Workspace Calon Pengantin (`GET /login` → `GET /dashboard`)**
    - Pelanggan masuk menggunakan **Akun Google** (`POST /auth/google`, default terisi `aurelia.reza@gmail.com`) untuk membuka 5 modul utama yang saling terhubung:
      - **Executive Dashboard (`GET /dashboard`)** — Hitung mundur waktu nyata (Hari, Jam, Menit), Indeks Kesiapan Hari-H, grafik Estimasi vs Aktual, **Tata Upacara Adat Jawa (Siraman, Midodareni, Akad, Panggih)**, dan **Kalkulator Neptu Weton Mempelai**.
@@ -15,6 +16,7 @@ Platform Software-as-a-Service (SaaS) manajemen perencanaan pernikahan Indonesia
      - **Wedding Checklist (`GET /checklist`)** — Daftar tugas persiapan dengan filter kategori, status, PIC, dan centang selesai instan.
      - **Wedding Timeline (`GET /timeline`)** — Peta linimasa kronologis dari fase **H-12 Bulan** hingga **Hari-H**.
      - **Vendor Management (`GET /vendors`)** — Direktori mitra vendor pernikahan lengkap dengan kontak WhatsApp PIC, nilai kontrak, dan pelacakan DP/pelunasan.
+   - Akun baru tanpa profil diarahkan ke **Onboarding (`GET /onboarding`)** untuk membuat profil pernikahan sebelum workspace terbuka. Satu akun = satu profil pernikahan, sehingga data antar pengantin tidak pernah tercampur.
 3. **Konsol Admin & Operasional WO yang Tersembunyi & Privat (`GET /admin`)**
    - **Tersembunyi sepenuhnya** dari pengunjung publik maupun pelanggan biasa (`EnsureAdminAccess` middleware — mengembalikan `403 Forbidden` jika diakses oleh akun non-admin).
    - Diakses melalui menu **Otorisasi Privat Administrator & Lead WO** di halaman `/login` menggunakan kredensial Admin (`irsyad@ateliervow.id` / `AtelierAdmin2026!`).
@@ -57,3 +59,8 @@ php artisan serve
 - **Login Admin Privat (Klik "Otorisasi Privat Administrator & Lead WO" di `/login`):**
   - Email: `irsyad@ateliervow.id`
   - Kunci Otorisasi: `AtelierAdmin2026!`
+
+### Isolasi Data & Kunci Google Sign-In
+- Semua tabel modul (`vendors`, `budget_items`, `wedding_tasks`) memiliki `wedding_profile_id`; record baru otomatis ditandai sesuai profil pengguna yang sedang masuk.
+- `POST /auth/google` memakai **demo sign-in tanpa kata sandi** (membuat/masuk akun dari email). Kunci ini aktif hanya saat `GOOGLE_DEMO_LOGIN=true` (default non-production) dan mengembalikan `403` di produksi sampai Google OAuth asli dikonfigurasi.
+- Admin (`role=admin`) tidak memiliki profil pernikahan: konsol `/admin` sengaja membaca seluruh data lintas akun.
