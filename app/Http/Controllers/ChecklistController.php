@@ -27,6 +27,17 @@ final class ChecklistController extends Controller
         $selectedStatus = $request->query('status');
         $selectedPic = $request->query('assigned_to');
 
+        // Search and priority filters added for the Dinda checklist module.
+        $selectedSearch = $request->query('search', '');
+        $selectedSearch = is_string($selectedSearch) ? trim($selectedSearch) : '';
+
+        $selectedPriority = $request->query('priority', '');
+        $allowedPriorities = ['high', 'medium', 'low'];
+        $selectedPriority = is_string($selectedPriority)
+            && in_array($selectedPriority, $allowedPriorities, true)
+                ? $selectedPriority
+                : '';
+
         $query = WeddingTask::query()->with('vendor')->orderBy('due_date')->orderBy('id');
 
         if (is_string($selectedCategory) && $selectedCategory !== '') {
@@ -39,6 +50,14 @@ final class ChecklistController extends Controller
 
         if (is_string($selectedPic) && $selectedPic !== '') {
             $query->where('assigned_to', 'like', '%' . $selectedPic . '%');
+        }
+
+        if ($selectedSearch !== '') {
+            $query->where('title', 'like', '%' . $selectedSearch . '%');
+        }
+
+        if ($selectedPriority !== '') {
+            $query->where('priority', $selectedPriority);
         }
 
         $tasks = $query->get();
@@ -57,6 +76,8 @@ final class ChecklistController extends Controller
             'selectedCategory' => $selectedCategory,
             'selectedStatus' => $selectedStatus,
             'selectedPic' => $selectedPic,
+            'selectedSearch' => $selectedSearch,
+            'selectedPriority' => $selectedPriority,
         ]);
     }
 
