@@ -2,8 +2,7 @@
 
 @section('content')
     <x-ui.section-header
-        title="Manajemen Vendor & Status Pembayaran"
-        subtitle="Kelola kurasi vendor pernikahan, rincian kontak PIC, nilai kontrak kerja, pembayaran DP/termin, dan sisa pelunasan."
+        title="Mitra Vendor"
     >
         <x-slot:actions>
             <button
@@ -19,32 +18,32 @@
     {{-- Vendor Financial & Booking Summary Cards --}}
     <section class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-ui.stat-card
-            label="Total Vendor Terdaftar"
+            label="Vendor Terdaftar"
             :value="$summary['booked_vendors'] . ' / ' . $summary['total_vendors'] . ' Mitra'"
-            subtitle="Vendor terkunci kontrak, DP, atau lunas"
-            badge="Direktori Aktif"
+            subtitle="Terkontrak & aktif"
+            badge="Direktori"
             badgeTone="champagne"
         />
 
         <x-ui.stat-card
-            label="Total Nilai Kontrak Vendor"
+            label="Total Kontrak"
             :value="format_idr($totalContract)"
-            subtitle="Akumulasi nilai kontrak pada filter aktif"
+            subtitle="Nilai kerja sama aktif"
         />
 
         <x-ui.stat-card
-            label="Total DP & Pelunasan Terbayar"
+            label="Sudah Terbayar"
             :value="format_idr($totalPaid)"
-            :subtitle="($totalContract > 0 ? round(($totalPaid / $totalContract) * 100) : 0) . '% dari nilai kontrak vendor'"
+            :subtitle="($totalContract > 0 ? round(($totalPaid / $totalContract) * 100) : 0) . '% terbayar'"
             badge="Terbayar"
             badgeTone="sage"
         />
 
         <x-ui.stat-card
-            label="Sisa Tagihan Kontrak Vendor"
+            label="Sisa Tagihan"
             :value="format_idr($totalRemaining)"
-            subtitle="Kewajiban pelunasan sebelum Hari-H"
-            :badge="$totalRemaining > 0 ? 'Menunggu Pelunasan' : 'Seluruh Kontrak Lunas'"
+            subtitle="Kewajiban sebelum Hari-H"
+            :badge="$totalRemaining > 0 ? 'Belum Lunas' : 'Lunas'"
             :badgeTone="$totalRemaining > 0 ? 'ochre' : 'sage'"
         />
     </section>

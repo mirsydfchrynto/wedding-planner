@@ -2,8 +2,7 @@
 
 @section('content')
     <x-ui.section-header
-        title="Buku Anggaran & Realisasi Biaya"
-        subtitle="Kelola plafon anggaran induk, pantau deviasi estimasi terhadap kontrak aktual, dan kendalikan arus kas pembayaran vendor."
+        title="Anggaran Pernikahan"
     >
         <x-slot:actions>
             <button
@@ -26,21 +25,21 @@
     {{-- Financial Summary Strip --}}
     <section class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-ui.stat-card
-            label="Plafon Anggaran Induk"
+            label="Plafon Anggaran"
             :value="format_idr($summary['total_budget_cap'])"
-            :subtitle="'Target untuk ' . number_format($profile->guest_target, 0, ',', '.') . ' tamu undangan'"
-            badge="Target Utama"
+            :subtitle="'Target: ' . number_format($profile->guest_target, 0, ',', '.') . ' tamu'"
+            badge="Plafon"
             badgeTone="champagne"
         />
 
         <x-ui.stat-card
-            label="Total Estimasi Perencanaan"
+            label="Total Estimasi"
             :value="format_idr($summary['total_estimated'])"
-            :subtitle="round(($summary['total_estimated'] / max(1, $summary['total_budget_cap'])) * 100) . '% dari plafon anggaran induk'"
+            :subtitle="round(($summary['total_estimated'] / max(1, $summary['total_budget_cap'])) * 100) . '% dari plafon'"
         />
 
         <x-ui.stat-card
-            label="Total Realisasi Aktual"
+            label="Total Realisasi"
             :value="format_idr($summary['total_actual'])"
             :subtitle="'Terbayar: ' . format_idr($summary['total_paid'])"
             :badge="$summary['variance_amount'] >= 0 ? 'Hemat ' . format_idr($summary['variance_amount']) : 'Over ' . format_idr(abs($summary['variance_amount']))"
@@ -48,10 +47,10 @@
         />
 
         <x-ui.stat-card
-            label="Sisa Plafon Anggaran"
+            label="Sisa Anggaran"
             :value="format_idr($summary['remaining_budget'])"
-            :subtitle="'Tagihan belum dibayar: ' . format_idr(max(0, $summary['total_actual'] - $summary['total_paid']))"
-            :badge="$summary['remaining_budget'] >= 0 ? 'Anggaran Sehat' : 'Melebihi Plafon'"
+            :subtitle="'Sisa tagihan: ' . format_idr(max(0, $summary['total_actual'] - $summary['total_paid']))"
+            :badge="$summary['remaining_budget'] >= 0 ? 'Aman' : 'Over'"
             :badgeTone="$summary['remaining_budget'] >= 0 ? 'sage' : 'wine'"
         />
     </section>
@@ -60,7 +59,7 @@
     <section class="mt-6 editorial-card rounded-lg p-6">
         <div class="flex flex-col justify-between gap-2 border-b border-stone-line pb-4 sm:flex-row sm:items-center">
             <div>
-                <h2 class="font-editorial text-2xl font-semibold text-espresso">Alokasi per Kategori Pengeluaran</h2>
+                <h2 class="font-editorial text-2xl font-semibold text-espresso">Alokasi Kategori</h2>
                 <p class="text-xs text-taupe">Klik salah satu kategori untuk menyaring tabel pos anggaran di bawah</p>
             </div>
             @if($selectedCategory || $selectedStatus)

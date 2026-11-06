@@ -7,30 +7,30 @@
     'icon' => null,
 ])
 
-<article {{ $attributes->merge(['class' => 'editorial-card flex flex-col justify-between rounded-lg p-5']) }} data-reveal>
+<article {{ $attributes->merge(['class' => 'editorial-card flex flex-col justify-between p-5 transition hover:border-black/15']) }} data-reveal>
     <div class="flex items-center justify-between gap-2.5">
         <div class="flex items-center gap-2 text-taupe">
             @if($icon)
-                <x-ui.icon :name="$icon" class="h-4 w-4 text-champagne" />
+                <x-ui.icon :name="$icon" class="h-3.5 w-3.5 text-champagne" />
             @endif
-            <p class="text-sm font-medium text-taupe">{{ $label }}</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-taupe">{{ $label }}</p>
         </div>
         @if($badge)
             <x-ui.status-badge :tone="$badgeTone" :label="$badge" />
         @endif
     </div>
 
-    <div class="mt-2.5">
+    <div class="mt-3">
         <p class="tabular-nums text-2xl font-bold tracking-tight text-espresso">
             {{ $value }}
         </p>
         @if($subtitle)
-            <p class="mt-1 text-sm text-taupe tabular-nums">{{ $subtitle }}</p>
+            <p class="mt-1 text-xs text-taupe/90 tabular-nums">{{ $subtitle }}</p>
         @endif
     </div>
 
     @if(! $slot->isEmpty())
-        <div class="mt-3.5 border-t border-stone-line/80 pt-3">
+        <div class="mt-3.5 border-t border-black/[0.06] pt-3">
             {{ $slot }}
         </div>
     @endif

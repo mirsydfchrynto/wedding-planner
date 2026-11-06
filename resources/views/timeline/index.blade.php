@@ -2,8 +2,7 @@
 
 @section('content')
     <x-ui.section-header
-        title="Linimasa Persiapan Pernikahan (H-12 Bulan — Hari-H)"
-        subtitle="Visualisasi urutan kerja persiapan pernikahan dari tahap penguncian tanggal hingga prosesi akad dan resepsi puncak."
+        title="Linimasa & Jadwal"
     >
         <x-slot:actions>
             <a

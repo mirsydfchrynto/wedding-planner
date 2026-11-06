@@ -52,12 +52,12 @@
                 </nav>
             @else
                 @if($hasProfile)
-                <nav class="hidden lg:flex items-center gap-1 rounded-md border border-stone-line bg-alabaster p-1" aria-label="Navigasi Workspace Pengantin">
+                <nav class="hidden lg:flex items-center gap-1 rounded-xl border border-black/[0.06] bg-white p-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]" aria-label="Navigasi Workspace Pengantin">
                     @foreach($workspaceItems as $item)
                         @php $active = request()->routeIs($item['pattern']); @endphp
                         <a
                             href="{{ route($item['route']) }}"
-                            class="inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-semibold transition {{ $active ? 'bg-espresso text-alabaster' : 'text-charcoal hover:bg-pearl hover:text-espresso' }}"
+                            class="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition {{ $active ? 'bg-espresso text-alabaster shadow-sm' : 'text-taupe hover:bg-black/[0.03] hover:text-espresso' }}"
                             @if($active) aria-current="page" @endif
                         >
                             <x-ui.icon :name="$item['icon']" class="h-3.5 w-3.5" />

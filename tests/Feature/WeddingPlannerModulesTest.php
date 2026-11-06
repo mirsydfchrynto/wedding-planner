@@ -128,7 +128,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->actingAs($this->customerUser)
             ->get('/budget')
             ->assertOk()
-            ->assertSee('Buku Anggaran & Realisasi Biaya')
+            ->assertSee('Anggaran Pernikahan')
             ->assertSee('Sewa Eksklusif The Glasshouse & Courtyard Plataran');
 
         $storeResponse = $this->actingAs($this->customerUser)->post('/budget', [
@@ -168,8 +168,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->actingAs($this->customerUser)
             ->get('/checklist?category=venue')
             ->assertOk()
-            ->assertSee('Daftar Tugas & Checklist Pernikahan');
-
+            ->assertSee('Checklist Persiapan');
         $this->actingAs($this->customerUser)->post('/checklist', [
             'title' => 'Verifikasi Berkas Wali Nikah KUA',
             'description' => 'Fotokopi KTP dan KK wali nikah',
@@ -195,7 +194,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->actingAs($this->customerUser)
             ->get('/timeline')
             ->assertOk()
-            ->assertSee('Linimasa Persiapan Pernikahan')
+            ->assertSee('Linimasa &amp; Jadwal', false)
             ->assertSee('H-12 Bulan')
             ->assertSee('Hari-H');
 
@@ -224,7 +223,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->actingAs($this->customerUser)
             ->get('/vendors')
             ->assertOk()
-            ->assertSee('Manajemen Vendor & Status Pembayaran')
+            ->assertSee('Mitra Vendor')
             ->assertSee('Plataran Menteng Heritage Venue');
 
         $this->actingAs($this->customerUser)->post('/vendors', [

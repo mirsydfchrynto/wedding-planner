@@ -92,9 +92,9 @@
     <section class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-ui.stat-card
             icon="wallet"
-            label="Plafon Total Anggaran"
+            label="Plafon Anggaran"
             :value="format_idr($summary['total_budget_cap'])"
-            :subtitle="'Sisa plafon: ' . format_idr($summary['remaining_budget'])"
+            :subtitle="'Sisa: ' . format_idr($summary['remaining_budget'])"
             :badge="$summary['remaining_budget'] >= 0 ? 'Aman' : 'Over'"
             :badgeTone="$summary['remaining_budget'] >= 0 ? 'sage' : 'wine'"
         >
@@ -103,7 +103,7 @@
 
         <x-ui.stat-card
             icon="trending-up"
-            label="Realisasi Pengeluaran"
+            label="Total Pengeluaran"
             :value="format_idr($summary['total_actual'])"
             :subtitle="'Terbayar: ' . format_idr($summary['total_paid']) . ' (' . $summary['budget_paid_percent'] . '%)'"
             :badge="$summary['variance_amount'] >= 0 ? 'Hemat ' . format_idr($summary['variance_amount']) : 'Over'"
@@ -114,9 +114,9 @@
 
         <x-ui.stat-card
             icon="check-circle"
-            label="Progres Tugas Checklist"
+            label="Checklist Tugas"
             :value="$summary['completion_percent'] . '%'"
-            :subtitle="$summary['completed_tasks'] . '/' . $summary['total_tasks'] . ' tugas selesai'"
+            :subtitle="$summary['completed_tasks'] . ' dari ' . $summary['total_tasks'] . ' selesai'"
             :badge="$summary['overdue_tasks_count'] > 0 ? $summary['overdue_tasks_count'] . ' Terlambat' : 'Tepat Waktu'"
             :badgeTone="$summary['overdue_tasks_count'] > 0 ? 'wine' : 'sage'"
         >
@@ -125,9 +125,9 @@
 
         <x-ui.stat-card
             icon="building"
-            label="Kontrak Mitra Vendor"
+            label="Mitra Vendor"
             :value="$summary['booked_vendors'] . ' / ' . $summary['total_vendors'] . ' Mitra'"
-            :subtitle="'Sisa tagihan: ' . format_idr($summary['unpaid_balance'])"
+            :subtitle="'Sisa: ' . format_idr($summary['unpaid_balance'])"
             :badge="format_idr($summary['cost_per_guest']) . '/pax'"
             badgeTone="champagne"
         >

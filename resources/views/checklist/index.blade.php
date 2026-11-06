@@ -2,8 +2,7 @@
 
 @section('content')
     <x-ui.section-header
-        title="Daftar Tugas & Checklist Pernikahan"
-        subtitle="Kelola setiap tahapan persiapan pernikahan berdasarkan kategori, penanggung jawab (PIC), prioritas, dan status penyelesaian."
+        title="Checklist Persiapan"
     >
         <x-slot:actions>
             <button
@@ -19,9 +18,9 @@
     {{-- Checklist KPI Cards --}}
     <section class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-ui.stat-card
-            label="Progres Penyelesaian"
+            label="Penyelesaian"
             :value="$summary['completion_percent'] . '%'"
-            :subtitle="$summary['completed_tasks'] . ' dari ' . $summary['total_tasks'] . ' tugas selesai'"
+            :subtitle="$summary['completed_tasks'] . ' dari ' . $summary['total_tasks'] . ' selesai'"
             badge="Target 100%"
             badgeTone="sage"
         >
@@ -29,26 +28,26 @@
         </x-ui.stat-card>
 
         <x-ui.stat-card
-            label="Tugas Sedang Berjalan"
+            label="Sedang Berjalan"
             :value="$summary['in_progress_tasks'] . ' Tugas'"
-            subtitle="Dalam koordinasi aktif bersama keluarga & vendor"
-            badge="In Progress"
+            subtitle="Dalam proses pengerjaan"
+            badge="Aktif"
             badgeTone="ochre"
         />
 
         <x-ui.stat-card
-            label="Tugas Belum Dimulai"
+            label="Belum Dimulai"
             :value="$summary['todo_tasks'] . ' Tugas'"
-            subtitle="Terjadwal pada fase persiapan berikutnya"
-            badge="To-Do"
+            subtitle="Menunggu jadwal"
+            badge="Antrean"
             badgeTone="neutral"
         />
 
         <x-ui.stat-card
-            label="Perhatian Tenggat Waktu"
+            label="Tenggat Terlewat"
             :value="$summary['overdue_tasks_count'] . ' Tugas'"
-            subtitle="Melewati tanggal target penyelesaian"
-            :badge="$summary['overdue_tasks_count'] > 0 ? 'Perlu Tindakan' : 'Tepat Waktu'"
+            subtitle="Melewati target"
+            :badge="$summary['overdue_tasks_count'] > 0 ? 'Perhatian' : 'Tepat Waktu'"
             :badgeTone="$summary['overdue_tasks_count'] > 0 ? 'wine' : 'sage'"
         />
     </section>
