@@ -40,25 +40,27 @@ final class AuthController extends Controller
         $email = $validated['google_email'] ?? 'aurelia.reza@gmail.com';
         $name = $validated['google_name'] ?? 'Aurelia Larasati & Reza Mahendra';
 
-        $user = User::query()
-            ->where('role', 'customer')
-            ->firstOrCreate(
-                ['email' => $email],
-                [
-                    'name' => $name,
-                    'password' => Hash::make(Str::random(24)),
-                    'role' => 'customer',
-                    'google_id' => 'google-oauth-' . substr(sha1($email), 0, 10),
-                    'email_verified_at' => now(),
-                ]
-            );
+        $existingUser = User::query()->where('email', $email)->first();
+
+        if ($existingUser !== null && $existingUser->role !== 'customer') {
+            abort(403, 'Gunakan email akun pengantin untuk masuk ke workspace.');
+        }
+
+        $user = $existingUser ?? User::query()->create([
+            'email' => $email,
+            'name' => $name,
+            'password' => Hash::make(Str::random(24)),
+            'role' => 'customer',
+            'google_id' => 'google-oauth-'.substr(sha1($email), 0, 10),
+            'email_verified_at' => now(),
+        ]);
 
         Auth::login($user, true);
         $request->session()->regenerate();
 
         return redirect()
             ->intended(route('dashboard.index'))
-            ->with('success', 'Berhasil masuk dengan akun Google (' . $user->email . '). Selamat datang di Portal Pengantin.');
+            ->with('success', 'Berhasil masuk dengan akun Google ('.$user->email.'). Selamat datang di Portal Pengantin.');
     }
 
     /**

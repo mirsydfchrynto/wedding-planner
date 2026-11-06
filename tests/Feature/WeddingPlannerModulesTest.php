@@ -74,6 +74,26 @@ final class WeddingPlannerModulesTest extends TestCase
         $response->assertDontSee('Konsol Admin Privat');
     }
 
+    public function test_google_sign_in_aborts_when_attempting_to_use_admin_account(): void
+    {
+        $response = $this->post('/auth/google', [
+            'google_email' => $this->adminUser->email,
+        ]);
+
+        $response->assertForbidden();
+    }
+
+    public function test_google_sign_in_aborts_when_demo_mode_is_disabled(): void
+    {
+        config(['services.google.demo_login' => false]);
+
+        $response = $this->post('/auth/google', [
+            'google_email' => 'aurelia.reza@gmail.com',
+        ]);
+
+        $response->assertForbidden();
+    }
+
     public function test_customer_cannot_access_private_admin_console(): void
     {
         $this->actingAs($this->customerUser)
