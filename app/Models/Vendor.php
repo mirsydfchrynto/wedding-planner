@@ -51,6 +51,11 @@ final class Vendor extends Model
         return $this->hasMany(WeddingTask::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(VendorPayment::class)->latest('paid_date');
+    }
+
     public function getRemainingBalanceAttribute(): int
     {
         return max(0, (int) $this->contract_amount - (int) $this->paid_amount);

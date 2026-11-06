@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
 final class WeddingProfile extends Model
@@ -33,6 +34,21 @@ final class WeddingProfile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function rundowns(): HasMany
+    {
+        return $this->hasMany(WeddingRundown::class)->orderBy('sort_order')->orderBy('start_time');
+    }
+
+    public function guests(): HasMany
+    {
+        return $this->hasMany(WeddingGuest::class)->orderBy('name');
+    }
+
+    public function vendorPayments(): HasMany
+    {
+        return $this->hasMany(VendorPayment::class)->latest('paid_date');
     }
 
     protected $fillable = [

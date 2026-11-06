@@ -11,14 +11,21 @@ use App\Enums\WeddingCategory;
 use App\Models\BudgetItem;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Models\VendorPayment;
+use App\Models\WeddingGuest;
 use App\Models\WeddingProfile;
+use App\Models\WeddingRundown;
 use App\Models\WeddingTask;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+
 final class WeddingPlannerSeeder extends Seeder
 {
     public function run(): void
     {
+        VendorPayment::query()->delete();
+        WeddingGuest::query()->delete();
+        WeddingRundown::query()->delete();
         WeddingTask::query()->delete();
         BudgetItem::query()->delete();
         Vendor::query()->delete();
@@ -546,6 +553,126 @@ final class WeddingPlannerSeeder extends Seeder
 
         foreach ($taskRows as $row) {
             WeddingTask::query()->create($row);
+        }
+        // 4. Seed Rundown Acara Hari-H (Minute-by-Minute Event Schedule)
+        $rundownRows = [
+            [
+                'start_time' => '05:00',
+                'end_time' => '07:30',
+                'session_name' => 'Persiapan & Tata Rias',
+                'activity' => 'Tata Rias & Hairdo Mempelai Wanita, Pria, dan Orang Tua',
+                'location' => 'Ruang Rias VIP Glasshouse Plataran',
+                'pic_name' => 'Anpa Suha & Tim MUA',
+                'pic_phone' => '081234567891',
+                'notes' => 'Sarapan pagi keluarga disiapkan WO di pantry VIP pk 06:00 WIB.',
+                'sort_order' => 1,
+            ],
+            [
+                'start_time' => '07:30',
+                'end_time' => '08:00',
+                'session_name' => 'Penyambutan',
+                'activity' => 'Kedatangan Keluarga Besar, Saksi Nikah, dan Tamu Terbatas Akad',
+                'location' => 'Foyer & Veranda Plataran Menteng',
+                'pic_name' => 'Tim Penerima Tamu Keluarga CPW',
+                'pic_phone' => '081298765432',
+                'notes' => 'Pengecekan mas kawin dan kelengkapan buku nikah bersama petugas KUA.',
+                'sort_order' => 2,
+            ],
+            [
+                'start_time' => '08:00',
+                'end_time' => '09:15',
+                'session_name' => 'Ijab Qabul / Akad Nikah',
+                'activity' => 'Prosesi Ijab Qabul, Khutbah Nikah, Penyerahan Mahar & Buku Nikah',
+                'location' => 'Pendopo Utama Glasshouse Plataran',
+                'pic_name' => 'Penghulu KUA Menteng & MC Bpk. Hartono',
+                'pic_phone' => '081188229911',
+                'notes' => 'Kamera Axioo standby multi-angle (livestream keluarga luar kota aktif).',
+                'sort_order' => 3,
+            ],
+            [
+                'start_time' => '09:15',
+                'end_time' => '10:15',
+                'session_name' => 'Upacara Adat Jawa Panggih',
+                'activity' => 'Prosesi Balangan Gantal, Ngidak Endhog, Sinduran, Bobot Timbang, & Kacar Kucur',
+                'location' => 'Pelaminan Utama Adat Jogja Paes Ageng',
+                'pic_name' => 'Ibu Pemaes & Sanggar Suryo',
+                'pic_phone' => '081377881122',
+                'notes' => 'Gamelan live mengiringi gendhing Kodhok Ngorek & Ketawang Boyong.',
+                'sort_order' => 4,
+            ],
+            [
+                'start_time' => '10:15',
+                'end_time' => '11:30',
+                'session_name' => 'Sungkeman & Jamuan Siang',
+                'activity' => 'Sungkeman Orang Tua, Foto Keluarga Inti, & Brunch Syukuran',
+                'location' => 'Courtyard Dining Room Plataran',
+                'pic_name' => 'Lead WO Irsyad Fachryanto',
+                'pic_phone' => '081298811002',
+                'notes' => 'Menu Akasya Fine Indonesian Catering disajikan prasmanan premium.',
+                'sort_order' => 5,
+            ],
+            [
+                'start_time' => '16:00',
+                'end_time' => '18:00',
+                'session_name' => 'Persiapan Resepsi Malam',
+                'activity' => 'Touch-up Rias Pengantin, Ganti Busana Editorial Biyan, & Briefing Panitia Malam',
+                'location' => 'Ruang Rias VIP',
+                'pic_name' => 'Tim Stylist Biyan & WO',
+                'pic_phone' => '081234567891',
+                'notes' => 'Valet parking & sound check string quartet selesai sebelum pk 17:30 WIB.',
+                'sort_order' => 6,
+            ],
+            [
+                'start_time' => '18:30',
+                'end_time' => '21:30',
+                'session_name' => 'Gala Resepsi Pernikahan',
+                'activity' => 'Kirab Pengantin Editorial, Toast, Jamuan 450 Tamu Undangan, & Live Entertainment',
+                'location' => 'Grand Glasshouse Ballroom Plataran',
+                'pic_name' => 'MC Dwi Andhika & Jakarta Chamber Orchestra',
+                'pic_phone' => '081822334455',
+                'notes' => 'Sesi foto VIP diawali pk 19:00 WIB, dilanjutkan ucapan selamat ramah tamah.',
+                'sort_order' => 7,
+            ],
+        ];
+
+        foreach ($rundownRows as $rundown) {
+            WeddingRundown::query()->create($rundown);
+        }
+
+        // 5. Seed Buku Tamu Digital & RSVP
+        $guestRows = [
+            ['name' => 'Bpk. Anies Rasyid Baswedan & Ibu Fery Farhati', 'category' => 'Tamu VIP Kehormatan', 'pax' => 2, 'session' => 'Akad & Resepsi Malam', 'rsvp_status' => 'confirmed', 'table_number' => 'VIP-01', 'whatsapp_number' => '081199881100', 'notes' => 'Akomodasi meja depan dekat pelaminan'],
+            ['name' => 'Sri Sultan Hamengkubuwono X & GKR Hemas', 'category' => 'Tamu VIP Kehormatan', 'pax' => 2, 'session' => 'Akad & Resepsi Malam', 'rsvp_status' => 'confirmed', 'table_number' => 'VIP-01', 'whatsapp_number' => '081122334455', 'notes' => 'Protokoler keraton dikoordinasikan WO'],
+            ['name' => 'Bpk. Bambang Soesatyo, S.E., M.B.A.', 'category' => 'Tamu VIP Kehormatan', 'pax' => 2, 'session' => 'Resepsi Malam', 'rsvp_status' => 'confirmed', 'table_number' => 'VIP-02', 'whatsapp_number' => '081299887766', 'notes' => 'Akses jalur VIP Barat'],
+            ['name' => 'Keluarga Besar Alm. Prof. Dr. Soemitro', 'category' => 'Keluarga CPW', 'pax' => 6, 'session' => 'Akad & Resepsi Malam', 'rsvp_status' => 'confirmed', 'table_number' => 'FAM-01', 'whatsapp_number' => '081311223344', 'notes' => 'Duduk bersama sesepuh keluarga Yogyakarta'],
+            ['name' => 'Keluarga Besar Bpk. H. Rahmat Mahendra', 'category' => 'Keluarga CPP', 'pax' => 8, 'session' => 'Akad & Resepsi Malam', 'rsvp_status' => 'confirmed', 'table_number' => 'FAM-02', 'whatsapp_number' => '081399884422', 'notes' => 'Meja khusus keluarga besan'],
+            ['name' => 'Dimas Raditya & Dinda Sekar Ayu', 'category' => 'Sahabat Pengantin', 'pax' => 2, 'session' => 'Resepsi Malam', 'rsvp_status' => 'confirmed', 'table_number' => 'TAB-04', 'whatsapp_number' => '081788224411', 'notes' => 'Rekan almamater ITB & UI'],
+            ['name' => 'Tim Engineering & Founders Atelier Vow', 'category' => 'Rekan Kerja & Partner', 'pax' => 4, 'session' => 'Resepsi Malam', 'rsvp_status' => 'confirmed', 'table_number' => 'TAB-05', 'whatsapp_number' => '081877665544', 'notes' => 'Meja tim pengembang SaaS'],
+            ['name' => 'Rendy Wicaksana & Jessica Amanda', 'category' => 'Teman Pengantin', 'pax' => 2, 'session' => 'Resepsi Malam', 'rsvp_status' => 'pending', 'table_number' => 'TAB-08', 'whatsapp_number' => '081922334411', 'notes' => 'Menunggu konfirmasi tiket pesawat'],
+            ['name' => 'Dr. Hendra Gunawan, Sp.A & Istri', 'category' => 'Kolega Bisnis', 'pax' => 2, 'session' => 'Resepsi Malam', 'rsvp_status' => 'declined', 'table_number' => null, 'whatsapp_number' => '081133445566', 'notes' => 'Berhalangan hadir, mengirim karangan bunga'],
+        ];
+
+        foreach ($guestRows as $guest) {
+            WeddingGuest::query()->create($guest);
+        }
+
+        // 6. Seed Riwayat Multi-Termin Pembayaran Vendor
+        $paymentRows = [
+            ['vendor_id' => $vendorPlataran->id, 'payment_stage' => 'DP 30%', 'amount' => 25000000, 'paid_date' => $weddingDate->copy()->subDays(180)->toDateString(), 'receipt_ref' => 'BCA-PLTR-001', 'notes' => 'Uang muka penguncian tanggal Glasshouse Plataran'],
+            ['vendor_id' => $vendorPlataran->id, 'payment_stage' => 'Termin 1 (30%)', 'amount' => 25000000, 'paid_date' => $weddingDate->copy()->subDays(120)->toDateString(), 'receipt_ref' => 'BCA-PLTR-002', 'notes' => 'Termin kedua setelah konfirmasi layout venue'],
+            ['vendor_id' => $vendorPlataran->id, 'payment_stage' => 'Pelunasan (40%)', 'amount' => 28000000, 'paid_date' => $weddingDate->copy()->subDays(60)->toDateString(), 'receipt_ref' => 'BCA-PLTR-003', 'notes' => 'Pelunasan 100% sewa venue & valet'],
+            ['vendor_id' => $vendorDharmawangsa->id, 'payment_stage' => 'DP 35%', 'amount' => 35000000, 'paid_date' => $weddingDate->copy()->subDays(150)->toDateString(), 'receipt_ref' => 'MDR-CATER-101', 'notes' => 'DP catering 450 pax setelah food tasting'],
+            ['vendor_id' => $vendorDharmawangsa->id, 'payment_stage' => 'Termin 1 (50%)', 'amount' => 50000000, 'paid_date' => $weddingDate->copy()->subDays(75)->toDateString(), 'receipt_ref' => 'MDR-CATER-102', 'notes' => 'Termin utama porsi stall live cooking'],
+            ['vendor_id' => $vendorSaptodjojokartiko->id, 'payment_stage' => 'DP 35%', 'amount' => 20000000, 'paid_date' => $weddingDate->copy()->subDays(160)->toDateString(), 'receipt_ref' => 'BYN-BESPOKE-91', 'notes' => 'DP pembuatan busana couture & fitting awal'],
+            ['vendor_id' => $vendorSaptodjojokartiko->id, 'payment_stage' => 'Pelunasan (65%)', 'amount' => 38000000, 'paid_date' => $weddingDate->copy()->subDays(50)->toDateString(), 'receipt_ref' => 'BYN-BESPOKE-92', 'notes' => 'Pelunasan setelah fitting final dan handover busana'],
+            ['vendor_id' => $vendorLotusDecor->id, 'payment_stage' => 'DP 50%', 'amount' => 25000000, 'paid_date' => $weddingDate->copy()->subDays(140)->toDateString(), 'receipt_ref' => 'SRY-DEC-441', 'notes' => 'DP dekorasi pelaminan Paes Ageng & Glasshouse'],
+            ['vendor_id' => $vendorLotusDecor->id, 'payment_stage' => 'Termin 1 (50%)', 'amount' => 25000000, 'paid_date' => $weddingDate->copy()->subDays(70)->toDateString(), 'receipt_ref' => 'SRY-DEC-442', 'notes' => 'Pelunasan dekorasi & instalasi bunga segar'],
+            ['vendor_id' => $vendorIluminen->id, 'payment_stage' => 'DP 40%', 'amount' => 15000000, 'paid_date' => $weddingDate->copy()->subDays(170)->toDateString(), 'receipt_ref' => 'AXO-PHOTO-09', 'notes' => 'DP pemesanan tim fotografer & videografer Axioo'],
+            ['vendor_id' => $vendorIluminen->id, 'payment_stage' => 'Pelunasan (60%)', 'amount' => 23000000, 'paid_date' => $weddingDate->copy()->subDays(45)->toDateString(), 'receipt_ref' => 'AXO-PHOTO-10', 'notes' => 'Pelunasan dokumentasi hari H & album teaser'],
+        ];
+
+        foreach ($paymentRows as $payment) {
+            VendorPayment::query()->create($payment);
         }
         WeddingProfile::useTenancy(null);
     }

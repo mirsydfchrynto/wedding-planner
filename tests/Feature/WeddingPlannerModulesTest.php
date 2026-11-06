@@ -272,4 +272,15 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->patch("/admin/vendors/{$vendor->id}/verify")->assertRedirect(route('admin.index'));
         $this->assertSame(VendorBookingStatus::Booked, $vendor->fresh()->booking_status);
     }
+
+    public function test_master_guide_print_view_renders_rundown_and_vendor_directory(): void
+    {
+        $response = $this->actingAs($this->customerUser)->get('/print/master-guide');
+
+        $response->assertOk();
+        $response->assertSee('Buku Kerja &amp; Panduan Operasional Resmi Hari Pernikahan', false);
+        $response->assertSee('Rundown Acara Menit-demi-Menit');
+        $response->assertSee('Plataran Menteng Heritage Venue');
+        $response->assertSee('Daftar Tamu Kehormatan (VIP) &amp; Penataan Meja', false);
+    }
 }

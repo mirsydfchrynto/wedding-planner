@@ -8,6 +8,7 @@ use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\PrintController;
 use App\Http\Controllers\SaasController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\VendorController;
@@ -47,6 +48,7 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
     // Module #5: Executive Dashboard & Couple Profile (Lead: irsyad)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::patch('/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.updateProfile');
+    Route::get('/print/master-guide', [PrintController::class, 'masterGuide'])->name('print.masterGuide');
 
     // Module #1: Budget Planner (Owner: marsha)
     Route::prefix('budget')->name('budget.')->group(function (): void {

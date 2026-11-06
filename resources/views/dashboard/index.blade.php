@@ -33,14 +33,15 @@
                         <x-ui.icon name="sliders" class="h-3.5 w-3.5" />
                         <span>Edit Profil &amp; Plafon</span>
                     </button>
-                    <button
-                        type="button"
-                        onclick="window.print()"
+                    <a
+                        href="{{ route('print.masterGuide') }}"
+                        target="_blank"
                         class="editorial-btn-secondary"
+                        title="Buka Dokumen Panduan Master Pernikahan Siap Cetak A4 / PDF"
                     >
                         <x-ui.icon name="printer" class="h-3.5 w-3.5" />
-                        <span>Cetak Ringkasan</span>
-                    </button>
+                        <span>Buku Panduan &amp; Cetak</span>
+                    </a>
                 </div>
             </div>
 

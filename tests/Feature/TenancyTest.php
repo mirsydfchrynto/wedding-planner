@@ -29,6 +29,7 @@ final class TenancyTest extends TestCase
         $this->actingAs($user)->get('/dashboard')->assertRedirect('/onboarding');
         $this->actingAs($user)->get('/budget')->assertRedirect('/onboarding');
         $this->actingAs($user)->get('/vendors')->assertRedirect('/onboarding');
+        $this->actingAs($user)->get('/print/master-guide')->assertRedirect('/onboarding');
     }
 
     public function test_onboarding_page_renders_the_profile_form(): void

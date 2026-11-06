@@ -16,6 +16,7 @@ Platform Software-as-a-Service (SaaS) manajemen perencanaan pernikahan Indonesia
      - **Wedding Checklist (`GET /checklist`)** — Daftar tugas persiapan dengan filter kategori, status, PIC, dan centang selesai instan.
      - **Wedding Timeline (`GET /timeline`)** — Peta linimasa kronologis dari fase **H-12 Bulan** hingga **Hari-H**.
      - **Vendor Management (`GET /vendors`)** — Direktori mitra vendor pernikahan lengkap dengan kontak WhatsApp PIC, nilai kontrak, dan pelacakan DP/pelunasan.
+     - **Master Wedding Guide Print A4 / PDF (`GET /print/master-guide`)** — Lembar panduan resmi siap cetak (4 halaman): Cover & Ringkasan Eksekutif, Rundown Menit-demi-Menit Hari-H, Direktori Kontak Darurat Vendor & Pelunasan, serta Penataan Meja Tamu Kehormatan VIP.
    - Akun baru tanpa profil diarahkan ke **Onboarding (`GET /onboarding`)** untuk membuat profil pernikahan sebelum workspace terbuka. Satu akun = satu profil pernikahan, sehingga data antar pengantin tidak pernah tercampur.
 3. **Konsol Admin & Operasional WO yang Tersembunyi & Privat (`GET /admin`)**
    - **Tersembunyi sepenuhnya** dari pengunjung publik maupun pelanggan biasa (`EnsureAdminAccess` middleware — mengembalikan `403 Forbidden` jika diakses oleh akun non-admin).
@@ -36,21 +37,27 @@ Setiap anggota tim bekerja pada *branch* dan berkas masing-masing sehingga bebas
 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Modul #2: Wedding Checklist (`/checklist`)** | `app/Http/Controllers/ChecklistController.php`<br>`resources/views/checklist/index.blade.php` |
 ---
 
-## Panduan Instalasi Cepat (30 Detik)
+## Panduan Instalasi Cepat
 
+### Opsi A: Menjalankan via Docker Compose (Rekomendasi Produksi)
+Cukup jalankan satu perintah menggunakan skrip otomatisasi:
 ```bash
-# 1. Clone repositori
+./deploy.sh --seed
+```
+Aplikasi langsung aktif pada port `http://localhost:8080` lengkap dengan container PHP 8.4-FPM, PostgreSQL 16, Redis 7, dan Nginx Reverse Proxy.
+
+### Opsi B: Menjalankan Lokal (PHP CLI & Composer)
+```bash
+# 1. Clone repositori & pindah ke branch kerja
 git clone https://github.com/mirsydfchrynto/wedding-planner.git
 cd wedding-planner
-
-# 2. Pindah ke branch masing-masing (irsyad / marsha / adam / dinda)
 git checkout <nama-branch>
 
-# 3. Jalankan instalasi otomatis (Composer, .env, APP_KEY, Migrasi + Seeder, dan Build Vite)
+# 2. Instal dependensi, migrasi database, dan build asset
 composer setup
 php artisan migrate:fresh --seed
 
-# 4. Jalankan server lokal
+# 3. Jalankan server lokal
 php artisan serve
 ```
 
