@@ -21,20 +21,16 @@ final class VendorController extends Controller
 
     public function index(Request $request): View
     {
-        $selectedCategory = $request->query('category');
-        $selectedStatus = $request->query('booking_status');
+        $selectedCategory = is_string($request->query('category')) ? $request->query('category') : null;
+        $selectedStatus = is_string($request->query('booking_status')) ? $request->query('booking_status') : null;
+        $searchQuery = is_string($request->query('search')) ? trim($request->query('search')) : '';
+        $selectedSort = is_string($request->query('sort')) ? $request->query('sort') : null;
 
-        $query = Vendor::query()->withCount(['budgetItems', 'tasks'])->orderBy('category')->orderBy('name');
+        $vendors = Vendor::query()
+            ->withCount(['budgetItems', 'tasks'])
+            ->filterAndSort($selectedCategory, $selectedStatus, $searchQuery, $selectedSort)
+            ->get();
 
-        if (is_string($selectedCategory) && $selectedCategory !== '') {
-            $query->where('category', $selectedCategory);
-        }
-
-        if (is_string($selectedStatus) && $selectedStatus !== '') {
-            $query->where('booking_status', $selectedStatus);
-        }
-
-        $vendors = $query->get();
         $summary = $this->metricsService->getDashboardSummary();
 
         $totalContract = (int) $vendors->sum('contract_amount');
@@ -48,6 +44,8 @@ final class VendorController extends Controller
             'bookingStatuses' => VendorBookingStatus::cases(),
             'selectedCategory' => $selectedCategory,
             'selectedStatus' => $selectedStatus,
+            'searchQuery' => $searchQuery,
+            'selectedSort' => $selectedSort,
             'totalContract' => $totalContract,
             'totalPaid' => $totalPaid,
             'totalRemaining' => $totalRemaining,

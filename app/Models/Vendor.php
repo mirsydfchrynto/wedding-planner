@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\VendorBookingStatus;
 use App\Enums\WeddingCategory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -71,5 +72,63 @@ final class Vendor extends Model
         }
 
         return "https://wa.me/{$digits}";
+    }
+
+    public function getIsPaymentOverdueAttribute(): bool
+    {
+        if ($this->remaining_balance <= 0 || ! $this->payment_due_date) {
+            return false;
+        }
+
+        return $this->payment_due_date->endOfDay()->isPast();
+    }
+
+    public function getDaysUntilPaymentDueAttribute(): ?int
+    {
+        if (! $this->payment_due_date) {
+            return null;
+        }
+
+        return (int) now()->startOfDay()->diffInDays($this->payment_due_date->startOfDay(), false);
+    }
+
+    public function scopeFilterAndSort(
+        Builder $query,
+        ?string $category = null,
+        ?string $bookingStatus = null,
+        ?string $search = null,
+        ?string $sort = null,
+    ): Builder {
+        if (is_string($category) && $category !== '') {
+            $query->where('category', $category);
+        }
+
+        if (is_string($bookingStatus) && $bookingStatus !== '') {
+            $query->where('booking_status', $bookingStatus);
+        }
+
+        if (is_string($search) && trim($search) !== '') {
+            $keyword = '%' . trim($search) . '%';
+            $query->where(function (Builder $subQuery) use ($keyword): void {
+                $subQuery
+                    ->where('name', 'like', $keyword)
+                    ->orWhere('contact_person', 'like', $keyword)
+                    ->orWhere('phone', 'like', $keyword)
+                    ->orWhere('notes', 'like', $keyword);
+            });
+        }
+
+        return match ($sort) {
+            'contract_desc' => $query->orderByDesc('contract_amount')->orderBy('name'),
+            'contract_asc' => $query->orderBy('contract_amount')->orderBy('name'),
+            'due_date_asc' => $query
+                ->orderByRaw('CASE WHEN payment_due_date IS NULL THEN 1 ELSE 0 END ASC')
+                ->orderBy('payment_due_date')
+                ->orderByDesc('contract_amount'),
+            'remaining_desc' => $query
+                ->orderByRaw('(contract_amount - paid_amount) DESC')
+                ->orderBy('name'),
+            default => $query->orderBy('category')->orderBy('name'),
+        };
     }
 }
