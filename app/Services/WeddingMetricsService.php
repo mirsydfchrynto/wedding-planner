@@ -56,12 +56,23 @@ final class WeddingMetricsService
         $tasks = WeddingTask::query()->with('vendor')->orderBy('due_date')->get();
         $vendors = Vendor::query()->orderBy('payment_due_date')->get();
 
+
         // 1. Countdown Metrics
-        $weddingMoment = Carbon::parse($profile->wedding_date->format('Y-m-d') . ' 08:30:00');
+        $weddingDate = $profile->wedding_date;
+
+        $weddingMoment = $weddingDate
+            ? Carbon::parse($weddingDate->format('Y-m-d') . ' 08:30:00')
+            : null;
+
         $now = now();
-        $totalHours = max(0, (int) $now->diffInHours($weddingMoment, false));
+
+        $totalHours = $weddingMoment !== null
+            ? max(0, (int) $now->diffInHours($weddingMoment, false))
+            : 0;
+
         $daysRemaining = (int) floor($totalHours / 24);
         $hoursRemaining = $totalHours % 24;
+
 
         // 2. Financial Metrics
         $totalBudgetCap = (int) $profile->total_budget;
@@ -108,13 +119,13 @@ final class WeddingMetricsService
         $completedTasks = $tasks->where('status', TaskStatus::Done)->count();
         $inProgressTasks = $tasks->where('status', TaskStatus::InProgress)->count();
         $todoTasks = $tasks->where('status', TaskStatus::Todo)->count();
-        $overdueTasksCount = $tasks->filter(fn (WeddingTask $task): bool => $task->is_overdue)->count();
+        $overdueTasksCount = $tasks->filter(fn(WeddingTask $task): bool => $task->is_overdue)->count();
         $completionPercent = $totalTasks > 0
             ? (int) round(($completedTasks / $totalTasks) * 100)
             : 0;
 
         $urgentTasks = $tasks
-            ->reject(fn (WeddingTask $task): bool => $task->status === TaskStatus::Done)
+            ->reject(fn(WeddingTask $task): bool => $task->status === TaskStatus::Done)
             ->sortBy('due_date')
             ->take(6)
             ->values();
@@ -136,11 +147,11 @@ final class WeddingMetricsService
         // 4. Vendor Metrics
         $totalVendors = $vendors->count();
         $bookedVendors = $vendors->filter(
-            fn (Vendor $vendor): bool => $vendor->booking_status->isConfirmed()
+            fn(Vendor $vendor): bool => $vendor->booking_status->isConfirmed()
         )->count();
-        $unpaidVendorBalance = (int) $vendors->sum(fn (Vendor $vendor): int => $vendor->remaining_balance);
+        $unpaidVendorBalance = (int) $vendors->sum(fn(Vendor $vendor): int => $vendor->remaining_balance);
         $upcomingVendorPayments = $vendors
-            ->filter(fn (Vendor $vendor): bool => $vendor->remaining_balance > 0)
+            ->filter(fn(Vendor $vendor): bool => $vendor->remaining_balance > 0)
             ->sortBy('payment_due_date')
             ->take(5)
             ->values();
@@ -161,8 +172,8 @@ final class WeddingMetricsService
         return [
             'profile' => $profile,
             'couple_names' => $profile->couple_names,
-            'wedding_date_formatted' => $profile->wedding_date->translatedFormat('l, d F Y'),
-            'wedding_date_iso' => $weddingMoment->toIso8601String(),
+            'wedding_date_formatted' => $profile->wedding_date?->translatedFormat('l, d F Y') ?? 'Tanggal belum ditentukan',
+            'wedding_date_iso' => $weddingMoment?->toIso8601String(),
             'days_remaining' => $daysRemaining,
             'hours_remaining' => $hoursRemaining,
             'total_budget_cap' => $totalBudgetCap,

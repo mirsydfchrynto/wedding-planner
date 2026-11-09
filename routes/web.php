@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 | Public Web Utama: SaaS Brand Landing Page, Marketing & Google Auth (irsyad)
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [SaasController::class, 'landing'])->name('saas.landing');
 Route::get('/saas', [SaasController::class, 'landing'])->name('saas.showcase');
 
@@ -86,6 +87,13 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
     });
 
     // Module #6: Buku Tamu Digital & RSVP (Owner: dinda)
+    Route::post('/guests/bulk', [GuestController::class, 'bulkStore'])
+        ->name('guests.bulkStore');
+
+    // Export CSV Rekapitulasi Tamu
+    Route::get('/guests/export-csv', [GuestController::class, 'exportCsv'])
+        ->name('guests.exportCsv');
+
     Route::resource('guests', GuestController::class)->except(['create', 'show', 'edit']);
 });
 
