@@ -72,7 +72,7 @@
         <div x-data="{ activePreset: 'jawa', totalCap: {{ $summary['total_budget_cap'] }} }" class="mt-4 rounded-xl border border-stone-line bg-pearl p-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
-                    <x-ui.icon name="sparkles" class="h-4 w-4 text-champagne" />
+                    <x-ui.icon name="sliders" class="h-4 w-4 text-champagne" />
                     <span class="text-xs font-bold uppercase tracking-wider text-espresso">Smart Allocator Adat</span>
                 </div>
                 <div class="flex flex-wrap gap-1.5 text-xs">

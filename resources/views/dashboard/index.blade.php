@@ -318,7 +318,7 @@
     >
         <div class="flex items-center justify-between border-b border-stone-line pb-3">
             <div class="flex items-center gap-2">
-                <x-ui.icon name="sparkles" class="h-4 w-4 text-champagne" />
+                <x-ui.icon name="calendar" class="h-4 w-4 text-champagne" />
                 <h2 class="text-xl font-bold text-espresso">Tata Upacara Adat Jawa &amp; Perhitungan Weton Neptu</h2>
             </div>
             <x-ui.status-badge tone="champagne" label="Adat Nusantara" />

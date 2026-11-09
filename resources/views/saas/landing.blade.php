@@ -9,10 +9,6 @@
             <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center">
                 {{-- Left 5 Cols: Magnetic Outcome Headline, Subheadline, CTA, and Proof --}}
                 <div class="lg:col-span-5 space-y-6">
-                    <div class="inline-flex items-center gap-2 rounded-full border border-champagne/30 bg-champagne-light/50 px-3 py-1 text-xs font-semibold text-espresso">
-                        <x-ui.icon name="sparkles" class="h-3.5 w-3.5 text-champagne" />
-                        <span>SaaS Perencanaan Pernikahan #1 Nusantara</span>
-                    </div>
 
                     <h1 class="text-4xl font-bold leading-[1.05] tracking-tight text-espresso sm:text-5xl lg:text-6xl font-editorial">
                         Satu buku kerja untuk pernikahan impian.
@@ -27,7 +23,6 @@
                             href="{{ auth()->check() ? route('dashboard.index') : route('login') }}"
                             class="editorial-btn-primary !min-h-[3rem] !px-6 !text-base shadow-md hover:shadow-lg justify-center"
                         >
-                            <x-ui.icon name="sparkles" class="h-4 w-4 text-champagne" />
                             <span>{{ auth()->check() ? 'Buka Workspace Pernikahan' : 'Masuk dengan Google' }}</span>
                         </a>
                         <a
@@ -72,12 +67,7 @@
                         {{-- Window Bar with macOS Dots & Module Tabs --}}
                         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.06] bg-alabaster/90 px-4 py-3">
                             <div class="flex items-center gap-2">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="h-2.5 w-2.5 rounded-full bg-wine/80"></span>
-                                    <span class="h-2.5 w-2.5 rounded-full bg-ochre/80"></span>
-                                    <span class="h-2.5 w-2.5 rounded-full bg-sage/80"></span>
-                                </div>
-                                <span class="text-[11px] font-bold text-taupe font-mono ml-1">Atelier Vow Workspace</span>
+                                <span class="text-xs font-bold text-espresso tracking-tight">Atelier Vow Workspace</span>
                             </div>
 
                             <div class="flex items-center gap-2">
@@ -521,7 +511,6 @@
                     href="{{ auth()->check() ? route('dashboard.index') : route('login') }}"
                     class="editorial-btn-primary !min-h-[3.25rem] !px-8 !text-base !bg-alabaster !text-espresso hover:!bg-champagne hover:!text-alabaster shadow-xl"
                 >
-                    <x-ui.icon name="sparkles" class="h-4 w-4 text-champagne" />
                     <span>Buka Workspace Sekarang — Gratis</span>
                 </a>
             </div>
