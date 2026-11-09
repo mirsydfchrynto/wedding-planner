@@ -59,6 +59,9 @@ final class AdminController extends Controller
             'db_driver' => DB::connection()->getDriverName(),
             'locale' => config('app.locale'),
             'total_records' => Vendor::query()->count() + BudgetItem::query()->count() + WeddingTask::query()->count() + 1,
+            'total_guests' => (int) \App\Models\WeddingGuest::query()->sum('pax'),
+            'total_rundowns' => \App\Models\WeddingRundown::query()->count(),
+            'total_payments_logged' => (int) \App\Models\VendorPayment::query()->sum('amount'),
         ];
 
         return view('admin.index', [
@@ -106,5 +109,17 @@ final class AdminController extends Controller
         return redirect()
             ->route('admin.index')
             ->with('success', 'Status kontrak vendor "' . $vendor->name . '" diverifikasi sebagai ' . $nextStatus->label() . '.');
+    }
+
+    public function markPaid(Vendor $vendor): RedirectResponse
+    {
+        $vendor->update([
+            'paid_amount' => $vendor->contract_amount,
+            'booking_status' => VendorBookingStatus::Paid,
+        ]);
+
+        return redirect()
+            ->route('admin.index')
+            ->with('success', 'Vendor "' . $vendor->name . '" telah diverifikasi lunas 100%.');
     }
 }
