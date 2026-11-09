@@ -416,7 +416,7 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Plafon Total Anggaran (Rp)</label>
-                    <input type="number" name="total_budget" value="{{ old('total_budget', $profile->total_budget) }}" min="1000000" step="500000" required class="editorial-input tabular-nums">
+                    <input type="number" name="total_budget" value="{{ old('total_budget', $profile->total_budget) }}" min="1000000" step="500000" data-rupiah required class="editorial-input tabular-nums">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Target Jumlah Tamu</label>

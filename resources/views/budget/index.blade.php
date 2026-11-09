@@ -314,15 +314,15 @@
                                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                                             <div>
                                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Estimasi (Rp)</label>
-                                                <input type="number" name="estimated_cost" value="{{ $item->estimated_cost }}" min="0" required class="editorial-input tabular-nums">
+                                                <input type="number" name="estimated_cost" value="{{ $item->estimated_cost }}" min="0" data-rupiah required class="editorial-input tabular-nums">
                                             </div>
                                             <div>
                                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Aktual (Rp)</label>
-                                                <input type="number" name="actual_cost" value="{{ $item->actual_cost }}" min="0" required class="editorial-input tabular-nums">
+                                                <input type="number" name="actual_cost" value="{{ $item->actual_cost }}" min="0" data-rupiah required class="editorial-input tabular-nums">
                                             </div>
                                             <div>
                                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Sudah Dibayar (Rp)</label>
-                                                <input type="number" name="paid_amount" value="{{ $item->paid_amount }}" min="0" required class="editorial-input tabular-nums">
+                                                <input type="number" name="paid_amount" value="{{ $item->paid_amount }}" min="0" data-rupiah required class="editorial-input tabular-nums">
                                             </div>
                                         </div>
 
@@ -395,15 +395,15 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Estimasi (Rp)</label>
-                    <input type="number" name="estimated_cost" value="15000000" min="0" step="100000" required class="editorial-input tabular-nums">
+                    <input type="number" name="estimated_cost" value="15000000" min="0" step="100000" data-rupiah required class="editorial-input tabular-nums">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Aktual (Rp)</label>
-                    <input type="number" name="actual_cost" value="0" min="0" step="100000" class="editorial-input tabular-nums">
+                    <input type="number" name="actual_cost" value="0" min="0" step="100000" data-rupiah class="editorial-input tabular-nums">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Sudah Dibayar (Rp)</label>
-                    <input type="number" name="paid_amount" value="0" min="0" step="100000" class="editorial-input tabular-nums">
+                    <input type="number" name="paid_amount" value="0" min="0" step="100000" data-rupiah class="editorial-input tabular-nums">
                 </div>
             </div>
 
@@ -437,7 +437,7 @@
 
             <div>
                 <label class="mb-1 block text-xs font-semibold text-charcoal">Plafon Total Anggaran Baru (Rp)</label>
-                <input type="number" name="total_budget" value="{{ $profile->total_budget }}" min="1000000" step="1000000" required class="editorial-input tabular-nums">
+                <input type="number" name="total_budget" value="{{ $profile->total_budget }}" min="1000000" step="1000000" data-rupiah required class="editorial-input tabular-nums">
                 <p class="mt-1 text-xs text-taupe">Saat ini: {{ format_idr($profile->total_budget) }}</p>
             </div>
 

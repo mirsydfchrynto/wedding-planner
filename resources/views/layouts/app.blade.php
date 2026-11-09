@@ -203,7 +203,7 @@
         </main>
     @endif
 
-    <footer class="{{ $isLandingPage ? 'bg-espresso text-alabaster py-14' : 'mt-16 border-t border-stone-line bg-pearl py-10 text-taupe' }} no-print">
+    <footer class="{{ $isLandingPage ? 'bg-espresso text-alabaster py-14' : 'mt-16 border-t border-stone-line bg-pearl pt-10 pb-24 lg:pb-10 text-taupe' }} no-print">
         <div class="mx-auto max-w-7xl px-6 lg:px-10">
             <div class="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
                 <div>
@@ -225,6 +225,36 @@
             @endif
         </div>
     </footer>
+
+    @if(!$isPublicPage && $hasProfile)
+        @php
+            $mobileBottomItems = [
+                ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
+                ['route' => 'budget.index', 'pattern' => 'budget.*', 'label' => 'Anggaran', 'icon' => 'wallet'],
+                ['route' => 'checklist.index', 'pattern' => 'checklist.*', 'label' => 'Checklist', 'icon' => 'check-circle'],
+                ['route' => 'timeline.index', 'pattern' => 'timeline.*', 'label' => 'Linimasa', 'icon' => 'calendar'],
+                ['route' => 'guests.index', 'pattern' => 'guests.*', 'label' => 'Tamu', 'icon' => 'users'],
+            ];
+        @endphp
+        <nav
+            aria-label="Menu Bawah Layar HP"
+            class="fixed inset-x-0 bottom-0 z-40 border-t border-stone-line bg-pearl/95 backdrop-blur-md lg:hidden no-print"
+        >
+            <div class="mx-auto grid max-w-lg grid-cols-5 px-1 py-1">
+                @foreach($mobileBottomItems as $mobileItem)
+                    @php $mobileActive = request()->routeIs($mobileItem['pattern']); @endphp
+                    <a
+                        href="{{ route($mobileItem['route']) }}"
+                        class="flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5 text-xs font-semibold transition {{ $mobileActive ? 'bg-espresso text-alabaster shadow-sm' : 'text-taupe hover:text-espresso' }}"
+                        @if($mobileActive) aria-current="page" @endif
+                    >
+                        <x-ui.icon :name="$mobileItem['icon']" class="h-4 w-4" />
+                        <span class="truncate">{{ $mobileItem['label'] }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </nav>
+    @endif
 
     @livewireScripts
     @stack('scripts')

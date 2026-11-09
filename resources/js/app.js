@@ -6,6 +6,93 @@ document.documentElement.classList.add('js');
 window.Alpine = Alpine;
 window.Chart = Chart;
 
+window.copyToClipboard = async function (text) {
+    const value = String(text ?? '').trim();
+    if (!value) return false;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        try {
+            await navigator.clipboard.writeText(value);
+            return true;
+        } catch (_) {
+            // Fallback below
+        }
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand('copy');
+        return true;
+    } finally {
+        document.body.removeChild(textarea);
+    }
+};
+
+function formatRupiahDigits(raw) {
+    const digits = String(raw ?? '').replace(/\D+/g, '');
+    if (!digits) return '';
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function initRupiahInputs(root = document) {
+    const selector = [
+        'input[data-rupiah]',
+        'input[name="total_budget"]',
+        'input[name="estimated_cost"]',
+        'input[name="actual_cost"]',
+        'input[name="paid_amount"]',
+        'input[name="contract_amount"]',
+        'input[name="amount"]',
+    ].join(', ');
+
+    root.querySelectorAll(selector).forEach((input) => {
+        if (input.dataset.rupiahInitialized === '1' || input.type === 'hidden') {
+            return;
+        }
+        input.dataset.rupiahInitialized = '1';
+
+        const fieldName = input.getAttribute('name');
+        if (!fieldName) return;
+
+        const initialDigits = String(input.value ?? '').replace(/\D+/g, '');
+
+        // Create hidden input that holds raw integer value for backend validation
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = fieldName;
+        hiddenInput.value = initialDigits;
+        input.parentNode.insertBefore(hiddenInput, input.nextSibling);
+
+        // Convert visible input into thousand-formatted text input
+        input.removeAttribute('name');
+        input.removeAttribute('step');
+        input.removeAttribute('min');
+        input.setAttribute('type', 'text');
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('autocomplete', 'off');
+        input.dataset.rupiahField = fieldName;
+        input.value = formatRupiahDigits(initialDigits);
+
+        const syncValue = () => {
+            const rawDigits = String(input.value ?? '').replace(/\D+/g, '');
+            hiddenInput.value = rawDigits;
+            const formatted = formatRupiahDigits(rawDigits);
+            if (input.value !== formatted) {
+                input.value = formatted;
+            }
+        };
+
+        input.addEventListener('input', syncValue);
+        input.addEventListener('blur', syncValue);
+    });
+}
+
 Alpine.data('spatialTilt', (maxDeg = 4) => ({
     transformStyle: 'perspective(1100px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
     prefersReduced: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -48,7 +135,11 @@ function initScrollReveals() {
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initScrollReveals);
+    document.addEventListener('DOMContentLoaded', () => {
+        initScrollReveals();
+        initRupiahInputs();
+    });
 } else {
     initScrollReveals();
+    initRupiahInputs();
 }
