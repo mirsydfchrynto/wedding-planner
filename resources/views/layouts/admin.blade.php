@@ -30,6 +30,7 @@
                     <div>
                         <p class="text-sm font-bold text-white leading-none">Atelier Vow</p>
                         <p class="mt-0.5 text-[11px] text-slate-400">Backoffice Operasional WO</p>
+                    </div>
                 </div>
                 <span class="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-300">v1.0</span>
             </div>
@@ -151,7 +152,6 @@
         </div>
     </div>
 
-    @livewireScripts
     @stack('scripts')
 </body>
 </html>

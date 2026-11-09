@@ -1,9 +1,7 @@
-import Alpine from 'alpinejs';
 import Chart from 'chart.js/auto';
 
 document.documentElement.classList.add('js');
 
-window.Alpine = Alpine;
 window.Chart = Chart;
 
 window.copyToClipboard = async function (text) {
@@ -93,7 +91,7 @@ function initRupiahInputs(root = document) {
     });
 }
 
-Alpine.data('spatialTilt', (maxDeg = 4) => ({
+const spatialTilt = (maxDeg = 4) => ({
     transformStyle: 'perspective(1100px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
     prefersReduced: typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     handleMove(event) {
@@ -108,9 +106,12 @@ Alpine.data('spatialTilt', (maxDeg = 4) => ({
     handleLeave() {
         this.transformStyle = 'perspective(1100px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
     }
-}));
+});
 
-Alpine.start();
+// Livewire 4 injects its own Alpine bundle; register on init so only one instance runs.
+document.addEventListener('alpine:init', () => {
+    window.Alpine.data('spatialTilt', spatialTilt);
+});
 
 // Scroll-triggered entrance choreography (fires once per element, respects reduced-motion)
 function initScrollReveals() {
