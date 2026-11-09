@@ -21,11 +21,11 @@
     </div>
 
     <div class="mt-3">
-        <p class="tabular-nums text-2xl font-bold tracking-tight text-espresso">
+        <p class="tabular-nums text-2xl font-bold tracking-tight text-espresso whitespace-nowrap">
             {{ $value }}
         </p>
         @if($subtitle)
-            <p class="mt-1 text-xs text-taupe/90 tabular-nums">{{ $subtitle }}</p>
+            <p class="mt-1 text-xs text-taupe/90 tabular-nums whitespace-nowrap">{{ $subtitle }}</p>
         @endif
     </div>
 

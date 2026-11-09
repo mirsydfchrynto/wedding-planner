@@ -101,19 +101,19 @@
                 <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div class="rounded-lg border border-stone-line bg-pearl/60 p-4">
                         <p class="text-[10px] font-bold uppercase text-taupe">Plafon Anggaran</p>
-                        <p class="mt-1 text-lg font-bold text-espresso">Rp {{ number_format($summary['total_budget_cap'], 0, ',', '.') }}</p>
+                        <p class="mt-1 text-lg font-bold text-espresso whitespace-nowrap">Rp {{ number_format($summary['total_budget_cap'], 0, ',', '.') }}</p>
                     </div>
                     <div class="rounded-lg border border-stone-line bg-pearl/60 p-4">
                         <p class="text-[10px] font-bold uppercase text-taupe">Total Komitmen</p>
-                        <p class="mt-1 text-lg font-bold text-espresso">Rp {{ number_format($summary['total_estimated'], 0, ',', '.') }}</p>
+                        <p class="mt-1 text-lg font-bold text-espresso whitespace-nowrap">Rp {{ number_format($summary['total_estimated'], 0, ',', '.') }}</p>
                     </div>
                     <div class="rounded-lg border border-stone-line bg-pearl/60 p-4">
                         <p class="text-[10px] font-bold uppercase text-taupe">Sudah Terbayar</p>
-                        <p class="mt-1 text-lg font-bold text-forest">Rp {{ number_format($summary['total_paid'], 0, ',', '.') }}</p>
+                        <p class="mt-1 text-lg font-bold text-forest whitespace-nowrap">Rp {{ number_format($summary['total_paid'], 0, ',', '.') }}</p>
                     </div>
                     <div class="rounded-lg border border-stone-line bg-pearl/60 p-4">
                         <p class="text-[10px] font-bold uppercase text-taupe">Sisa Tagihan Vendor</p>
-                        <p class="mt-1 text-lg font-bold text-wine">Rp {{ number_format($summary['unpaid_balance'], 0, ',', '.') }}</p>
+                        <p class="mt-1 text-lg font-bold text-wine whitespace-nowrap">Rp {{ number_format($summary['unpaid_balance'], 0, ',', '.') }}</p>
                     </div>
                 </div>
             </div>
@@ -228,13 +228,13 @@
                                     <p class="font-medium text-espresso">{{ $vendor->contact_person }}</p>
                                     <p class="font-mono text-[11px] text-taupe">{{ $vendor->phone }}</p>
                                 </td>
-                                <td class="px-3 py-3 text-right font-mono font-medium text-espresso">
+                                <td class="px-3 py-3 text-right font-mono font-medium text-espresso whitespace-nowrap">
                                     Rp {{ number_format($vendor->contract_amount, 0, ',', '.') }}
                                 </td>
-                                <td class="px-3 py-3 text-right font-mono font-medium text-forest">
+                                <td class="px-3 py-3 text-right font-mono font-medium text-forest whitespace-nowrap">
                                     Rp {{ number_format($vendor->paid_amount, 0, ',', '.') }}
                                 </td>
-                                <td class="px-3 py-3 text-right font-mono font-bold {{ $vendor->remaining_balance > 0 ? 'text-wine' : 'text-taupe' }}">
+                                <td class="px-3 py-3 text-right font-mono font-bold whitespace-nowrap {{ $vendor->remaining_balance > 0 ? 'text-wine' : 'text-taupe' }}">
                                     Rp {{ number_format($vendor->remaining_balance, 0, ',', '.') }}
                                 </td>
                                 <td class="pl-3 py-3 text-center">

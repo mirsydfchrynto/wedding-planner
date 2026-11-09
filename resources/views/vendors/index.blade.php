@@ -158,15 +158,15 @@
                     <div class="grid grid-cols-3 gap-2 text-xs">
                         <div>
                             <span class="text-taupe">Nilai Kontrak</span>
-                            <p class="mt-0.5 tabular-nums font-semibold text-espresso">{{ format_idr($vendor->contract_amount) }}</p>
+                            <p class="mt-0.5 tabular-nums font-semibold text-espresso whitespace-nowrap">{{ format_idr($vendor->contract_amount) }}</p>
                         </div>
                         <div>
                             <span class="text-taupe">Sudah Dibayar</span>
-                            <p class="mt-0.5 tabular-nums font-semibold text-sage">{{ format_idr($vendor->paid_amount) }}</p>
+                            <p class="mt-0.5 tabular-nums font-semibold text-sage whitespace-nowrap">{{ format_idr($vendor->paid_amount) }}</p>
                         </div>
                         <div class="text-right">
                             <span class="text-taupe">Sisa Pelunasan</span>
-                            <p class="mt-0.5 tabular-nums font-semibold {{ $vendor->remaining_balance > 0 ? 'text-wine' : 'text-taupe' }}">
+                            <p class="mt-0.5 tabular-nums font-semibold whitespace-nowrap {{ $vendor->remaining_balance > 0 ? 'text-wine' : 'text-taupe' }}">
                                 {{ format_idr($vendor->remaining_balance) }}
                             </p>
                         </div>
@@ -188,7 +188,7 @@
                                 @foreach($vendor->payments as $p)
                                     <div class="flex items-center justify-between text-taupe">
                                         <span>{{ $p->payment_stage }} &bull; {{ $p->paid_date->format('d/m/Y') }}</span>
-                                        <span class="font-mono font-bold text-forest">{{ format_idr($p->amount) }}</span>
+                                        <span class="font-mono font-bold text-forest whitespace-nowrap">{{ format_idr($p->amount) }}</span>
                                     </div>
                                 @endforeach
                             </div>

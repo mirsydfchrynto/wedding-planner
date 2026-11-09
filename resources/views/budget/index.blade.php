@@ -105,27 +105,27 @@
             <div class="mt-3 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
                 <div class="rounded-lg bg-alabaster/80 p-2.5">
                     <span class="text-taupe">Venue</span>
-                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.25 : (activePreset === 'sunda' ? 0.22 : 0.30))).toLocaleString('id-ID')"></p>
+                    <p class="font-bold text-espresso font-mono mt-0.5 whitespace-nowrap" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.25 : (activePreset === 'sunda' ? 0.22 : 0.30))).toLocaleString('id-ID')"></p>
                 </div>
                 <div class="rounded-lg bg-alabaster/80 p-2.5">
                     <span class="text-taupe">Catering</span>
-                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.35 : (activePreset === 'sunda' ? 0.38 : 0.30))).toLocaleString('id-ID')"></p>
+                    <p class="font-bold text-espresso font-mono mt-0.5 whitespace-nowrap" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.35 : (activePreset === 'sunda' ? 0.38 : 0.30))).toLocaleString('id-ID')"></p>
                 </div>
                 <div class="rounded-lg bg-alabaster/80 p-2.5">
                     <span class="text-taupe">Busana &amp; Rias</span>
-                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.18 : (activePreset === 'sunda' ? 0.16 : 0.12))).toLocaleString('id-ID')"></p>
+                    <p class="font-bold text-espresso font-mono mt-0.5 whitespace-nowrap" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.18 : (activePreset === 'sunda' ? 0.16 : 0.12))).toLocaleString('id-ID')"></p>
                 </div>
                 <div class="rounded-lg bg-alabaster/80 p-2.5">
                     <span class="text-taupe">Dekorasi</span>
-                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.12 : (activePreset === 'sunda' ? 0.14 : 0.14))).toLocaleString('id-ID')"></p>
+                    <p class="font-bold text-espresso font-mono mt-0.5 whitespace-nowrap" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.12 : (activePreset === 'sunda' ? 0.14 : 0.14))).toLocaleString('id-ID')"></p>
                 </div>
                 <div class="rounded-lg bg-alabaster/80 p-2.5">
                     <span class="text-taupe">Dokumentasi</span>
-                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.06 : (activePreset === 'sunda' ? 0.06 : 0.10))).toLocaleString('id-ID')"></p>
+                    <p class="font-bold text-espresso font-mono mt-0.5 whitespace-nowrap" x-text="'Rp ' + Number(totalCap * (activePreset === 'jawa' ? 0.06 : (activePreset === 'sunda' ? 0.06 : 0.10))).toLocaleString('id-ID')"></p>
                 </div>
                 <div class="rounded-lg bg-alabaster/80 p-2.5">
                     <span class="text-taupe">Lainnya / Cadangan</span>
-                    <p class="font-bold text-espresso font-mono mt-0.5" x-text="'Rp ' + Number(totalCap * 0.04).toLocaleString('id-ID')"></p>
+                    <p class="font-bold text-espresso font-mono mt-0.5 whitespace-nowrap" x-text="'Rp ' + Number(totalCap * 0.04).toLocaleString('id-ID')"></p>
                 </div>
             </div>
         </div>
@@ -233,10 +233,10 @@
                                     <span class="text-taupe">Mandiri / Internal</span>
                                 @endif
                             </td>
-                            <td class="px-3 py-3.5 text-right tabular-nums text-xs text-charcoal">
+                            <td class="px-3 py-3.5 text-right tabular-nums text-xs text-charcoal whitespace-nowrap">
                                 {{ format_idr($item->estimated_cost) }}
                             </td>
-                            <td class="px-3 py-3.5 text-right tabular-nums text-xs font-semibold text-espresso">
+                            <td class="px-3 py-3.5 text-right tabular-nums text-xs font-semibold text-espresso whitespace-nowrap">
                                 {{ format_idr($item->actual_cost) }}
                                 @if($item->is_overbudget)
                                     <span class="block text-[11px] font-normal text-wine">
@@ -248,10 +248,10 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-3 py-3.5 text-right tabular-nums text-xs text-sage font-medium">
+                            <td class="px-3 py-3.5 text-right tabular-nums text-xs text-sage font-medium whitespace-nowrap">
                                 {{ format_idr($item->paid_amount) }}
                             </td>
-                            <td class="px-3 py-3.5 text-right tabular-nums text-xs font-semibold {{ $item->remaining_balance > 0 ? 'text-ochre' : 'text-taupe' }}">
+                            <td class="px-3 py-3.5 text-right tabular-nums text-xs font-semibold {{ $item->remaining_balance > 0 ? 'text-ochre' : 'text-taupe' }} whitespace-nowrap">
                                 {{ format_idr($item->remaining_balance) }}
                             </td>
                             <td class="px-3 py-3.5 text-center">
