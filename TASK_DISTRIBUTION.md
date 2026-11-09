@@ -1,132 +1,158 @@
-# Pembagian Tugas Tim & Panduan Kolaborasi Git — Atelier Vow Wedding Planner
+# Pembagian Tugas Tim & Spesifikasi Peran (Enterprise Full-Stack Model)
+## Atelier Vow Nusantara — Luxury Wedding Planner & Backoffice SaaS
 
-Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pembagian kerja tim rekayasa perangkat lunak untuk aplikasi **Atelier Vow Nusantara — Luxury Wedding Planner & Backoffice SaaS**.
-
----
-
-## 1. Peta Kepemilikan Modul & Branch Git
-
-| No | Nama Lengkap | Akun GitHub | Branch Git | Modul & Tanggung Jawab Utama | Status Final (100% Siap Pakai) |
-|:---|:---|:---|:---|:---|:---|
-| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` (Lead) | **Arsitektur Inti, Multi-Tenancy, Master Guide Print A4 (`/print/master-guide`), & Docker Deployment** | **100% Selesai & Teruji** |
-| 2 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Modul #1: Budget Planner (`/budget`), Smart Adat Allocator & Multi-Termin Breakdown** | **100% Selesai & Teruji** |
-| 3 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Modul #3: Timeline & Live Rundown Hari-H (`/timeline`), Modul #4: Vendor SLA & Bukti Termin (`/vendors`)** | **100% Selesai & Teruji** |
-| 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Modul #2: Wedding Checklist (`/checklist`), Buku Tamu Digital & WhatsApp RSVP (`/guests`)** | **100% Selesai & Teruji** |
+Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pembagian kerja tim rekayasa perangkat lunak untuk aplikasi **Atelier Vow Nusantara**. Struktur tim disusun menggunakan model industri: **1 Lead & Admin Architect + 1 Lead Frontend Engineer (Web Utuh) + 2 Backend Core Engineers**.
 
 ---
 
-## 2. Rincian Tugas & Panduan Implementasi per Anggota
+## 1. Peta Peran Tim, Tanggung Jawab, & Git Branch
 
-### A. M. Irsyad Fachryanto (`branch: irsyad` & `main`) — LEAD ARCHITECT
-- **Status**: **SELESAI & SUDAH DIRILIS DI `main` (v0.1.1)**
-- **Fitur & Berkas yang Diselesaikan**:
-  1. **Multi-Tenancy & Isolasi Data**:
-     - `app/Models/Concerns/BelongsToWeddingProfile.php` (Global Scope tenant).
-     - `app/Http/Middleware/EnsureWeddingProfile.php` (Gate onboarding otomatis).
-     - `app/Http/Controllers/OnboardingController.php` & `resources/views/onboarding/*`.
-     - `database/migrations/2026_11_06_000001_add_tenant_ownership_columns.php`.
-     - `tests/Feature/TenancyTest.php` (5 test isolasi multi-tenant).
-  2. **Fondasi Skema Bersama Tim**:
-     - `database/migrations/2026_11_06_000002_create_rundowns_guests_and_payments_tables.php`.
-     - Model `WeddingRundown`, `WeddingGuest`, `VendorPayment` (lengkap relasi ke `WeddingProfile` & `Vendor`).
-     - Seeder `WeddingPlannerSeeder` diperbarui dengan data rundown hari-H, buku tamu, dan riwayat termin.
-  3. **Cetak Master Guide Pernikahan A4 / PDF (`GET /print/master-guide`)**:
-     - `app/Http/Controllers/PrintController.php`.
-     - `resources/views/print/master-guide.blade.php` (Editorial layout, `@media print` 4 halaman: Ringkasan Eksekutif & Weton, Rundown Menit-demi-Menit, Kontak Darurat Vendor, Penataan Meja Tamu VIP).
-     - Tombol *Buku Panduan & Cetak* di Dashboard terhubung langsung ke view ini.
-  4. **Infrastruktur Produksi & Docker**:
-     - `Dockerfile` multi-stage production PHP 8.4-FPM + Nginx.
-     - `docker-compose.yml` (App, PostgreSQL 16, Redis 7, Nginx).
-     - `docker/nginx.conf`, `.dockerignore`, dan skrip eksekusi satu baris `./deploy.sh`.
+| No | Nama Anggota | Akun GitHub | Branch Git | Peran Utama (*Core Role*) | Cakupan Kerja & Modul | Status |
+|:---|:---|:---|:---|:---|:---|:---|
+| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` / `main` | **Project Lead, Systems Architect & Admin Ops** | Arsitektur Multi-Tenancy, Konsol Admin Privat (`/admin`), Mesin Dokumen Cetak Master Guide A4 (`/print/master-guide`), Keamanan Auth, dan Kontainerisasi Docker | **100% Selesai & Teruji** |
+| 2 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Lead Frontend Engineer & UI/UX Specialist** | Seluruh Antarmuka Web Utuh (Design System Vogue, Blade Views, Alpine.js, Responsivitas Mobile, Apple HIG & Refactoring UI Polish untuk 6 Modul Utama) | **100% Selesai & Teruji** |
+| 3 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Senior Backend Engineer (Operations & Vendors)** | Data Layer & Logika Bisnis Modul Linimasa & Rundown Hari-H (`WeddingRundown`), Manajemen Kemitraan Vendor (`Vendor`), dan Arsitektur Multi-Termin (`VendorPayment`) | **100% Selesai & Teruji** |
+| 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Senior Backend Engineer (Guests & Workflows)** | Data Layer & Logika Bisnis Modul Buku Tamu Digital & RSVP (`WeddingGuest`), Workflow Checklist Tugas (`WeddingTask`), WhatsApp Link Generator, dan Otomasi Pengujian PHPUnit | **100% Selesai & Teruji** |
 
 ---
 
-### B. Marsha Dwi Lucyana (`branch: marsha`) — BUDGET & FINANCIAL LEAD
-- **Modul**: **Fitur #1: Budget Planner (`GET /budget`)**
+## 2. Rincian Job Desk Mendalam per Anggota Tim
+
+### A. M. Irsyad Fachryanto (`branch: irsyad`) — LEAD & ADMIN ARCHITECT
+- **Fokus Utama**: Menjaga integritas sistem, keamanan batas penyewa (*tenant boundaries*), operasional backoffice WO, dan kesiapan rilis produksi.
+- **Tanggung Jawab Spesifik**:
+  1. **Multi-Tenancy & Tenant Isolation**:
+     - Membangun trait `BelongsToWeddingProfile` dengan Global Scope Eloquent agar seluruh query (vendor, budget, task, rundown, guest) terkunci secara otomatis pada profil pernikahan pasangan yang sedang login.
+     - Mengamankan middleware `EnsureWeddingProfile` dan alur onboarding (`/onboarding`).
+     - Mengamankan alur Google Sign-In dari celah eskalasi akun admin (`role = customer`).
+  2. **Konsol Administrator & Lead WO (`/admin`)**:
+     - Membangun konsol operasional tersembunyi dengan middleware `EnsureAdminAccess` (proteksi status `403 Forbidden` untuk non-admin).
+     - Menyiapkan telemetri sistem: Eskalasi 1-klik tugas terlambat, verifikasi SLA kontrak vendor, dan **Matriks Kepatuhan Twelve-Factor SaaS (12/12 Faktor)**.
+  3. **Mesin Cetak Dokumen Resmi Master Guide A4/PDF (`/print/master-guide`)**:
+     - Merancang controller dan format cetak presisi 4 halaman A4 untuk panduan lapangan panitia tanpa ketergantungan koneksi internet.
+  4. **DevOps & Kontainerisasi**:
+     - `Dockerfile` multi-stage (PHP 8.4-FPM + Node 22 Vite Build + OPcache).
+     - `docker-compose.yml` (App, PostgreSQL 16, Redis 7, Nginx Reverse Proxy).
+     - Skrip deployment otomatis satu baris `./deploy.sh`.
 - **Berkas yang Dikelola**:
-  - `app/Http/Controllers/BudgetController.php`
-  - `resources/views/budget/index.blade.php`
-  - `app/Models/BudgetItem.php` & `app/Models/VendorPayment.php`
-- **Rincian Tugas yang Dikerjakan**:
-  1. **Tampilan Riwayat Multi-Termin Pembayaran**:
-     - Skema tabel `vendor_payments` sudah disediakan oleh Irsyad.
-     - Tambahkan sub-panel / accordion di baris item anggaran vendor untuk menampilkan riwayat termin yang sudah dibayar (DP, Termin 1, Pelunasan) beserta tanggal bayar dan nomor referensi kwitansi (`receipt_ref`).
-  2. **Smart Budget Allocator (Preset Adat Nusantara)**:
-     - Tambahkan tombol / dropdown rekomendasi alokasi anggaran otomatis berdasarkan konsep:
-       - **Adat Jawa Paes Ageng**: Venue 25%, Catering 35%, Busana & Paes 18%, Dekorasi 12%, Dokumentasi 6%, Lainnya 4%.
-       - **Adat Sunda Siger**: Venue 22%, Catering 38%, Busana & Rias 16%, Dekorasi 14%, Dokumentasi 6%, Lainnya 4%.
-       - **Modern Intimate**: Venue & Catering 50%, Dekorasi & Lighting 20%, Dokumentasi Editorial 15%, Entertainment 10%, Lainnya 5%.
-  3. **Breakdown Biaya per Pax Tamu**:
-     - Tampilkan kalkulasi real-time: `Biaya per Tamu = Plafon Total / Target Tamu` dan komparasi dengan `Realisasi Aktual / Target Tamu`.
+  - `app/Http/Controllers/{AuthController,OnboardingController,PrintController,AdminController,DashboardController}.php`
+  - `app/Models/Concerns/BelongsToWeddingProfile.php` & `app/Http/Middleware/EnsureAdminAccess.php`
+  - `Dockerfile`, `docker-compose.yml`, `docker/nginx.conf`, `deploy.sh`
 
 ---
 
-### C. Septiyan Adam Maulana (`branch: adam`) — TIMELINE & VENDOR LEAD
-- **Modul**: **Fitur #3: Wedding Timeline (`GET /timeline`)** & **Fitur #4: Vendor Management (`GET /vendors`)**
+### B. Marsha Dwi Lucyana (`branch: marsha`) — LEAD FRONTEND ENGINEER (WEB UTUH)
+- **Fokus Utama**: Menemani Irsyad memegang **seluruh lapisan antarmuka (*frontend web utuh*)** agar aplikasi mudah digunakan, bebas dari tumpukan teks (*decluttered*), responsif di layar HP, dan memiliki estetika visual setara produk Apple / Vogue Editorial.
+- **Tanggung Jawab Spesifik**:
+  1. **Sistem Desain & Tipografi Visual (Apple HIG & Refactoring UI)**:
+     - Mengelola token warna arsitektural di `resources/css/app.css` (Alabaster, Ivory, Pearl, Espresso, Champagne Bronze, Sage).
+     - Menerapkan radius sudut Apple-style (`rounded-2xl` untuk kartu, `rounded-xl` untuk tombol/input).
+     - Menghapus teks redundan/birokratis pada seluruh subjudul halaman dan kartu KPI.
+  2. **Pengembangan Seluruh Tampilan Modul (Blade Views)**:
+     - **Landing Page SaaS (`resources/views/saas/landing.blade.php`)**: Hero interaktif, simulasi adat, paket harga, dan FAQ.
+     - **Dashboard Pengantin (`resources/views/dashboard/index.blade.php`)**: Kartu hitung mundur Hari-H, 4 kartu ringkasan KPI, grafik distribusi anggaran, dan kalkulator weton neptu.
+     - **Budget Planner UI (`resources/views/budget/index.blade.php`)**: Widget *Smart Budget Allocator* untuk adat Jawa/Sunda/Modern, kartu alokasi, dan tabel rincian pos biaya.
+     - **Checklist UI (`resources/views/checklist/index.blade.php`)**: Daftar tugas interaktif dengan checkbox instan, filter kategori pil, dan filter PIC.
+     - **Timeline & Rundown UI (`resources/views/timeline/index.blade.php`)**: Segmented control switcher untuk linimasa bulanan dan tabel rundown menit-demi-menit Hari-H.
+     - **Vendor Directory UI (`resources/views/vendors/index.blade.php`)**: Kartu vendor bersih, progress bar pelunasan, dan tombol WhatsApp PIC.
+     - **Buku Tamu UI (`resources/views/guests/index.blade.php`)**: Filter kategori tamu, status RSVP, penataan meja, dan tombol aksi WhatsApp.
+  3. **Komponen Bersama (*Shared UI Kit*)**:
+     - `resources/views/components/ui/{stat-card,section-header,modal,status-badge,progress-bar,icon}.blade.php`.
+     - Segmented control navigasi pada `resources/views/layouts/app.blade.php`.
+- **Berkas yang Dikelola**:
+  - Seluruh direktori `resources/views/**/*`
+  - `resources/css/app.css` & `resources/js/app.js`
+
+---
+
+### C. Septiyan Adam Maulana (`branch: adam`) — SENIOR BACKEND (OPERATIONS & VENDORS)
+- **Fokus Utama**: Membangun lapisan data (*backend data layer*), relasi Eloquent, validasi transaksi, dan logika operasional untuk Modul Linimasa, Rundown Hari-H, dan Mitra Vendor.
+- **Tanggung Jawab Spesifik**:
+  1. **Modul Rundown Hari-H & Linimasa (`WeddingRundown` & `WeddingTask`)**:
+     - Mengembangkan logika penyimpanan agenda rundown menit-demi-menit (`POST /timeline/rundowns`).
+     - Membangun logika pembaruan status tugas linimasa (`PATCH /timeline/{weddingTask}/status`).
+     - Menyusun filter kronologis per fase persiapan (H-12 Bulan s/d Hari-H).
+  2. **Modul Vendor & Arsitektur Multi-Termin (`Vendor` & `VendorPayment`)**:
+     - Mengembangkan CRUD vendor dengan validasi nomor telepon dan kategori `WeddingCategory`.
+     - Membangun endpoint pencatatan termin pembayaran bertahap (`POST /vendors/{vendor}/payments`).
+     - Menyusun logika otomatisasi: Setiap pembayaran termin dicatat, kolom `paid_amount` vendor bertambah, sisa pelunasan dihitung ulang, dan status booking otomatis beralih (`DpPaid` $\rightarrow$ `Paid`).
+  3. **Optimasi Query & Eager Loading**:
+     - Mencegah N+1 query dengan eager loading terstruktur: `with(['payments', 'budgetItems', 'tasks'])`.
 - **Berkas yang Dikelola**:
   - `app/Http/Controllers/TimelineController.php` & `VendorController.php`
-  - `resources/views/timeline/index.blade.php`
-  - `resources/views/vendors/index.blade.php`
-  - `app/Models/WeddingRundown.php` & `app/Models/Vendor.php`
-- **Rincian Tugas yang Dikerjakan**:
-  1. **Tab Baru: Rundown Acara Hari-H (Minute-by-Minute Live Rundown)**:
-     - Skema tabel `wedding_rundowns` dan data seeder sudah disediakan oleh Irsyad.
-     - Buat tab switcher di `/timeline`:
-       - Tab 1: **Timeline Persiapan Bulanan (H-12 bln s.d. Hari-H)** (sudah ada).
-       - Tab 2: **Rundown Acara Hari-H (Jadwal Menit-demi-Menit)** (fitur baru).
-     - Di Tab 2, tampilkan tabel/kartu interaktif: Jam Mulai, Jam Selesai, Sesi Acara, Aktivitas, Lokasi, Nama PIC, No Telepon PIC (klik langsung ke WhatsApp atau telepon), dan Catatan Khusus.
-     - Sediakan modal tambah/edit item rundown (`POST /timeline/rundowns`).
-  2. **Form Catat Bukti Termin Pembayaran Vendor**:
-     - Di halaman `/vendors`, perbarui form pembayaran agar mendukung pencatatan riwayat termin pembayaran ke tabel `vendor_payments` (bukan hanya menimpa angka `paid_amount`).
-     - Setiap kali pembayaran baru dicatat: update `paid_amount` vendor secara otomatis.
+  - `app/Models/WeddingRundown.php`, `Vendor.php`, `VendorPayment.php`
+  - `database/migrations/*create_vendors*` & `*create_rundowns_guests_and_payments*`
 
 ---
 
-### D. Adinda Aulia Sabrina Arumsari (`branch: dinda`) — CHECKLIST & GUEST OPS LEAD
-- **Modul**: **Fitur #2: Checklist Persiapan (`GET /checklist`)** & **Fitur Tambahan: Buku Tamu Digital & RSVP (`GET /guests`)**
+### D. Adinda Aulia Sabrina Arumsari (`branch: dinda`) — SENIOR BACKEND (GUESTS & WORKFLOWS)
+- **Fokus Utama**: Membangun lapisan data untuk Modul Buku Tamu Digital, konfirmasi kehadiran (*RSVP*), alur kerja checklist persiapan, serta pengujian otomatis (*automated test suite*).
+- **Tanggung Jawab Spesifik**:
+  1. **Modul Buku Tamu Digital & RSVP (`WeddingGuest`)**:
+     - Membangun `GuestController` lengkap untuk penanganan data tamu undangan (Nama, Kategori VIP/Keluarga/Teman, Jumlah Pax, Sesi Acara, Status RSVP, No Meja).
+     - Mengembangkan accessor WhatsApp URL pada model `WeddingGuest` (`$guest->whatsapp_url`) untuk memformat nomor telepon internasional `62...` dan mengenerate pesan konfirmasi otomatis.
+     - Menyusun kalkulasi agregasi kapasitas: Total Tamu Terdata, Konfirmasi Hadir, Menunggu Konfirmasi, dan Berhalangan terhadap `guest_target`.
+  2. **Workflow Checklist Persiapan (`WeddingTask`)**:
+     - Mengembangkan endpoint toggle status tugas instan (`PATCH /checklist/{weddingTask}/toggle`).
+     - Menyusun filter pencarian teks judul/catatan, filter prioritas (`high`, `medium`, `low`), dan filter penanggung jawab (`assigned_to`).
+  3. **Otomasi Pengujian Backend (PHPUnit Test Suite)**:
+     - Menjaga cakupan pengujian di `tests/Feature/WeddingPlannerModulesTest.php` dan `tests/Feature/TenancyTest.php`.
+     - Memastikan 22 test skenario fungsional dan isolasi multi-tenancy selalu lulus 100%.
 - **Berkas yang Dikelola**:
-  - `app/Http/Controllers/ChecklistController.php`
-  - `resources/views/checklist/index.blade.php`
-  - `app/Http/Controllers/GuestController.php` (baru)
-  - `resources/views/guests/index.blade.php` (baru)
-  - `app/Models/WeddingTask.php` & `app/Models/WeddingGuest.php`
-- **Rincian Tugas yang Dikerjakan**:
-  1. **Modul Buku Tamu Digital & Manajemen RSVP (`/guests`)**:
-     - Skema tabel `wedding_guests` dan model `WeddingGuest` sudah dibuat oleh Irsyad.
-     - Buat `GuestController` dan view `resources/views/guests/index.blade.php`.
-     - Tampilkan tabel daftar tamu: Nama, Kategori (VIP / Keluarga CPW / Keluarga CPP / Teman), Jumlah Pax, Sesi Acara (Akad / Resepsi Malam), Nomor Meja, Status RSVP (Pending / Confirmed / Declined).
-     - Tombol cepat kirim undangan/konfirmasi kehadiran via WhatsApp menggunakan accessor `$guest->whatsapp_url`.
-     - Ringkasan kuota tamu: Total Tamu Terdata, Tamu Terkonfirmasi Hadir, dan Sisa Kuota terhadap `guest_target`.
-  2. **Filter PIC Penanggung Jawab pada Checklist**:
-     - Di halaman `/checklist`, tambahkan filter dropdown berdasarkan `assigned_to` (Calon Pengantin, Orang Tua, Lead WO, Vendor).
-     - Tampilkan badge prioritas tinggi (Merah) dengan visual yang lebih menonjol.
+  - `app/Http/Controllers/ChecklistController.php` & `GuestController.php`
+  - `app/Models/WeddingGuest.php` & `WeddingTask.php`
+  - `tests/Feature/{WeddingPlannerModulesTest,TenancyTest}.php`
 
 ---
 
-## 3. Alur Kerja Git Harian Setiap Anggota Tim
+## 3. Matriks Skill & Tool Developer Rekomendasi per Peran
 
-Agar kode tidak bentrok (*conflict-free collaboration*):
+Untuk mempercepat pengerjaan dan menjaga standar kualitas industri (*best practices*), berikut skill agen dan perkakas yang disarankan untuk masing-masing peran:
 
-1. **Pindah ke Branch Sendiri & Tarik Kode Terbaru dari `main`**:
+### A. Untuk Lead & Admin Architect (Irsyad)
+- **`affaan-m/ecc@laravel-security`** (13.1K installs): Audit keamanan hak akses, pencegahan bypass auth, dan hardening backend.
+- **`affaan-m/ecc@twelve-factor`**: Kepatuhan standar arsitektur cloud/SaaS (konfigurasi env, stateless process, port binding).
+- **`affaan-m/ecc@deployment-patterns`**: Pola CI/CD, optimasi kontainer Docker, dan kesiapan rilis produksi.
+- *Perintah instalasi*: `npx skills add affaan-m/ecc@laravel-security`
+
+### B. Untuk Lead Frontend Engineer (Marsha)
+- **`anthropics/skills@frontend-design`** (1.1M installs): Fondasi desain frontend modern, tipografi, dan komposisi ruang.
+- **`leonxlnx/taste-skill@design-taste-frontend`** (748K installs): Aturan anti-slop, penghapusan teks berlebih, palet warna elegan, dan rasio visual premium.
+- **`apple-ui-designer`**: Penerapan pedoman Apple Human Interface Guidelines (SF Pro aesthetic, radius halus, segmented control).
+- **`refactoring-ui`**: Hierarki visual melalui bobot & ukuran teks, kontras warna, dan skala spasi proporsional.
+- *Perintah instalasi*: `npx skills add anthropics/skills@frontend-design`
+
+### C. Untuk Backend Operations Engineer (Adam)
+- **`affaan-m/ecc@laravel-patterns`** (12.6K installs): Pola arsitektur controller, service layer, Eloquent scopes, dan query optimization.
+- **`jeffallan/claude-skills@laravel-specialist`** (23.8K installs): Panduan spesifik ekosistem Laravel modern (PHP 8.3/8.4, Enum casts, Form Requests).
+- **`affaan-m/ecc@api-design`**: Standarisasi penamaan endpoint, HTTP verb (POST/PUT/PATCH/DELETE), dan response contract.
+- *Perintah instalasi*: `npx skills add affaan-m/ecc@laravel-patterns`
+
+### D. Untuk Backend Workflow & QA Engineer (Dinda)
+- **`affaan-m/ecc@laravel-tdd`** (8.5K installs): Pengembangan berbasis tes (Test-Driven Development), pembuatan fixture, dan assertion HTTP status.
+- **`anthropics/skills@webapp-testing`** (200K installs): Verifikasi end-to-end, visual regression testing, dan pengujian form input.
+- **`affaan-m/ecc@error-handling`**: Penanganan boundary validation, fail-fast rules, dan pencegahan error query 500.
+- *Perintah instalasi*: `npx skills add affaan-m/ecc@laravel-tdd`
+
+---
+
+## 4. Alur Kolaborasi Git Harian
+
+1. **Sinkronisasi Kode**:
    ```bash
-   git checkout <branch-anda>   # contoh: git checkout marsha
-   git pull origin main         # mengambil migrasi, model, dan fitur dari Irsyad
+   git checkout <branch-anda>
+   git pull origin main
+   php artisan migrate:fresh --seed
+   npm run build
    ```
-2. **Jalankan Migrasi Database Lokal**:
-   ```bash
-   php artisan migrate --seed
-   ```
-3. **Kembangkan Fitur Sesuai Batas Berkas Masing-masing**.
-4. **Jalankan Pengujian & Format Kode Sebelum Push**:
+2. **Pengujian Sebelum Kirim**:
    ```bash
    php artisan test
-   npm run build
    ./vendor/bin/pint --test
    ```
-5. **Commit dan Push ke Branch Pribadi**:
+3. **Commit & Push**:
    ```bash
    git add .
-   git commit -m "feat(<nama-fitur>): penjelasan singkat perubahan"
+   git commit -m "feat(<nama-fitur>): penjelasan singkat pekerjaan"
    git push origin <branch-anda>
    ```
-6. **Buka Pull Request (PR) ke `main` di GitHub**.
