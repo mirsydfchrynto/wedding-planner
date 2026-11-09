@@ -180,7 +180,7 @@
                                 <x-ui.icon :name="$cat['case']->icon()" class="h-3.5 w-3.5 text-champagne" />
                                 <span>{{ $cat['short_label'] }}</span>
                             </span>
-                            <span class="tabular-nums font-semibold text-charcoal">{{ format_idr($cat['actual']) }}</span>
+                            <span class="tabular-nums font-semibold text-charcoal whitespace-nowrap">{{ format_idr($cat['actual']) }}</span>
                         </div>
                         <div class="mt-1.5">
                             <x-ui.progress-bar size="sm" :percent="$cat['utilization_percent']" :tone="$cat['is_overbudget'] ? 'wine' : 'champagne'" />
@@ -250,7 +250,7 @@
                                 <p class="truncate font-semibold text-espresso">{{ $vendor->name }}</p>
                                 <p class="text-xs text-taupe">{{ $vendor->category->shortLabel() }} · Terbayar {{ $vendor->payment_progress_percent }}%</p>
                             </div>
-                            <span class="tabular-nums font-bold text-wine shrink-0">{{ format_idr($vendor->remaining_balance) }}</span>
+                            <span class="tabular-nums font-bold text-wine shrink-0 whitespace-nowrap">{{ format_idr($vendor->remaining_balance) }}</span>
                         </div>
                     @empty
                         <p class="py-4 text-center text-xs text-taupe">Semua kontrak lunas.</p>
