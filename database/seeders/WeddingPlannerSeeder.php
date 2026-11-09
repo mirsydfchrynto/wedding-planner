@@ -35,16 +35,33 @@ final class WeddingPlannerSeeder extends Seeder
         $customer = User::query()->create([
             'name' => 'Aurelia Larasati & Reza Mahendra',
             'email' => 'aurelia.reza@gmail.com',
-            'password' => Hash::make('GoogleCustomer2026!'),
+            'password' => Hash::make('user'),
             'role' => 'customer',
             'google_id' => 'google-oauth-108291',
             'email_verified_at' => now(),
         ]);
 
         User::query()->create([
+            'name' => 'Testing User Pengantin',
+            'email' => 'user@ateliervow.id',
+            'password' => Hash::make('user'),
+            'role' => 'customer',
+            'google_id' => 'google-oauth-108292',
+            'email_verified_at' => now(),
+        ]);
+
+        User::query()->create([
             'name' => 'M. Irsyad Fachryanto (Lead Admin)',
             'email' => 'irsyad@ateliervow.id',
-            'password' => Hash::make('AtelierAdmin2026!'),
+            'password' => Hash::make('admin'),
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]);
+
+        User::query()->create([
+            'name' => 'Administrator Atelier Vow',
+            'email' => 'admin@ateliervow.id',
+            'password' => Hash::make('admin'),
             'role' => 'admin',
             'email_verified_at' => now(),
         ]);

@@ -26,6 +26,7 @@ Route::get('/', [SaasController::class, 'landing'])->name('saas.landing');
 Route::get('/saas', [SaasController::class, 'landing'])->name('saas.showcase');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'loginWithPassword'])->name('login.password');
 Route::post('/auth/google', [AuthController::class, 'loginWithGoogle'])->name('auth.google');
 Route::post('/auth/admin', [AuthController::class, 'loginAsAdmin'])->name('auth.admin');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
