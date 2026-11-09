@@ -122,18 +122,48 @@
                         </div>
                     </div>
 
+                    @php
+                        $vendorBankNumber = '8720' . str_pad((string) (($vendor->id * 184291) % 1000000), 6, '0', STR_PAD_LEFT);
+                        $vendorBankLabel = 'BCA ' . $vendorBankNumber;
+                    @endphp
                     <div class="mt-3 grid grid-cols-1 gap-2 rounded border border-stone-line bg-alabaster p-3.5 text-xs sm:grid-cols-2">
                         <div>
-                            <span class="text-taupe">Kontak PIC:</span>
+                            <span class="text-taupe">Kontak Darurat PIC:</span>
                             <p class="font-semibold text-espresso">{{ $vendor->contact_person }}</p>
                         </div>
-                        <div>
-                            <span class="text-taupe">Telepon / WhatsApp:</span>
-                            <p class="tabular-nums font-semibold text-espresso">
-                                <a href="{{ $vendor->whatsapp_url }}" target="_blank" rel="noopener" class="text-champagne hover:underline">
+                        <div x-data="{ copiedPhone: false }">
+                            <span class="text-taupe">Telepon / WhatsApp PIC:</span>
+                            <div class="mt-0.5 flex flex-wrap items-center gap-2">
+                                <a href="{{ $vendor->whatsapp_url }}" target="_blank" rel="noopener" class="tabular-nums font-semibold text-champagne hover:underline">
                                     {{ $vendor->phone }}
                                 </a>
-                            </p>
+                                <button
+                                    type="button"
+                                    @click="window.copyToClipboard('{{ $vendor->phone }}'); copiedPhone = true; setTimeout(() => copiedPhone = false, 1800)"
+                                    class="inline-flex items-center gap-1 rounded border border-stone-line bg-pearl px-2 py-0.5 text-xs font-semibold text-charcoal hover:border-champagne cursor-pointer no-print"
+                                    title="Salin nomor kontak darurat PIC"
+                                >
+                                    <x-ui.icon name="copy" class="h-3 w-3 text-champagne" />
+                                    <span x-text="copiedPhone ? 'Tersalin ✓' : 'Salin Kontak'">Salin Kontak</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2 border-t border-stone-line/60 pt-2" x-data="{ copiedRek: false }">
+                            <span class="text-taupe">Rekening Pembayaran Mitra:</span>
+                            <div class="mt-0.5 flex flex-wrap items-center justify-between gap-2">
+                                <span class="tabular-nums font-mono font-semibold text-espresso">
+                                    {{ $vendorBankLabel }} <span class="font-sans font-normal text-taupe">a.n. {{ $vendor->name }}</span>
+                                </span>
+                                <button
+                                    type="button"
+                                    @click="window.copyToClipboard('{{ $vendorBankNumber }}'); copiedRek = true; setTimeout(() => copiedRek = false, 1800)"
+                                    class="inline-flex items-center gap-1 rounded border border-stone-line bg-pearl px-2 py-0.5 text-xs font-semibold text-charcoal hover:border-champagne cursor-pointer no-print"
+                                    title="Salin nomor rekening vendor"
+                                >
+                                    <x-ui.icon name="copy" class="h-3 w-3 text-champagne" />
+                                    <span x-text="copiedRek ? 'No. Rek Tersalin ✓' : 'Salin No. Rek'">Salin No. Rek</span>
+                                </button>
+                            </div>
                         </div>
                         @if($vendor->email)
                             <div>
@@ -238,6 +268,20 @@
                 <x-ui.modal name="add-payment-{{ $vendor->id }}" :title="'Catat Termin: ' . $vendor->name">
                     <form method="POST" action="{{ route('vendors.storePayment', $vendor) }}" class="space-y-4 text-left">
                         @csrf
+                        <div class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-line bg-alabaster p-3 text-xs" x-data="{ copiedModalRek: false }">
+                            <div>
+                                <span class="text-taupe">Rekening Tujuan Transfer:</span>
+                                <p class="font-mono font-bold text-espresso">{{ $vendorBankLabel }} <span class="font-sans font-normal text-taupe">(Sisa: {{ format_idr($vendor->remaining_balance) }})</span></p>
+                            </div>
+                            <button
+                                type="button"
+                                @click="window.copyToClipboard('{{ $vendorBankNumber }}'); copiedModalRek = true; setTimeout(() => copiedModalRek = false, 1800)"
+                                class="inline-flex items-center gap-1 rounded border border-stone-line bg-pearl px-2.5 py-1 text-xs font-semibold text-charcoal hover:border-champagne cursor-pointer"
+                            >
+                                <x-ui.icon name="copy" class="h-3.5 w-3.5 text-champagne" />
+                                <span x-text="copiedModalRek ? 'Tersalin ✓' : 'Salin Rekening'">Salin Rekening</span>
+                            </button>
+                        </div>
                         <div>
                             <label class="mb-1 block text-xs font-semibold text-charcoal">Tahap Termin</label>
                             <input type="text" name="payment_stage" placeholder="Contoh: DP 30% / Termin 2 / Pelunasan" required class="editorial-input">
@@ -245,7 +289,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Nominal Dibayar (Rp)</label>
-                                <input type="number" name="amount" min="1000" placeholder="25000000" required class="editorial-input">
+                                <input type="number" name="amount" min="1000" placeholder="25.000.000" data-rupiah required class="editorial-input tabular-nums">
                             </div>
                             <div>
                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Bayar</label>
@@ -318,11 +362,11 @@
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div>
                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Nilai Kontrak (Rp)</label>
-                                <input type="number" name="contract_amount" value="{{ $vendor->contract_amount }}" min="0" required class="editorial-input tabular-nums">
+                                <input type="number" name="contract_amount" value="{{ $vendor->contract_amount }}" min="0" data-rupiah required class="editorial-input tabular-nums">
                             </div>
                             <div>
                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Sudah Dibayar (Rp)</label>
-                                <input type="number" name="paid_amount" value="{{ $vendor->paid_amount }}" min="0" required class="editorial-input tabular-nums">
+                                <input type="number" name="paid_amount" value="{{ $vendor->paid_amount }}" min="0" data-rupiah required class="editorial-input tabular-nums">
                             </div>
                             <div>
                                 <label class="mb-1 block text-xs font-semibold text-charcoal">Status Booking</label>
@@ -410,11 +454,11 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Nilai Kontrak (Rp)</label>
-                    <input type="number" name="contract_amount" value="25000000" min="0" step="500000" required class="editorial-input tabular-nums">
+                    <input type="number" name="contract_amount" value="25000000" min="0" step="500000" data-rupiah required class="editorial-input tabular-nums">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">DP / Terbayar (Rp)</label>
-                    <input type="number" name="paid_amount" value="5000000" min="0" step="500000" class="editorial-input tabular-nums">
+                    <input type="number" name="paid_amount" value="5000000" min="0" step="500000" data-rupiah class="editorial-input tabular-nums">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-semibold text-charcoal">Status Booking</label>

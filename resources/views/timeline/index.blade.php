@@ -255,12 +255,23 @@
                                 <td class="px-3 py-3.5 text-taupe">
                                     {{ $rundown->location ?? '-' }}
                                 </td>
-                                <td class="pl-3 py-3.5 text-espresso">
+                                <td class="pl-3 py-3.5 text-espresso" x-data="{ copiedPic: false }">
                                     <p class="font-semibold">{{ $rundown->pic_name ?? 'Tim WO' }}</p>
                                     @if($rundown->pic_phone)
-                                        <a href="tel:{{ $rundown->pic_phone }}" class="font-mono text-[11px] text-champagne hover:underline">
-                                            {{ $rundown->pic_phone }}
-                                        </a>
+                                        <div class="mt-0.5 flex flex-wrap items-center gap-1.5">
+                                            <a href="tel:{{ $rundown->pic_phone }}" class="font-mono text-xs text-champagne hover:underline">
+                                                {{ $rundown->pic_phone }}
+                                            </a>
+                                            <button
+                                                type="button"
+                                                @click="window.copyToClipboard('{{ $rundown->pic_phone }}'); copiedPic = true; setTimeout(() => copiedPic = false, 1800)"
+                                                class="inline-flex items-center gap-1 rounded border border-stone-line bg-alabaster px-1.5 py-0.5 text-xs font-semibold text-charcoal hover:border-champagne cursor-pointer no-print"
+                                                title="Salin kontak darurat PIC"
+                                            >
+                                                <x-ui.icon name="copy" class="h-3 w-3 text-champagne" />
+                                                <span x-text="copiedPic ? 'Tersalin ✓' : 'Salin'">Salin</span>
+                                            </button>
+                                        </div>
                                     @endif
                                 </td>
                             </tr>
