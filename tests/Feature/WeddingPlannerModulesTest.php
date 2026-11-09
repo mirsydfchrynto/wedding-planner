@@ -339,4 +339,35 @@ final class WeddingPlannerModulesTest extends TestCase
             'receipt_ref' => 'REF-ADD-001',
         ]);
     }
+
+    public function test_login_with_invalid_credentials_returns_error(): void
+    {
+        $response = $this->post('/login', [
+            'login' => 'wrong@example.com',
+            'password' => 'wrongpassword',
+        ]);
+
+        $response->assertSessionHasErrors('login');
+        $this->assertGuest();
+    }
+
+    public function test_login_with_shorthand_credentials(): void
+    {
+        $userResponse = $this->post('/login', [
+            'login' => 'user',
+            'password' => 'user',
+        ]);
+        $userResponse->assertRedirect(route('dashboard.index'));
+        $this->assertAuthenticated();
+
+        $this->post('/logout');
+        $this->assertGuest();
+
+        $adminResponse = $this->post('/login', [
+            'login' => 'admin',
+            'password' => 'admin',
+        ]);
+        $adminResponse->assertRedirect(route('admin.index'));
+        $this->assertAuthenticated();
+    }
 }
