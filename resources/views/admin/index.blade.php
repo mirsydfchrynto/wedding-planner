@@ -2,7 +2,7 @@
 
 @section('content')
     {{-- 1. OVERVIEW: Divided KPI Container (app-screens.md §14: One container split by hairlines, label over value) --}}
-    <section class="grid grid-cols-1 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x" data-reveal>
+    <section class="grid grid-cols-1 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x shadow-xs">
         <div class="p-5">
             <p class="text-sm font-medium text-slate-600">Workspace Klien Aktif</p>
             <p class="mt-1.5 text-2xl font-bold text-slate-900 truncate">{{ $profile->couple_names }}</p>
@@ -19,8 +19,8 @@
 
         <div class="p-5">
             <p class="text-sm font-medium text-slate-600">Sisa Kewajiban Vendor</p>
-            <p class="mt-1.5 tabular-nums text-2xl font-bold text-slate-900">{{ format_idr($summary['unpaid_balance']) }}</p>
-            <p class="mt-1 text-sm text-slate-600 tabular-nums">
+            <p class="mt-1.5 tabular-nums text-2xl font-bold text-slate-900 whitespace-nowrap">{{ format_idr($summary['unpaid_balance']) }}</p>
+            <p class="mt-1 text-sm text-slate-600 tabular-nums whitespace-nowrap">
                 Dari total kontrak {{ format_idr($vendors->sum('contract_amount')) }}
             </p>
         </div>
@@ -34,9 +34,34 @@
         </div>
     </section>
 
+    {{-- Secondary Telemetry Bar --}}
+    <section class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div class="rounded-lg border border-slate-200 bg-white p-4 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tamu Undangan Terdata</p>
+                <p class="mt-1 text-xl font-bold text-slate-900 tabular-nums">{{ $systemDiagnostics['total_guests'] }} Pax</p>
+            </div>
+            <x-ui.icon name="users" class="h-6 w-6 text-slate-400" />
+        </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-4 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Agenda Rundown Hari-H</p>
+                <p class="mt-1 text-xl font-bold text-slate-900 tabular-nums">{{ $systemDiagnostics['total_rundowns'] }} Sesi</p>
+            </div>
+            <x-ui.icon name="calendar" class="h-6 w-6 text-slate-400" />
+        </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-4 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Termin Terverifikasi</p>
+                <p class="mt-1 text-xl font-bold text-slate-900 font-mono whitespace-nowrap">{{ format_idr($systemDiagnostics['total_payments_logged']) }}</p>
+            </div>
+            <x-ui.icon name="wallet" class="h-6 w-6 text-slate-400" />
+        </div>
+    </section>
+
     {{-- 2. VISUALIZATIONS: Where Is the Bottleneck? (2 Side-by-Side Operator Charts) --}}
     <section class="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
-        <div class="rounded-lg border border-slate-200 bg-white p-5 lg:col-span-5" data-reveal style="--delay: 60ms">
+        <div class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-5 shadow-xs">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">Visualisasi Status Tugas</h2>
@@ -49,13 +74,13 @@
             </div>
         </div>
 
-        <div class="rounded-lg border border-slate-200 bg-white p-5 lg:col-span-7" data-reveal style="--delay: 120ms">
+        <div class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-7 shadow-xs">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">Serapan Anggaran vs Estimasi (Juta Rp)</h2>
                     <p class="text-sm text-slate-600">Deteksi cepat pos biaya yang melampaui estimasi awal</p>
                 </div>
-                <span class="tabular-nums text-sm font-semibold text-sage">Sisa Plafon: {{ format_idr($summary['remaining_budget']) }}</span>
+                <span class="tabular-nums text-sm font-semibold text-sage whitespace-nowrap">Sisa Plafon: {{ format_idr($summary['remaining_budget']) }}</span>
             </div>
             <div class="mt-4 h-56 w-full">
                 <canvas id="adminBudgetBottleneckChart" role="img" aria-label="Grafik batang serapan anggaran"></canvas>
@@ -65,7 +90,7 @@
 
     {{-- 3. ACTION REQUIRED: Bottleneck & Overdue Escalation + High-Risk Budget --}}
     <section id="bottleneck-section" class="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
-        <div class="rounded-lg border border-slate-200 bg-white p-5 lg:col-span-6" data-reveal style="--delay: 160ms">
+        <div class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-6 shadow-xs">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div class="flex items-center gap-2">
                     <x-ui.icon name="alert-triangle" class="h-4 w-4 text-wine" />
@@ -102,7 +127,7 @@
             </div>
         </div>
 
-        <div class="rounded-lg border border-slate-200 bg-white p-5 lg:col-span-6" data-reveal style="--delay: 200ms">
+        <div class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-6 shadow-xs">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div class="flex items-center gap-2">
                     <x-ui.icon name="wallet" class="h-4 w-4 text-ochre" />
@@ -116,7 +141,7 @@
                     <div class="flex items-center justify-between gap-3 py-3">
                         <div>
                             <p class="font-semibold text-slate-900">{{ $item->title }}</p>
-                            <p class="mt-0.5 text-slate-600">{{ $item->category->shortLabel() }} · Aktual {{ format_idr($item->actual_cost) }}</p>
+                            <p class="mt-0.5 text-slate-600">{{ $item->category->shortLabel() }} · Aktual <span class="whitespace-nowrap">{{ format_idr($item->actual_cost) }}</span></p>
                         </div>
                         @if($item->is_overbudget)
                             <x-ui.status-badge tone="wine" :label="'Over ' . format_idr(abs($item->variance_amount))" />
@@ -132,12 +157,12 @@
     </section>
 
     {{-- 4. LIVEWIRE VENDOR SLA MANAGER --}}
-    <section class="mt-6" data-reveal>
+    <section class="mt-6">
         <livewire:admin-vendor-manager />
     </section>
 
     {{-- 5. TWELVE-FACTOR INFRASTRUCTURE MATRIX --}}
-    <section id="system-health-section" class="mt-6 rounded-lg border border-slate-200 bg-white p-5" data-reveal>
+    <section id="system-health-section" class="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
         <div class="flex items-center justify-between border-b border-slate-200 pb-3">
             <div class="flex items-center gap-2">
                 <x-ui.icon name="shield-check" class="h-4 w-4 text-sage" />

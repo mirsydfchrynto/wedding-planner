@@ -29,8 +29,7 @@
                     </div>
                     <div>
                         <p class="text-sm font-bold text-white leading-none">Atelier Vow</p>
-                        <p class="mt-0.5 text-[11px] text-slate-400">Breeze Admin Console</p>
-                    </div>
+                        <p class="mt-0.5 text-[11px] text-slate-400">Backoffice Operasional WO</p>
                 </div>
                 <span class="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-300">v1.0</span>
             </div>
@@ -70,6 +69,14 @@
                 <a href="{{ route('vendors.index') }}" class="flex items-center gap-2.5 rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800/70 hover:text-white">
                     <x-ui.icon name="file-text" class="h-4 w-4 text-slate-400" />
                     <span>Direktori Vendor</span>
+                </a>
+                <a href="{{ route('guests.index') }}" class="flex items-center gap-2.5 rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                    <x-ui.icon name="users" class="h-4 w-4 text-slate-400" />
+                    <span>Buku Tamu &amp; RSVP</span>
+                </a>
+                <a href="{{ route('print.masterGuide') }}" target="_blank" class="flex items-center gap-2.5 rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                    <x-ui.icon name="printer" class="h-4 w-4 text-slate-400" />
+                    <span>Dokumen Cetak A4</span>
                 </a>
             </nav>
 
@@ -122,6 +129,11 @@
                     <a href="{{ route('admin.index') }}" class="rounded px-2.5 py-1.5 bg-slate-800 font-semibold">Overview Admin</a>
                     <a href="{{ route('dashboard.index') }}" class="rounded px-2.5 py-1.5 text-slate-300">Portal Pengantin</a>
                     <a href="{{ route('budget.index') }}" class="rounded px-2.5 py-1.5 text-slate-300">Budget Planner</a>
+                    <a href="{{ route('checklist.index') }}" class="rounded px-2.5 py-1.5 text-slate-300">Checklist</a>
+                    <a href="{{ route('timeline.index') }}" class="rounded px-2.5 py-1.5 text-slate-300">Timeline &amp; Rundown</a>
+                    <a href="{{ route('vendors.index') }}" class="rounded px-2.5 py-1.5 text-slate-300">Direktori Vendor</a>
+                    <a href="{{ route('guests.index') }}" class="rounded px-2.5 py-1.5 text-slate-300">Buku Tamu</a>
+                    <a href="{{ route('print.masterGuide') }}" target="_blank" class="rounded px-2.5 py-1.5 text-slate-300">Dokumen Cetak A4</a>
                 </div>
             </div>
 

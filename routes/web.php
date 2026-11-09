@@ -104,4 +104,5 @@ Route::prefix('admin')
         Route::get('/', [AdminController::class, 'index'])->name('index');
         Route::post('/escalate-overdue', [AdminController::class, 'escalateOverdue'])->name('escalateOverdue');
         Route::patch('/vendors/{vendor}/verify', [AdminController::class, 'verifyVendor'])->name('verifyVendor');
+        Route::patch('/vendors/{vendor}/paid', [AdminController::class, 'markPaid'])->name('markPaid');
     });
