@@ -69,7 +69,7 @@
                             <label for="password_field" class="block text-xs font-semibold text-charcoal">
                                 Kata Sandi
                             </label>
-                            <span class="text-[11px] text-taupe">Demo: user / admin</span>
+                            <span class="text-[11px] text-taupe">Demo: user / user</span>
                         </div>
                         <input
                             id="password_field"
