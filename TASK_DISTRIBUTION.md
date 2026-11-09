@@ -1,7 +1,7 @@
 # Pembagian Tugas Tim & Spesifikasi Peran (Enterprise Full-Stack Model)
 ## Atelier Vow Nusantara — Luxury Wedding Planner & Backoffice SaaS
 
-Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pembagian kerja tim rekayasa perangkat lunak untuk aplikasi **Atelier Vow Nusantara**. Struktur tim disusun sesuai penetapan final: **Irsyad & Adam di Frontend (Admin & Web Utuh) + Marsha & Dinda di Backend**.
+Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pembagian kerja tim rekayasa perangkat lunak untuk aplikasi **Atelier Vow Nusantara**. Struktur tim dipimpin oleh **Irsyad sebagai Project Lead & PM Integrator**, didampingi **Adam di Frontend (Web Utuh)**, serta **Marsha & Dinda di Backend Core**.
 
 ---
 
@@ -9,7 +9,7 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 
 | No | Nama Anggota | Akun GitHub | Branch Git | Peran Utama (*Core Role*) | Cakupan Kerja & Modul | Status |
 |:---|:---|:---|:---|:---|:---|:---|
-| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` / `main` | **Project Lead, Architect & Frontend Admin Lead** | Konsol Admin Privat (`/admin`), Mesin Dokumen Cetak Master Guide A4 (`/print/master-guide`), Arsitektur Multi-Tenancy, dan Kontainerisasi Docker | **100% Selesai & Teruji** |
+| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` / `main` | **Project Lead, Project Manager & System Integrator** | Memimpin proyek, integrasi seluruh modul, melengkapi kekurangan sistem, Konsol Admin (`/admin`), Cetak Master Guide (`/print/master-guide`), Keamanan Multi-Tenancy, dan Rilis Docker | **100% Selesai & Teruji** |
 | 2 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Lead Frontend Engineer (Web Utuh UI/UX)** | Seluruh Antarmuka Pengguna Web Utuh (Design System Vogue, Blade Views, Alpine.js, Responsivitas Mobile, Apple HIG & Refactoring UI Polish untuk 6 Modul Utama) | **100% Selesai & Teruji** |
 | 3 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Senior Backend Engineer (Financial & Vendors)** | Data Layer & Logika Bisnis Modul Budget Planner (`/budget`), Kalkulasi Deviasi, Smart Adat Allocator Logic, dan Arsitektur Multi-Termin Vendor (`VendorPayment`) | **100% Selesai & Teruji** |
 | 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Senior Backend Engineer (Guests & Workflows)** | Data Layer & Logika Bisnis Modul Buku Tamu Digital & RSVP (`WeddingGuest`), Workflow Checklist Tugas (`WeddingTask`), WhatsApp Link Generator, dan Otomasi Pengujian PHPUnit | **100% Selesai & Teruji** |
@@ -18,31 +18,34 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 
 ## 2. Rincian Job Desk Mendalam per Anggota Tim
 
-### A. M. Irsyad Fachryanto (`branch: irsyad`) — PROJECT LEAD & FRONTEND ADMIN ARCHITECT
-- **Fokus Utama**: Menjaga integritas arsitektur sistem, antarmuka konsol admin, mesin dokumen cetak, dan alur rilis produksi.
+### A. M. Irsyad Fachryanto (`branch: irsyad`) — PROJECT LEAD, PROJECT MANAGER & SYSTEM INTEGRATOR
+- **Fokus Utama**: Memimpin arah teknis proyek, menyatukan seluruh pekerjaan tim (*system integration*), melengkapi setiap celah/kekurangan fitur, serta mengamankan arsitektur dan rilis server.
 - **Tanggung Jawab Spesifik**:
-  1. **Konsol Administrator & Lead WO (`/admin`)**:
-     - Membangun tata letak antarmuka admin yang tersembunyi dengan middleware `EnsureAdminAccess` (`403 Forbidden` untuk non-admin).
-     - Antarmuka telemetri: Eskalasi 1-klik tugas terlambat, verifikasi SLA kontrak vendor, dan **Matriks Kepatuhan Twelve-Factor SaaS (12/12 Faktor)**.
-  2. **Mesin Cetak Dokumen Resmi Master Guide A4/PDF (`/print/master-guide`)**:
-     - Merancang controller dan tampilan cetak presisi 4 halaman A4 (*Vogue Bridal Editorial*) untuk panduan operasional lapangan panitia tanpa koneksi internet.
-  3. **Arsitektur Multi-Tenancy & Autentikasi**:
-     - Trait `BelongsToWeddingProfile` dengan Global Scope Eloquent agar seluruh query data terkunci per pasangan pengantin.
-     - Middleware `EnsureWeddingProfile` dan gerbang onboarding otomatis (`/onboarding`).
-     - Pengamanan login Google OAuth dari potensi eskalasi akun admin (`role = customer`).
-  4. **DevOps & Kontainerisasi**:
+  1. **Manajemen Proyek & Integrasi Sistem (*Merge Master*)**:
+     - Mengatur branching strategy Git, me-review Pull Request dari branch `adam`, `marsha`, dan `dinda`, serta menggabungkannya ke `main` tanpa konflik kode (*zero merge conflicts*).
+     - Menyatukan API contracts antara antarmuka Blade/Alpine dengan controller dan database.
+     - Menyisir dan melengkapi fitur yang belum tuntas (*finishing & gap-filling*) pada seluruh modul agar aplikasi 100% siap pakai.
+  2. **Konsol Administrator & Lead WO (`/admin`)**:
+     - Antarmuka dan backend khusus backoffice operasional WO yang diproteksi middleware `EnsureAdminAccess` (`403 Forbidden` untuk non-admin).
+     - Eskalasi 1-klik tugas terlambat, verifikasi SLA kontrak vendor, dan **Matriks Kepatuhan Twelve-Factor SaaS (12/12 Faktor)**.
+  3. **Mesin Cetak Dokumen Resmi Master Guide A4/PDF (`/print/master-guide`)**:
+     - Generator cetak presisi 4 halaman A4 (*Vogue Bridal Editorial*) untuk buku panduan lapangan panitia dan pengantin tanpa internet.
+  4. **Arsitektur Multi-Tenancy & Keamanan**:
+     - Trait `BelongsToWeddingProfile` dengan Global Scope Eloquent agar seluruh data pasangan terisolasi aman.
+     - Gerbang onboarding otomatis (`/onboarding`) dan mitigasi eskalasi akun admin pada alur Google OAuth.
+  5. **DevOps & Kontainerisasi**:
      - `Dockerfile` multi-stage (PHP 8.4-FPM + Node 22 Vite Build + OPcache).
      - `docker-compose.yml` (App, PostgreSQL 16, Redis 7, Nginx Reverse Proxy).
      - Skrip deployment otomatis satu baris `./deploy.sh`.
 - **Berkas yang Dikelola**:
   - `app/Http/Controllers/{AuthController,OnboardingController,PrintController,AdminController,DashboardController}.php`
-  - `resources/views/{print,onboarding,admin}/*`
-  - `Dockerfile`, `docker-compose.yml`, `docker/nginx.conf`, `deploy.sh`
+  - `app/Models/Concerns/BelongsToWeddingProfile.php` & `app/Http/Middleware/EnsureAdminAccess.php`
+  - `Dockerfile`, `docker-compose.yml`, `docker/nginx.conf`, `deploy.sh`, `TASK_DISTRIBUTION.md`
 
 ---
 
 ### B. Septiyan Adam Maulana (`branch: adam`) — LEAD FRONTEND ENGINEER (WEB UTUH)
-- **Fokus Utama**: Menemani Irsyad memegang **seluruh tampilan web utuh (*full frontend*)** agar antarmuka tenang, mudah digunakan, bebas dari tumpukan teks (*decluttered*), responsif di layar smartphone, dan memiliki standar visual kelas atas (Apple HIG & Refactoring UI).
+- **Fokus Utama**: Berkolaborasi dengan Project Lead untuk memegang **seluruh tampilan web utuh (*full frontend*)** agar antarmuka tenang, mudah digunakan, bebas dari tumpukan teks (*decluttered*), responsif di layar smartphone, dan memiliki standar visual kelas atas (Apple HIG & Refactoring UI).
 - **Tanggung Jawab Spesifik**:
   1. **Sistem Desain & Tipografi Visual (Apple HIG & Refactoring UI)**:
      - Mengelola token warna arsitektural di `resources/css/app.css` (Alabaster, Ivory, Pearl, Espresso, Champagne Bronze, Sage).
@@ -89,7 +92,7 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 - **Fokus Utama**: Membangun lapisan data untuk Modul Buku Tamu Digital, konfirmasi kehadiran (*RSVP*), alur kerja checklist persiapan, serta pengujian otomatis (*automated test suite*).
 - **Tanggung Jawab Spesifik**:
   1. **Modul Buku Tamu Digital & RSVP (`WeddingGuest`)**:
-     - Membangun `GuestController` lengkap untuk penanganan data tamu undangan (Nama, Kategori VIP/Keluarga/Teman, Jumlah Pax, Sesi Acara, Status RSVP, No Meja).
+     - Membangun `GuestController` lengkap untuk penanganan data tamu undangan (Nama, Kategori VIP/Keluarga/Teman, Sesi Acara, Jumlah Pax, Status RSVP, No Meja).
      - Mengembangkan accessor WhatsApp URL pada model `WeddingGuest` (`$guest->whatsapp_url`) untuk memformat nomor telepon internasional `62...` dan mengenerate pesan konfirmasi otomatis.
      - Menyusun agregasi kapasitas: Total Tamu Terdata, Konfirmasi Hadir, Menunggu Konfirmasi, dan Berhalangan terhadap `guest_target`.
   2. **Workflow Checklist Persiapan (`WeddingTask`)**:
@@ -109,16 +112,27 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 
 Berikut skill terverifikasi dari ekosistem agen untuk masing-masing peran:
 
-### Tim Frontend (Irsyad & Adam)
+### A. Untuk Project Lead & PM Integrator (Irsyad)
+- **`affaan-m/ecc@laravel-security`** (13.1K installs): Pengamanan hak akses, token sesi, dan pencegahan eskalasi hak akses.
+- **`affaan-m/ecc@twelve-factor`**: Kepatuhan standar arsitektur cloud/SaaS.
+- **`affaan-m/ecc@deployment-patterns`**: Pola orkestrasi kontainer dan optimasi produksi.
+- *Perintah instalasi*: `npx skills add affaan-m/ecc@laravel-security`
+
+### B. Untuk Lead Frontend Engineer (Adam)
 - **`anthropics/skills@frontend-design`** (1.1M installs): Standar desain web modern, komposisi, dan tipografi.
 - **`leonxlnx/taste-skill@design-taste-frontend`** (748K installs): Aturan anti-slop, penghapusan teks berlebih (*decluttering*), dan rasio visual premium.
 - **`apple-ui-designer`**: Penerapan pedoman Apple Human Interface Guidelines (SF Pro aesthetic, radius halus, segmented control).
 - **`refactoring-ui`**: Hierarki visual berbasis ukuran/bobot teks, kontras warna, dan skala spasi proporsional.
 - *Perintah instalasi*: `npx skills add anthropics/skills@frontend-design`
 
-### Tim Backend (Marsha & Dinda)
+### C. Untuk Senior Backend Financial (Marsha)
 - **`jeffallan/claude-skills@laravel-specialist`** (23.8K installs): Standar arsitektur Laravel modern (PHP 8.3/8.4, Enum casts, Form Requests).
 - **`affaan-m/ecc@laravel-patterns`** (12.6K installs): Pola service layer, query scopes, dan relasi Eloquent.
-- **`affaan-m/ecc@laravel-tdd`** (8.5K installs): Pengembangan berbasis tes (Test-Driven Development) dan penulisan assertion HTTP.
-- **`affaan-m/ecc@error-handling`**: Penanganan fail-fast boundary validation dan pencegahan error query 500.
+- **`affaan-m/ecc@api-design`**: Standarisasi RESTful API dan kontrak response.
 - *Perintah instalasi*: `npx skills add jeffallan/claude-skills@laravel-specialist`
+
+### D. Untuk Senior Backend Workflows & Testing (Dinda)
+- **`affaan-m/ecc@laravel-tdd`** (8.5K installs): Pengembangan berbasis tes (Test-Driven Development) dan penulisan assertion HTTP.
+- **`anthropics/skills@webapp-testing`** (200K installs): Verifikasi alur kerja form dan validasi data.
+- **`affaan-m/ecc@error-handling`**: Penanganan fail-fast boundary validation dan pencegahan error query 500.
+- *Perintah instalasi*: `npx skills add affaan-m/ecc@laravel-tdd`
