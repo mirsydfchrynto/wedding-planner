@@ -289,7 +289,7 @@
     {{-- ======================================================== --}}
     {{-- 3. INTERACTIVE SIMULATOR (ADAT & ANGGARAN NUSANTARA) --}}
     {{-- ======================================================== --}}
-    <livewire:budget-simulator />
+    @include('saas.partials.budget-simulator')
 
     {{-- ======================================================== --}}
     {{-- 4. HOW IT WORKS: EMPAT TAHAP MENUJU HARI-H --}}

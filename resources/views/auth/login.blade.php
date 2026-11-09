@@ -95,52 +95,6 @@
                 <a href="{{ route('saas.landing') }}" class="hover:text-espresso transition flex items-center gap-1">
                     <span>&larr; Kembali ke Beranda</span>
                 </a>
-
-                {{-- Hidden / Discrete Administrator Portal Modal Trigger --}}
-                <div x-data="{ openAdmin: false }">
-                    <button
-                        type="button"
-                        @click="openAdmin = true"
-                        class="text-[11px] text-taupe/80 hover:text-espresso transition cursor-pointer"
-                    >
-                        Portal WO &amp; Admin
-                    </button>
-
-                    {{-- Sleek, Quiet Admin Login Modal --}}
-                    <div
-                        x-show="openAdmin"
-                        x-cloak
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs"
-                    >
-                        <div
-                            @click.away="openAdmin = false"
-                            class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl border border-black/[0.08] text-left space-y-4"
-                        >
-                            <div class="flex items-center justify-between pb-3 border-b border-stone-line">
-                                <div class="flex items-center gap-2">
-                                    <x-ui.icon name="shield-check" class="h-4 w-4 text-wine" />
-                                    <h3 class="font-bold text-espresso text-sm">Otorisasi Administrator WO</h3>
-                                </div>
-                                <button type="button" @click="openAdmin = false" class="text-taupe hover:text-espresso text-xs font-bold">&times;</button>
-                            </div>
-
-                            <form method="POST" action="{{ route('auth.admin') }}" class="space-y-3 text-xs">
-                                @csrf
-                                <div>
-                                    <label for="admin_email" class="block font-semibold text-charcoal mb-1">Email / Username Admin</label>
-                                    <input id="admin_email" type="text" name="email" value="admin" required class="editorial-input !py-1.5 !text-xs">
-                                </div>
-                                <div>
-                                    <label for="admin_password" class="block font-semibold text-charcoal mb-1">Kunci Keamanan</label>
-                                    <input id="admin_password" type="password" name="password" value="admin" required class="editorial-input !py-1.5 !text-xs">
-                                </div>
-                                <button type="submit" class="editorial-btn-primary w-full !py-2 !text-xs">
-                                    Buka Konsol Backoffice
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

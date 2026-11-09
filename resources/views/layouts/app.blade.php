@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
 </head>
 @php
     $isLandingPage = request()->routeIs('saas.*') || request()->is('/');
@@ -76,15 +75,6 @@
                             <span>Buka Workspace</span>
                         </a>
                     @else
-                        @if(auth()->user()->isAdmin())
-                            <a
-                                href="{{ route('admin.index') }}"
-                                class="hidden lg:inline-flex items-center gap-1.5 rounded-md border border-wine/30 bg-wine-bg px-3 py-1.5 text-xs font-semibold text-wine hover:bg-wine hover:text-alabaster"
-                            >
-                                <x-ui.icon name="shield-check" class="h-3.5 w-3.5" />
-                                <span>Konsol Admin</span>
-                            </a>
-                        @endif
 
                         <div class="hidden xl:flex items-center gap-2 rounded-md border border-stone-line bg-alabaster px-3 py-1.5 text-xs">
                             <x-ui.google-icon class="h-3.5 w-3.5" />

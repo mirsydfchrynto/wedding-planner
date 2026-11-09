@@ -23,7 +23,6 @@ final class WeddingPlannerModulesTest extends TestCase
 
     private User $customerUser;
 
-    private User $adminUser;
 
     protected function setUp(): void
     {
@@ -31,7 +30,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->seed(WeddingPlannerSeeder::class);
 
         $this->customerUser = User::query()->where('role', 'customer')->firstOrFail();
-        $this->adminUser = User::query()->where('role', 'admin')->firstOrFail();
     }
 
     public function test_public_root_renders_saas_branding_landing_page_and_hides_admin_console(): void
@@ -43,7 +41,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $response->assertSee('Simulasi Interaktif Anggaran & Adat Nusantara');
         $response->assertSee('Keraton Royal');
         $response->assertSee('Masuk dengan Google');
-        $response->assertDontSee('Konsol Admin Privat');
     }
 
     public function test_guest_is_redirected_to_login_when_accessing_customer_or_admin_routes(): void
@@ -53,7 +50,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->get('/checklist')->assertRedirect('/login');
         $this->get('/timeline')->assertRedirect('/login');
         $this->get('/vendors')->assertRedirect('/login');
-        $this->get('/admin')->assertRedirect('/login');
     }
 
     public function test_customer_can_sign_in_with_google_and_access_dashboard(): void
@@ -74,14 +70,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $response->assertDontSee('Konsol Admin Privat');
     }
 
-    public function test_google_sign_in_aborts_when_attempting_to_use_admin_account(): void
-    {
-        $response = $this->post('/auth/google', [
-            'google_email' => $this->adminUser->email,
-        ]);
-
-        $response->assertForbidden();
-    }
 
     public function test_google_sign_in_aborts_when_demo_mode_is_disabled(): void
     {
@@ -94,12 +82,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_customer_cannot_access_private_admin_console(): void
-    {
-        $this->actingAs($this->customerUser)
-            ->get('/admin')
-            ->assertForbidden();
-    }
 
     public function test_dashboard_profile_can_be_updated_by_authenticated_customer(): void
     {
@@ -252,25 +234,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->assertSame(VendorBookingStatus::Paid, $vendor->fresh()->booking_status);
     }
 
-    public function test_private_admin_can_login_and_execute_admin_console_operations(): void
-    {
-        $this->post('/auth/admin', [
-            'email' => 'irsyad@ateliervow.id',
-            'password' => 'AtelierAdmin2026!',
-        ])->assertRedirect(route('admin.index'));
-
-        $this->get('/admin')
-            ->assertOk()
-            ->assertSee('Konsol Admin & Operasional Wedding Organizer')
-            ->assertSee('Matriks Kepatuhan Arsitektur Twelve-Factor SaaS')
-            ->assertSee('12 / 12 Faktor Terverifikasi');
-
-        $this->post('/admin/escalate-overdue')->assertRedirect(route('admin.index'));
-
-        $vendor = Vendor::query()->where('booking_status', VendorBookingStatus::Contacted->value)->firstOrFail();
-        $this->patch("/admin/vendors/{$vendor->id}/verify")->assertRedirect(route('admin.index'));
-        $this->assertSame(VendorBookingStatus::Booked, $vendor->fresh()->booking_status);
-    }
 
     public function test_master_guide_print_view_renders_rundown_and_vendor_directory(): void
     {
@@ -363,11 +326,5 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->post('/logout');
         $this->assertGuest();
 
-        $adminResponse = $this->post('/login', [
-            'login' => 'admin',
-            'password' => 'admin',
-        ]);
-        $adminResponse->assertRedirect(route('admin.index'));
-        $this->assertAuthenticated();
     }
 }

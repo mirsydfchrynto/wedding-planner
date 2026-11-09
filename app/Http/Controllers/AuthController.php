@@ -17,9 +17,7 @@ final class AuthController extends Controller
     public function showLogin(): View|RedirectResponse
     {
         if (Auth::check()) {
-            return Auth::user()?->isAdmin()
-                ? redirect()->route('admin.index')
-                : redirect()->route('dashboard.index');
+            return redirect()->route('dashboard.index');
         }
 
         return view('auth.login');
@@ -76,19 +74,6 @@ final class AuthController extends Controller
         $login = trim($validated['login']);
         $password = $validated['password'];
 
-        // Shorthand mapping
-        if ($login === 'admin' || $login === 'admin@ateliervow.id') {
-            $user = User::query()->where('role', 'admin')->first();
-            $passValid = $password === 'admin' || $password === 'AtelierAdmin2026!' || ($user && Hash::check($password, (string) $user->password));
-
-            if ($user && $passValid) {
-                Auth::login($user, true);
-                $request->session()->regenerate();
-
-                return redirect()->route('admin.index')->with('success', 'Berhasil masuk sebagai Administrator.');
-            }
-        }
-
         if ($login === 'user' || $login === 'user@ateliervow.id' || $login === 'aurelia.reza@gmail.com') {
             $user = User::query()->where('role', 'customer')->first();
             $passValid = $password === 'user' || ($user && Hash::check($password, (string) $user->password));
@@ -106,55 +91,12 @@ final class AuthController extends Controller
             Auth::login($user, true);
             $request->session()->regenerate();
 
-            return $user->isAdmin()
-                ? redirect()->route('admin.index')->with('success', 'Berhasil masuk sebagai Administrator.')
-                : redirect()->intended(route('dashboard.index'))->with('success', 'Berhasil masuk.');
+            return redirect()->intended(route('dashboard.index'))->with('success', 'Berhasil masuk.');
         }
 
-        return back()->withErrors(['login' => 'Email atau kata sandi tidak cocok. Gunakan admin / admin atau user / user.'])->onlyInput('login');
+        return back()->withErrors(['login' => 'Email atau kata sandi tidak cocok.'])->onlyInput('login');
     }
 
-    /**
-     * Authenticate private Administrator / Lead WO via email and secret password.
-     */
-    public function loginAsAdmin(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'email' => ['required', 'string'],
-            'password' => ['required', 'string'],
-        ]);
-
-        $email = trim($validated['email']);
-        if ($email === 'admin') {
-            $email = 'admin@ateliervow.id';
-        }
-
-        $user = User::query()
-            ->where('role', 'admin')
-            ->where(function ($q) use ($email) {
-                $q->where('email', $email)->orWhere('email', 'irsyad@ateliervow.id');
-            })
-            ->first();
-
-        $passValid = $user && (
-            $validated['password'] === 'admin'
-            || $validated['password'] === 'AtelierAdmin2026!'
-            || Hash::check($validated['password'], (string) $user->password)
-        );
-
-        if (! $user || ! $passValid) {
-            return back()
-                ->withErrors(['email' => 'Kredensial Admin tidak valid. Gunakan admin / admin.'])
-                ->onlyInput('email');
-        }
-
-        Auth::login($user, true);
-        $request->session()->regenerate();
-
-        return redirect()
-            ->route('admin.index')
-            ->with('success', 'Otorisasi Admin berhasil. Anda masuk ke Konsol Operasional Privat.');
-    }
 
     public function logout(Request $request): RedirectResponse
     {

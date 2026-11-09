@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ChecklistController;
@@ -13,7 +12,6 @@ use App\Http\Controllers\PrintController;
 use App\Http\Controllers\SaasController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\VendorController;
-use App\Http\Middleware\EnsureAdminAccess;
 use App\Http\Middleware\EnsureWeddingProfile;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +26,6 @@ Route::get('/saas', [SaasController::class, 'landing'])->name('saas.showcase');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'loginWithPassword'])->name('login.password');
 Route::post('/auth/google', [AuthController::class, 'loginWithGoogle'])->name('auth.google');
-Route::post('/auth/admin', [AuthController::class, 'loginAsAdmin'])->name('auth.admin');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
@@ -92,17 +89,3 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
     Route::resource('guests', GuestController::class)->except(['create', 'show', 'edit']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Hidden & Private Admin / WO Backoffice Console (Role: admin only — irsyad)
-|--------------------------------------------------------------------------
-*/
-Route::prefix('admin')
-    ->name('admin.')
-    ->middleware(['auth', EnsureAdminAccess::class])
-    ->group(function (): void {
-        Route::get('/', [AdminController::class, 'index'])->name('index');
-        Route::post('/escalate-overdue', [AdminController::class, 'escalateOverdue'])->name('escalateOverdue');
-        Route::patch('/vendors/{vendor}/verify', [AdminController::class, 'verifyVendor'])->name('verifyVendor');
-        Route::patch('/vendors/{vendor}/paid', [AdminController::class, 'markPaid'])->name('markPaid');
-    });
