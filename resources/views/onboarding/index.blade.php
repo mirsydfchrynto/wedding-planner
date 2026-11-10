@@ -86,6 +86,8 @@
                     </select>
                 </div>
 
+                <p class="text-xs text-taupe">29 pos anggaran otomatis memakai estimasi minimum riset (harga satuan × jumlah tamu) dan 124 tugas checklist. Semua angka bisa diedit setelah dashboard terbuka.</p>
+
                 <div class="flex gap-3">
                     <button type="button" @click="step = 1" class="editorial-btn-secondary flex-1">Kembali</button>
                     <button type="submit" class="editorial-btn-primary flex-[2]">Buat Profil & Buka Dashboard</button>
