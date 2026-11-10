@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function (Request $request) {
     if (! $request->user()) {
-        return redirect()->route('login');
+        return view('landing');
     }
 
     return $request->user()->weddingProfile()->exists()

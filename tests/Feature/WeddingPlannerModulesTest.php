@@ -33,9 +33,12 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->customerUser = User::query()->where('role', 'customer')->firstOrFail();
     }
 
-    public function test_root_redirects_guest_to_login_and_customer_to_dashboard(): void
+    public function test_root_shows_landing_to_guest_and_redirects_customer_to_dashboard(): void
     {
-        $this->get('/')->assertRedirect('/login');
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Rencanakan pernikahan tanpa spreadsheet.', false)
+            ->assertSee('Gratis, tanpa langganan', false);
 
         $this->actingAs($this->customerUser)
             ->get('/')
