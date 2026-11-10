@@ -4,39 +4,53 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+/**
+ * Work stages, not calendar offsets: due dates are spread across whatever time
+ * is left before the wedding, so a profile created a year out and one created
+ * tomorrow both get a usable sequence.
+ */
 enum TimelinePhase: string
 {
-    case Months12 = 'H-12 Bulan';
-    case Months9 = 'H-9 Bulan';
-    case Months6 = 'H-6 Bulan';
-    case Months3 = 'H-3 Bulan';
-    case Month1 = 'H-1 Bulan';
-    case Week1 = 'H-7 Hari';
+    case Planning = 'Perencanaan';
+    case Administration = 'Administrasi';
+    case Venue = 'Venue';
+    case Vendor = 'Vendor';
+    case Attire = 'Busana';
+    case Gifts = 'Mahar';
+    case Invitations = 'Undangan';
+    case Ceremony = 'Rangkaian';
+    case Finalization = 'Finalisasi';
     case WeddingDay = 'Hari-H';
 
     public function order(): int
     {
         return match ($this) {
-            self::Months12 => 1,
-            self::Months9 => 2,
-            self::Months6 => 3,
-            self::Months3 => 4,
-            self::Month1 => 5,
-            self::Week1 => 6,
-            self::WeddingDay => 7,
+            self::Planning => 1,
+            self::Administration => 2,
+            self::Venue => 3,
+            self::Vendor => 4,
+            self::Attire => 5,
+            self::Gifts => 6,
+            self::Invitations => 7,
+            self::Ceremony => 8,
+            self::Finalization => 9,
+            self::WeddingDay => 10,
         };
     }
 
     public function subtitle(): string
     {
         return match ($this) {
-            self::Months12 => 'Penentuan konsep, anggaran induk, tanggal akad, dan penguncian venue utama.',
-            self::Months9 => 'Kurasi katering utama, perancang busana pengantin, dan rumah dokumentasi.',
-            self::Months6 => 'Pendaftaran berkas KUA/Catatan Sipil, desainer dekorasi floral, dan cincin kawin.',
-            self::Months3 => 'Cetak undangan, pemesanan souvenir, food tasting final, dan fitting busana I.',
-            self::Month1 => 'Pelunasan vendor utama, technical meeting seluruh vendor, dan distribusi undangan.',
-            self::Week1 => 'Fitting akhir, gladi bersih prosesi akad, dan serah terima rundown ke WO.',
-            self::WeddingDay => 'Pelaksanaan Akad Nikah, prosesi adat, dan resepsi puncak.',
+            self::Planning => 'Konsep, anggaran induk, tanggal, dan pembagian tugas keluarga.',
+            self::Administration => 'Berkas KUA/Catatan Sipil, dokumen identitas, dan legalitas.',
+            self::Venue => 'Pemilihan dan penguncian lokasi akad serta resepsi.',
+            self::Vendor => 'Kurasi katering, dekorasi, dokumentasi, hiburan, dan kontrak vendor.',
+            self::Attire => 'Busana pengantin, fitting, dan penampilan keluarga.',
+            self::Gifts => 'Mahar, cincin, seserahan, dan perlengkapan adat.',
+            self::Invitations => 'Daftar tamu, undangan, souvenir, dan distribusi.',
+            self::Ceremony => 'Urutan prosesi, rundown, gladi, dan kebutuhan pendukung.',
+            self::Finalization => 'Pelunasan, technical meeting, dan pemeriksaan akhir.',
+            self::WeddingDay => 'Akad, prosesi adat, dan resepsi.',
         };
     }
 }

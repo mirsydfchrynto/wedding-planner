@@ -4,23 +4,22 @@ Platform Software-as-a-Service (SaaS) manajemen perencanaan pernikahan Indonesia
 
 ---
 
-## Arsitektur 3 Lapisan Utama
+## Arsitektur Akses & Workspace
 
-1. **Akses Publik (`GET /` → `GET /login`)**
-   - Tidak ada landing page pemasaran. `/` hanya mengalihkan: tamu ke `/login`, pengguna berprofil ke `/dashboard`, akun baru tanpa profil ke `/onboarding`.
+1. **Akses Publik (`GET /`)**
+   - Tamu melihat landing page pemasaran (`resources/views/landing.blade.php`): penjelasan modul, simulator anggaran reaktif, harga, dan FAQ. Tombol CTA mengarah ke `/login`.
+   - Pengguna yang sudah masuk langsung dialihkan: berprofil ke `/dashboard`, akun baru tanpa profil ke `/onboarding`.
    - Isolasi data per akun: setiap pengantin hanya melihat anggaran, checklist, timeline, dan vendor miliknya sendiri (`WeddingProfile` global scope).
 2. **Gerbang Login Google OAuth & Workspace Calon Pengantin (`GET /login` → `GET /dashboard`)**
    - Pelanggan masuk menggunakan **Akun Google** (`POST /auth/google`, default terisi `aurelia.reza@gmail.com`) untuk membuka 5 modul utama yang saling terhubung:
      - **Executive Dashboard (`GET /dashboard`)** — Hitung mundur waktu nyata (Hari, Jam, Menit), Indeks Kesiapan Hari-H, grafik Estimasi vs Aktual, **Tata Upacara Adat Jawa (Siraman, Midodareni, Akad, Panggih)**, dan **Kalkulator Neptu Weton Mempelai**.
-    - **Budget Planner (`GET /budget`)** — Plafon anggaran induk, alokasi 12 kategori riset, estimasi vs aktual, pelacakan pembayaran, dan indikator hemat/overbudget.
-    - **Wedding Checklist (`GET /checklist`)** — Daftar tugas persiapan dengan filter kategori, status, PIC, dan centang selesai instan.
-    - **Wedding Timeline (`GET /timeline`)** — Peta linimasa kronologis dari fase **H-12 Bulan** hingga **Hari-H**, plus rundown menit-demi-menit hari-H.
+    - **Budget Planner (`GET /budget`)** — Plafon anggaran induk, 29 pos biaya hasil riset pada 12 kategori (dokumen, venue, catering, dekorasi, busana, makeup, dokumentasi, hiburan, souvenir, transport, perhiasan, dana tak terduga), estimasi vs aktual, pelacakan pembayaran, dan indikator hemat/overbudget.
+    - **Wedding Checklist (`GET /checklist`)** — 124 tugas yang dibagi ke 10 tahap persiapan, dengan filter kategori, status, PIC, dan centang selesai instan.
+    - **Wedding Timeline (`GET /timeline`)** — Linimasa 10 tahap (Perencanaan sampai Hari-H) yang jatuh temponya disebar mengikuti sisa waktu menuju hari-H, plus rundown menit-demi-menit hari-H.
     - **Vendor Management (`GET /vendors`)** — Direktori mitra vendor pernikahan lengkap dengan kontak WhatsApp PIC, nilai kontrak, dan pelacakan DP/pelunasan per termin.
-    - **Buku Tamu (`GET /guests`)** — Daftar tamu dengan kategori, jumlah pax, dan status RSVP.
-     - **Master Wedding Guide Print A4 / PDF (`GET /print/master-guide`)** — Lembar panduan resmi siap cetak (4 halaman): Cover & Ringkasan Eksekutif, Rundown Menit-demi-Menit Hari-H, Direktori Kontak Darurat Vendor & Pelunasan, serta Penataan Meja Tamu Kehormatan VIP.
-   - Akun baru tanpa profil diarahkan ke **Onboarding (`GET /onboarding`)** untuk membuat profil pernikahan sebelum workspace terbuka. Satu akun = satu profil pernikahan, sehingga data antar pengantin tidak pernah tercampur.
-3. **Akun Admin**
-   - Konsol `/admin` sudah dihapus (commit `3f3a236`). Akun ber-`role=admin` masuk lewat alur Google yang sama dan tidak memiliki profil pernikahan.
+    - **Master Wedding Guide Print A4 / PDF (`GET /print/master-guide`)** — Lembar panduan siap cetak 4 halaman: Cover & Ringkasan Eksekutif, Rundown Menit-demi-Menit Hari-H, Direktori Kontak Vendor & Rekap Pembayaran, serta Lembar Persetujuan Panduan Kerja.
+3. **Onboarding (`GET /onboarding`)**
+   - Akun baru tanpa profil membuat profil pernikahan dulu; selesai itu 29 pos anggaran dan 124 tugas checklist dibuat otomatis lewat `BudgetAllocationService` dan `TimelineGeneratorService`, lalu workspace terbuka. Satu akun = satu profil pernikahan.
 
 ---
 
@@ -66,4 +65,3 @@ php artisan serve
 ### Isolasi Data & Kunci Google Sign-In
 - Semua tabel modul (`vendors`, `budget_items`, `wedding_tasks`) memiliki `wedding_profile_id`; record baru otomatis ditandai sesuai profil pengguna yang sedang masuk.
 - `POST /auth/google` memakai **demo sign-in tanpa kata sandi** (membuat/masuk akun dari email). Kunci ini aktif hanya saat `GOOGLE_DEMO_LOGIN=true` (default non-production) dan mengembalikan `403` di produksi sampai Google OAuth asli dikonfigurasi.
-- Akun (`role=admin`) tidak memiliki profil pernikahan dan tidak lagi punya konsol khusus.

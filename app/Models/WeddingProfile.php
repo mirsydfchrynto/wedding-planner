@@ -41,11 +41,6 @@ final class WeddingProfile extends Model
         return $this->hasMany(WeddingRundown::class)->orderBy('sort_order')->orderBy('start_time');
     }
 
-    public function guests(): HasMany
-    {
-        return $this->hasMany(WeddingGuest::class)->orderBy('name');
-    }
-
     public function vendorPayments(): HasMany
     {
         return $this->hasMany(VendorPayment::class)->latest('paid_date');

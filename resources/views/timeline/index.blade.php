@@ -51,7 +51,7 @@
                     href="{{ route('timeline.index', ['milestone_only' => $milestoneOnly ? 1 : null, 'search' => $searchQuery ?: null, 'sort' => $selectedSort]) }}"
                     class="rounded-md px-3.5 py-1.5 text-xs font-semibold transition {{ !$selectedPhase ? 'bg-espresso text-alabaster' : 'border border-stone-line bg-pearl text-charcoal hover:border-champagne' }}"
                 >
-                    Seluruh Fase (H-12 s/d Hari-H)
+                    Seluruh Fase
                 </a>
                 @foreach($allPhases as $phase)
                     @php $activePhase = $selectedPhase === $phase->value; @endphp

@@ -1,11 +1,8 @@
 import Alpine from 'alpinejs';
-import Chart from 'chart.js/auto';
 
 document.documentElement.classList.add('js');
 
 window.Alpine = Alpine;
-window.Chart = Chart;
-
 window.copyToClipboard = async function (text) {
     const value = String(text ?? '').trim();
     if (!value) return false;

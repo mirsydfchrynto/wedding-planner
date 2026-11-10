@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Atelier Vow — Wedding Planner Gratis untuk Pernikahan Nusantara</title>
-    <meta name="description" content="Wedding planner gratis: anggaran 29 pos riset, checklist 124 tugas, vendor, buku tamu RSVP, dan cetak panduan A4. Tanpa langganan.">
+    <meta name="description" content="Wedding planner gratis: anggaran 29 pos riset, checklist 124 tugas, linimasa, vendor, dan cetak panduan A4. Tanpa langganan.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,7 +53,7 @@
                     </h1>
 
                     <p class="mt-5 max-w-xl text-base leading-relaxed text-taupe sm:text-lg">
-                        Atelier Vow menyusun anggaran, checklist, vendor, dan buku tamu dalam satu tempat.
+                        Atelier Vow menyusun anggaran, checklist, linimasa, dan vendor dalam satu alur.
                         Isinya mengikuti riset biaya pernikahan Indonesia, bukan tebakan.
                     </p>
 
@@ -93,7 +93,7 @@
                 <div class="editorial-card overflow-hidden">
                     <div class="flex items-center justify-between border-b border-stone-line bg-ivory px-5 py-3">
                         <span class="text-xs font-bold uppercase tracking-wide text-taupe">Dashboard pengantin</span>
-                        <span class="rounded-md bg-espresso px-2 py-0.5 text-xs font-bold text-alabaster tabular-nums">H-138</span>
+                        <span class="rounded-md bg-espresso px-2 py-0.5 text-xs font-bold text-alabaster tabular-nums">138 hari</span>
                     </div>
 
                     <div class="space-y-5 p-5">
@@ -124,8 +124,8 @@
                         </div>
 
                         <div class="rounded-lg bg-sage-bg px-3 py-2.5">
-                            <p class="text-xs font-semibold text-sage">Checklist H-9</p>
-                            <p class="mt-1 text-sm font-medium text-sage">6 dari 18 tugas selesai</p>
+                            <p class="text-xs font-semibold text-sage">Checklist fase berjalan</p>
+                            <p class="mt-1 text-sm font-medium text-sage">6 dari 124 tugas selesai</p>
                         </div>
                     </div>
                 </div>
@@ -146,9 +146,9 @@
                     @php
                         $features = [
                             ['wallet', 'Anggaran realistis', '29 pos biaya hasil riset: sewa gedung, catering per pax, dekorasi, sampai dana darurat 5%.'],
-                            ['check-circle', 'Checklist 124 tugas', 'Terbagi 10 tahap dari H-12 bulan sampai hari-H, dengan penanggung jawab dan prioritas.'],
+                            ['check-circle', 'Checklist 124 tugas', 'Terbagi 10 tahap, jadwal menyesuaikan sisa waktu menuju hari-H, lengkap dengan prioritas.'],
                             ['building', 'Vendor & termin', 'Catat vendor, kontak PIC, rekening, serta pembayaran bertahap beserta statusnya.'],
-                            ['users', 'Buku tamu & RSVP', 'Kelola daftar tamu, jumlah rombongan, status hadir, dan tautan WhatsApp.'],
+                            ['calendar', 'Linimasa fleksibel', 'Fase dan jatuh tempo disebar dari hari ini sampai hari-H, plus rundown menit-demi-menit.'],
                             ['printer', 'Cetak panduan A4', 'Hasil rapi 4 halaman untuk dibagikan ke keluarga dan panitia, tanpa internet.'],
                             ['flower', 'Adat Nusantara', 'Tambahan tugas untuk adat Jawa, Sunda, Minang, atau Batak sesuai pilihan saat mendaftar.'],
                         ];
@@ -181,7 +181,7 @@
                     $steps = [
                         ['01', 'Isi profil pernikahan', 'Nama pasangan, tanggal akad/resepsi, kota, jumlah tamu, plafon anggaran, dan adat.'],
                         ['02', 'Dapat anggaran & checklist', 'Sistem menyusun 29 pos biaya dan 124 tugas dengan tenggat yang menyesuaikan tanggal acara.'],
-                        ['03', 'Kerjakan sampai hari-H', 'Centang tugas, catat pembayaran vendor, kirim RSVP, lalu cetak panduan untuk panitia.'],
+                        ['03', 'Kerjakan sampai hari-H', 'Centang tugas, catat pembayaran vendor, pantau linimasa, lalu cetak panduan untuk panitia.'],
                     ];
                 @endphp
 

@@ -31,7 +31,6 @@ final class TenancyTest extends TestCase
         $this->actingAs($user)->get('/dashboard')->assertRedirect('/onboarding');
         $this->actingAs($user)->get('/budget')->assertRedirect('/onboarding');
         $this->actingAs($user)->get('/vendors')->assertRedirect('/onboarding');
-        $this->actingAs($user)->get('/guests')->assertRedirect('/onboarding');
         $this->actingAs($user)->get('/print/master-guide')->assertRedirect('/onboarding');
     }
 
@@ -64,8 +63,63 @@ final class TenancyTest extends TestCase
 
         $profile = $user->fresh()->weddingProfile;
 
-        $this->assertGreaterThan(0, BudgetItem::query()->where('wedding_profile_id', $profile->id)->count());
-        $this->assertGreaterThan(0, WeddingTask::query()->where('wedding_profile_id', $profile->id)->count());
+        $this->assertSame(29, BudgetItem::query()->where('wedding_profile_id', $profile->id)->count());
+        $this->assertSame(124, WeddingTask::query()->where('wedding_profile_id', $profile->id)->count());
+    }
+
+    public function test_onboarding_appends_adat_tasks_and_rejects_unknown_traditions(): void
+    {
+        $user = User::factory()->create(['role' => 'customer']);
+
+        $this->actingAs($user)->post('/onboarding', [
+            'bride_name' => 'Sekar',
+            'groom_name' => 'Bagas',
+            'wedding_date' => now()->addMonths(6)->toDateString(),
+            'venue_name' => 'Pendopo Agung',
+            'city' => 'Yogyakarta',
+            'total_budget' => 150000000,
+            'guest_target' => 200,
+            'adat_tradition' => 'jawa',
+        ])->assertRedirect('/dashboard');
+
+        $profile = $user->fresh()->weddingProfile;
+
+        $this->assertSame(128, WeddingTask::query()->where('wedding_profile_id', $profile->id)->count());
+        $this->assertDatabaseHas('wedding_tasks', ['wedding_profile_id' => $profile->id, 'title' => 'Siraman (pembersihan lahir batin)']);
+
+        $this->actingAs(User::factory()->create(['role' => 'customer']))->post('/onboarding', [
+            'bride_name' => 'Ayu',
+            'groom_name' => 'Dimas',
+            'wedding_date' => now()->addMonths(6)->toDateString(),
+            'venue_name' => 'Balai Kartini',
+            'city' => 'Jakarta',
+            'total_budget' => 150000000,
+            'guest_target' => 200,
+            'adat_tradition' => 'bali',
+        ])->assertSessionHasErrors('adat_tradition');
+    }
+
+    public function test_checklist_due_dates_fit_the_time_left_before_the_wedding(): void
+    {
+        $user = User::factory()->create(['role' => 'customer']);
+        $weddingDate = now()->addWeek();
+
+        $this->actingAs($user)->post('/onboarding', [
+            'bride_name' => 'Sekar',
+            'groom_name' => 'Bagas',
+            'wedding_date' => $weddingDate->toDateString(),
+            'venue_name' => 'Pendopo Agung',
+            'city' => 'Yogyakarta',
+            'total_budget' => 150000000,
+            'guest_target' => 200,
+        ])->assertRedirect('/dashboard');
+
+        $profile = $user->fresh()->weddingProfile;
+        $tasks = WeddingTask::query()->where('wedding_profile_id', $profile->id)->get();
+
+        $this->assertTrue($tasks->min('due_date')->isSameDay(now()));
+        $this->assertTrue($tasks->max('due_date')->isSameDay($weddingDate));
+        $this->assertTrue($tasks->every(fn (WeddingTask $task): bool => $task->due_date->betweenIncluded(now()->startOfDay(), $weddingDate->copy()->startOfDay())));
     }
 
     public function test_new_records_are_auto_assigned_to_the_signed_in_profile(): void

@@ -26,7 +26,6 @@ final class PrintController extends Controller
 
         $rundowns = $profile->rundowns()->get();
         $vendors = Vendor::query()->with('payments')->orderBy('category')->get();
-        $guests = $profile->guests()->get();
         $budgetItems = BudgetItem::query()->with('vendor')->orderBy('category')->get();
 
         return view('print.master-guide', [
@@ -34,7 +33,6 @@ final class PrintController extends Controller
             'summary' => $summary,
             'rundowns' => $rundowns,
             'vendors' => $vendors,
-            'guests' => $guests,
             'budgetItems' => $budgetItems,
         ]);
     }

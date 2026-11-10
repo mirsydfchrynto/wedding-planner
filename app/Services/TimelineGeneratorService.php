@@ -83,16 +83,24 @@ final class TimelineGeneratorService
         ]);
     }
 
+    /**
+     * Spreads the ten stages across whatever time is left, so a wedding a year
+     * out and one tomorrow both produce an ordered, usable schedule.
+     * shortcut: stages are evenly spaced, no per-task lead time; add offsets
+     * to WeddingMasterData if tasks inside a stage need finer order.
+     */
     private function calculateDueDate(TimelinePhase $phase, CarbonInterface $weddingDate): CarbonInterface
     {
-        return match ($phase) {
-            TimelinePhase::Months12 => $weddingDate->copy()->subMonths(12),
-            TimelinePhase::Months9 => $weddingDate->copy()->subMonths(9),
-            TimelinePhase::Months6 => $weddingDate->copy()->subMonths(6),
-            TimelinePhase::Months3 => $weddingDate->copy()->subMonths(3),
-            TimelinePhase::Month1 => $weddingDate->copy()->subMonth(),
-            TimelinePhase::Week1 => $weddingDate->copy()->subWeek(),
-            TimelinePhase::WeddingDay => $weddingDate->copy(),
-        };
+        $today = now()->startOfDay();
+        $target = $weddingDate->copy()->startOfDay();
+
+        if ($phase === TimelinePhase::WeddingDay || $target->lessThanOrEqualTo($today)) {
+            return $target;
+        }
+
+        $remainingDays = (int) $today->diffInDays($target);
+
+        return $today->copy()->addDays((int) round($remainingDays * ($phase->order() - 1) / 9));
     }
+
 }

@@ -3,7 +3,7 @@
 @section('content')
     <x-ui.section-header
         title="Jadwalkan Milestone Linimasa"
-        subtitle="Tambahkan agenda penting ke dalam peta persiapan H-12 Bulan hingga Hari-H."
+        subtitle="Tambahkan agenda penting ke dalam fase persiapan."
     >
         <x-slot:actions>
             <a href="{{ route('timeline.index') }}" class="editorial-btn-secondary">Kembali</a>

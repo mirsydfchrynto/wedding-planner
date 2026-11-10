@@ -25,20 +25,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('wedding_guests', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('wedding_profile_id')->constrained()->cascadeOnDelete();
-            $table->string('name', 140);
-            $table->string('category', 60)->default('Teman / Kolega');
-            $table->unsignedSmallInteger('pax')->default(2);
-            $table->string('session', 60)->default('Sesi 1 (Resepsi Siang)');
-            $table->string('rsvp_status', 30)->default('pending'); // pending, confirmed, declined
-            $table->string('table_number', 40)->nullable();
-            $table->string('whatsapp_number', 40)->nullable();
-            $table->string('notes', 255)->nullable();
-            $table->timestamps();
-        });
-
         Schema::create('vendor_payments', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('wedding_profile_id')->constrained()->cascadeOnDelete();
@@ -55,7 +41,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('vendor_payments');
-        Schema::dropIfExists('wedding_guests');
         Schema::dropIfExists('wedding_rundowns');
     }
 };

@@ -86,7 +86,7 @@
                 <div>
                     <p class="text-[10px] font-bold uppercase tracking-wider text-taupe">Target Undangan</p>
                     <p class="mt-1 text-sm font-bold text-espresso">{{ number_format($profile->guest_target) }} Tamu</p>
-                    <p class="text-xs text-taupe">{{ $guests->count() }} Kontak Terdata</p>
+                    <p class="text-xs text-taupe">Target undangan akad &amp; resepsi</p>
                 </div>
                 <div>
                     <p class="text-[10px] font-bold uppercase tracking-wider text-taupe">Konsep &amp; Adat</p>
@@ -272,80 +272,14 @@
         </article>
 
         {{-- ======================================================== --}}
-        {{-- BAGIAN 4: BUKU TAMU VIP & DAFTAR MEJA KEHORMATAN --}}
+        {{-- BAGIAN 4: PENGESAHAN DOKUMEN --}}
         {{-- ======================================================== --}}
         <article class="mb-10 rounded-xl border border-stone-line bg-white p-8 sm:p-12 shadow-sm print:border-none print:p-0 print:shadow-none">
-            <div class="flex items-center justify-between border-b border-stone-line pb-4">
-                <div>
-                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-champagne">Protokoler &amp; Hospitality</span>
-                    <h2 class="font-serif-editorial text-2xl font-bold text-espresso">Daftar Tamu Kehormatan (VIP) &amp; Penataan Meja</h2>
-                </div>
-                <div class="text-right text-xs text-taupe">
-                    Target Kapasitas: {{ $profile->guest_target }} Pax
-                </div>
+            <div class="border-b border-stone-line pb-4">
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-champagne">Pengesahan</span>
+                <h2 class="font-serif-editorial text-2xl font-bold text-espresso">Lembar Persetujuan Panduan Kerja</h2>
             </div>
 
-            <div class="mt-6 overflow-x-auto">
-                <table class="w-full border-collapse text-left text-xs">
-                    <thead>
-                        <tr class="border-b-2 border-espresso text-[10px] font-bold uppercase tracking-wider text-espresso">
-                            <th scope="col" class="py-2.5 pr-3">Nama Tamu Undangan</th>
-                            <th scope="col" class="px-3 py-2.5">Kategori Tamu</th>
-                            <th scope="col" class="px-3 py-2.5 text-center">Pax</th>
-                            <th scope="col" class="px-3 py-2.5">Sesi Kehadiran</th>
-                            <th scope="col" class="px-3 py-2.5 text-center">Nomor Meja</th>
-                            <th scope="col" class="pl-3 py-2.5 text-center">Status RSVP</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-stone-line">
-                        @forelse($guests as $guest)
-                            <tr class="avoid-break hover:bg-pearl/40">
-                                <td class="py-3 pr-3 font-semibold text-espresso">
-                                    {{ $guest->name }}
-                                    @if($guest->notes)
-                                        <p class="mt-0.5 text-[10px] text-taupe font-normal">{{ $guest->notes }}</p>
-                                    @endif
-                                </td>
-                                <td class="px-3 py-3 text-taupe font-medium">
-                                    {{ $guest->category }}
-                                </td>
-                                <td class="px-3 py-3 text-center font-bold text-espresso">
-                                    {{ $guest->pax }}
-                                </td>
-                                <td class="px-3 py-3 text-charcoal">
-                                    {{ $guest->session }}
-                                </td>
-                                <td class="px-3 py-3 text-center font-mono font-bold text-espresso">
-                                    <span class="rounded bg-champagne/20 px-2 py-0.5 text-[11px] text-espresso">
-                                        {{ $guest->table_number ?? '-' }}
-                                    </span>
-                                </td>
-                                <td class="pl-3 py-3 text-center">
-                                    @php
-                                        $statusClass = match($guest->rsvp_status) {
-                                            'confirmed' => 'bg-forest/10 text-forest',
-                                            'declined' => 'bg-wine/10 text-wine',
-                                            default => 'bg-ochre/15 text-ochre',
-                                        };
-                                        $statusLabel = match($guest->rsvp_status) {
-                                            'confirmed' => 'Konfirmasi Hadir',
-                                            'declined' => 'Berhalangan',
-                                            default => 'Menunggu RSVP',
-                                        };
-                                    @endphp
-                                    <span class="inline-block rounded px-2 py-0.5 text-[10px] font-bold {{ $statusClass }}">
-                                        {{ $statusLabel }}
-                                    </span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="py-6 text-center text-taupe">Belum ada daftar tamu tercatat.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
 
             {{-- Signature & Approval Panitia --}}
             <div class="mt-12 pt-8 border-t border-stone-line">

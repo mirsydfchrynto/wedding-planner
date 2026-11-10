@@ -12,7 +12,7 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 | 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` / `main` | **Project Lead, Project Manager & System Integrator** | Memimpin proyek, integrasi seluruh modul, melengkapi kekurangan sistem, Cetak Master Guide (`/print/master-guide`), Keamanan Multi-Tenancy, dan Rilis Docker | **100% Selesai & Teruji** |
 | 2 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Lead Frontend Engineer (Web Utuh UI/UX)** | Seluruh Antarmuka Pengguna Web Utuh (Design System Vogue, Blade Views, Alpine.js, Responsivitas Mobile, Apple HIG & Refactoring UI Polish untuk 6 Modul Utama) | **100% Selesai & Teruji** |
 | 3 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Senior Backend Engineer (Financial & Vendors)** | Data Layer & Logika Bisnis Modul Budget Planner (`/budget`), Kalkulasi Deviasi, Smart Adat Allocator Logic, dan Arsitektur Multi-Termin Vendor (`VendorPayment`) | **100% Selesai & Teruji** |
-| 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Senior Backend Engineer (Guests & Workflows)** | Data Layer & Logika Bisnis Modul Buku Tamu Digital & RSVP (`WeddingGuest`), Workflow Checklist Tugas (`WeddingTask`), WhatsApp Link Generator, dan Otomasi Pengujian PHPUnit | **100% Selesai & Teruji** |
+| 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Senior Backend Engineer (Workflows & QA)** | Workflow Checklist Tugas (`WeddingTask`), agregasi progres 10 tahap, dan Otomasi Pengujian PHPUnit | **100% Selesai & Teruji** |
 
 ---
 
@@ -51,13 +51,12 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
      - Menerapkan radius sudut Apple-style (`rounded-2xl` untuk kartu, `rounded-xl` untuk tombol/input).
      - Menghapus paragraf penjelasan berlebih (*decluttering*) pada seluruh header dan kartu KPI.
   2. **Pengembangan Seluruh Tampilan Modul (Blade Views)**:
-    - **Landing Page SaaS** — dihapus pada commit `3f3a236`; `/` kini hanya mengalihkan ke login/dashboard/onboarding.
+     - **Landing Page SaaS (`resources/views/landing.blade.php`)**: Hero, demo modul interaktif, kartu harga, dan FAQ accordion untuk tamu yang belum masuk.
      - **Dashboard Pengantin (`resources/views/dashboard/index.blade.php`)**: Kartu hitung mundur Hari-H, 4 kartu ringkasan KPI, grafik distribusi anggaran, dan kalkulator weton neptu.
      - **Budget Planner UI (`resources/views/budget/index.blade.php`)**: Widget *Smart Budget Allocator* untuk adat Jawa/Sunda/Modern, kartu alokasi, dan tabel rincian pos biaya.
      - **Checklist UI (`resources/views/checklist/index.blade.php`)**: Daftar tugas interaktif dengan checkbox instan, filter kategori pil, dan filter PIC.
      - **Timeline & Rundown UI (`resources/views/timeline/index.blade.php`)**: Segmented control switcher untuk linimasa bulanan dan tabel rundown menit-demi-menit Hari-H.
      - **Vendor Directory UI (`resources/views/vendors/index.blade.php`)**: Kartu vendor bersih, progress bar pelunasan, dan tombol WhatsApp PIC.
-     - **Buku Tamu UI (`resources/views/guests/index.blade.php`)**: Filter kategori tamu, status RSVP, penataan meja, dan tombol aksi WhatsApp.
   3. **Komponen Bersama (*Shared UI Kit*)**:
      - `resources/views/components/ui/{stat-card,section-header,modal,status-badge,progress-bar,icon}.blade.php`.
      - Segmented control navigasi pada `resources/views/layouts/app.blade.php`.
@@ -87,22 +86,19 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 
 ---
 
-### D. Adinda Aulia Sabrina Arumsari (`branch: dinda`) — SENIOR BACKEND (GUESTS & WORKFLOWS)
-- **Fokus Utama**: Membangun lapisan data untuk Modul Buku Tamu Digital, konfirmasi kehadiran (*RSVP*), alur kerja checklist persiapan, serta pengujian otomatis (*automated test suite*).
+### D. Adinda Aulia Sabrina Arumsari (`branch: dinda`) — SENIOR BACKEND (WORKFLOWS & QA)
+- **Fokus Utama**: Alur kerja checklist persiapan, agregasi progres per tahap, serta pengujian otomatis (*automated test suite*).
 - **Tanggung Jawab Spesifik**:
-  1. **Modul Buku Tamu Digital & RSVP (`WeddingGuest`)**:
-     - Membangun `GuestController` lengkap untuk penanganan data tamu undangan (Nama, Kategori VIP/Keluarga/Teman, Sesi Acara, Jumlah Pax, Status RSVP, No Meja).
-     - Mengembangkan accessor WhatsApp URL pada model `WeddingGuest` (`$guest->whatsapp_url`) untuk memformat nomor telepon internasional `62...` dan mengenerate pesan konfirmasi otomatis.
-     - Menyusun agregasi kapasitas: Total Tamu Terdata, Konfirmasi Hadir, Menunggu Konfirmasi, dan Berhalangan terhadap `guest_target`.
-  2. **Workflow Checklist Persiapan (`WeddingTask`)**:
+  1. **Workflow Checklist Persiapan (`WeddingTask`)**:
      - Mengembangkan endpoint toggle status tugas instan (`PATCH /checklist/{weddingTask}/toggle`).
      - Menyusun filter pencarian teks judul/catatan, filter prioritas (`high`, `medium`, `low`), dan filter penanggung jawab (`assigned_to`).
-  3. **Otomasi Pengujian Backend (PHPUnit Test Suite)**:
+     - Menyediakan data progres per fase (selesai/total) untuk kartu linimasa dan dashboard.
+  2. **Otomasi Pengujian Backend (PHPUnit Test Suite)**:
      - Mengelola seluruh pengujian otomatis di `tests/Feature/WeddingPlannerModulesTest.php` dan `tests/Feature/TenancyTest.php`.
-     - Memastikan seluruh 22 skenario pengujian fungsional dan isolasi tenant selalu lulus 100%.
+     - Memastikan 19 skenario pengujian fungsional dan isolasi tenant selalu lulus 100%.
 - **Berkas yang Dikelola**:
-  - `app/Http/Controllers/ChecklistController.php` & `GuestController.php`
-  - `app/Models/WeddingGuest.php` & `WeddingTask.php`
+  - `app/Http/Controllers/ChecklistController.php`
+  - `app/Models/WeddingTask.php`
   - `tests/Feature/{WeddingPlannerModulesTest,TenancyTest}.php`
 
 ---

@@ -51,7 +51,7 @@ final class WeddingMasterData
     /** @var array<string, array{phase:string,category:string,tasks:array<int, array{id:string,title:string,description:string,type:string}>}> */
     public const CHECKLIST_STAGES = [
         '1. Perencanaan Pernikahan' => [
-            'phase' => 'H-12 Bulan',
+            'phase' => 'Perencanaan',
             'category' => 'planning',
             'tasks' => [
                 ['id' => 'WP-001', 'title' => 'Diskusikan rencana pernikahan bersama pasangan', 'description' => 'Menyamakan tujuan, harapan, dan gambaran umum acara yang diinginkan.', 'type' => 'Umum'],
@@ -70,7 +70,7 @@ final class WeddingMasterData
             ],
         ],
         '2. Administrasi dan Legalitas Pernikahan' => [
-            'phase' => 'H-9 Bulan',
+            'phase' => 'Administrasi',
             'category' => 'documents',
             'tasks' => [
                 ['id' => 'WP-014', 'title' => 'Cari informasi persyaratan pernikahan', 'description' => 'Memeriksa persyaratan terbaru pada KUA, Dukcapil, atau lembaga keagamaan sesuai jenis pernikahan.', 'type' => 'Wajib sesuai ketentuan'],
@@ -88,7 +88,7 @@ final class WeddingMasterData
             ],
         ],
         '3. Venue dan Lokasi Acara' => [
-            'phase' => 'H-9 Bulan',
+            'phase' => 'Venue',
             'category' => 'venue',
             'tasks' => [
                 ['id' => 'WP-026', 'title' => 'Cari referensi lokasi pernikahan', 'description' => 'Mencari gedung, hotel, rumah, tempat ibadah, restoran, atau lokasi outdoor.', 'type' => 'Umum'],
@@ -103,7 +103,7 @@ final class WeddingMasterData
             ],
         ],
         '4. Pemilihan dan Pengelolaan Vendor' => [
-            'phase' => 'H-6 Bulan',
+            'phase' => 'Vendor',
             'category' => 'vendor',
             'tasks' => [
                 ['id' => 'WP-035', 'title' => 'Cari dan bandingkan vendor', 'description' => 'Mengumpulkan rekomendasi, portofolio, harga, ulasan, dan ketersediaan vendor.', 'type' => 'Umum'],
@@ -126,7 +126,7 @@ final class WeddingMasterData
             ],
         ],
         '5. Busana dan Penampilan Pengantin' => [
-            'phase' => 'H-6 Bulan',
+            'phase' => 'Busana',
             'category' => 'attire',
             'tasks' => [
                 ['id' => 'WP-052', 'title' => 'Tentukan konsep busana pengantin', 'description' => 'Menentukan model, warna, dan gaya busana sesuai tema serta kebutuhan prosesi.', 'type' => 'Umum'],
@@ -143,7 +143,7 @@ final class WeddingMasterData
             ],
         ],
         '6. Mahar, Cincin, dan Seserahan' => [
-            'phase' => 'H-3 Bulan',
+            'phase' => 'Mahar',
             'category' => 'jewelry',
             'tasks' => [
                 ['id' => 'WP-063', 'title' => 'Tentukan bentuk dan isi mahar', 'description' => 'Menyepakati mahar sesuai ketentuan agama dan kesepakatan pasangan.', 'type' => 'Kondisional'],
@@ -157,7 +157,7 @@ final class WeddingMasterData
             ],
         ],
         '7. Undangan dan Pengelolaan Tamu' => [
-            'phase' => 'H-3 Bulan',
+            'phase' => 'Undangan',
             'category' => 'souvenir',
             'tasks' => [
                 ['id' => 'WP-071', 'title' => 'Buat daftar tamu dari kedua pihak', 'description' => 'Mencatat nama tamu dari keluarga, kerabat, teman, dan rekan kerja.', 'type' => 'Umum'],
@@ -175,7 +175,7 @@ final class WeddingMasterData
             ],
         ],
         '8. Rangkaian Acara dan Kebutuhan Pendukung' => [
-            'phase' => 'H-1 Bulan',
+            'phase' => 'Rangkaian',
             'category' => 'ceremony',
             'tasks' => [
                 ['id' => 'WP-083', 'title' => 'Susun rangkaian akad/pemberkatan', 'description' => 'Menentukan urutan prosesi sesuai agama dan ketentuan yang berlaku.', 'type' => 'Kondisional'],
@@ -193,7 +193,7 @@ final class WeddingMasterData
             ],
         ],
         '9. Finalisasi dan Pemeriksaan Akhir' => [
-            'phase' => 'H-1 Bulan',
+            'phase' => 'Finalisasi',
             'category' => 'planning',
             'tasks' => [
                 ['id' => 'WP-095', 'title' => 'Periksa kelengkapan dokumen pernikahan', 'description' => 'Memastikan dokumen, jadwal, dan konfirmasi instansi telah lengkap.', 'type' => 'Wajib sesuai ketentuan'],
@@ -239,24 +239,24 @@ final class WeddingMasterData
     /** @var array<string, array<int, array{phase:string,title:string,priority:string}>> */
     public const ADAT_TASKS = [
         'jawa' => [
-            ['phase' => 'H-1 Bulan', 'title' => 'Siraman (pembersihan lahir batin)', 'priority' => 'high'],
-            ['phase' => 'H-7 Hari', 'title' => 'Midodareni (malam sebelum akad)', 'priority' => 'high'],
+            ['phase' => 'Rangkaian', 'title' => 'Siraman (pembersihan lahir batin)', 'priority' => 'high'],
+            ['phase' => 'Finalisasi', 'title' => 'Midodareni (malam sebelum akad)', 'priority' => 'high'],
             ['phase' => 'Hari-H', 'title' => 'Panggih (temu pengantin adat Jawa)', 'priority' => 'high'],
             ['phase' => 'Hari-H', 'title' => 'Sungkeman (mohon restu orang tua)', 'priority' => 'high'],
         ],
         'sunda' => [
-            ['phase' => 'H-1 Bulan', 'title' => 'Ngeuyeuk Seureuh (wejangan hidup berumah tangga)', 'priority' => 'high'],
+            ['phase' => 'Rangkaian', 'title' => 'Ngeuyeuk Seureuh (wejangan hidup berumah tangga)', 'priority' => 'high'],
             ['phase' => 'Hari-H', 'title' => 'Saweran (tabur koin & beras kuning)', 'priority' => 'medium'],
             ['phase' => 'Hari-H', 'title' => 'Huap Lingkup & Pameuleum Harupat', 'priority' => 'high'],
         ],
         'minang' => [
-            ['phase' => 'H-6 Bulan', 'title' => 'Batimbang Tando (tukar tanda pertunangan)', 'priority' => 'high'],
-            ['phase' => 'H-7 Hari', 'title' => 'Malam Bainai (menghias kuku dengan inai)', 'priority' => 'medium'],
+            ['phase' => 'Rangkaian', 'title' => 'Batimbang Tando (tukar tanda pertunangan)', 'priority' => 'high'],
+            ['phase' => 'Finalisasi', 'title' => 'Malam Bainai (menghias kuku dengan inai)', 'priority' => 'medium'],
             ['phase' => 'Hari-H', 'title' => 'Manjapuik Marapulai (penjemputan mempelai pria)', 'priority' => 'high'],
         ],
         'batak' => [
-            ['phase' => 'H-6 Bulan', 'title' => 'Marhusip & Marhata Sinamot (rapat keluarga)', 'priority' => 'high'],
-            ['phase' => 'H-3 Bulan', 'title' => 'Martumpol (ikrar pertunangan di gereja)', 'priority' => 'high'],
+            ['phase' => 'Rangkaian', 'title' => 'Marhusip & Marhata Sinamot (rapat keluarga)', 'priority' => 'high'],
+            ['phase' => 'Rangkaian', 'title' => 'Martumpol (ikrar pertunangan di gereja)', 'priority' => 'high'],
             ['phase' => 'Hari-H', 'title' => 'Ulaon Unjuk (pesta adat dengan pembagian Jambar)', 'priority' => 'high'],
         ],
     ];

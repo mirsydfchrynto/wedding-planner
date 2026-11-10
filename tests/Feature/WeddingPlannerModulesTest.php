@@ -11,7 +11,6 @@ use App\Enums\WeddingCategory;
 use App\Models\BudgetItem;
 use App\Models\User;
 use App\Models\Vendor;
-use App\Models\WeddingGuest;
 use App\Models\WeddingProfile;
 use App\Models\WeddingTask;
 use Database\Seeders\WeddingPlannerSeeder;
@@ -52,7 +51,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $vendor = Vendor::query()->firstOrFail();
         $task = WeddingTask::query()->firstOrFail();
         $item = BudgetItem::query()->firstOrFail();
-        $guest = WeddingGuest::query()->firstOrFail();
 
         $this->get('/profile/edit')->assertOk();
         $this->get('/budget/create')->assertOk();
@@ -64,8 +62,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->get('/vendors/create')->assertOk();
         $this->get("/vendors/{$vendor->id}/edit")->assertOk();
         $this->get("/vendors/{$vendor->id}/payments/create")->assertOk();
-        $this->get('/guests/create')->assertOk();
-        $this->get("/guests/{$guest->id}/edit")->assertOk();
     }
 
     public function test_guest_is_redirected_to_login_when_accessing_customer_or_admin_routes(): void
@@ -92,7 +88,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $response->assertOk();
         $response->assertSee('Aurelia Larasati & Reza Mahendra');
         $response->assertSee('Rp 350.000.000');
-        $response->assertSee('Tata Upacara Adat Jawa & Perhitungan Weton Neptu');
+        $response->assertSee('Tugas Terdekat');
         $response->assertDontSee('Konsol Admin Privat');
     }
 
@@ -137,7 +133,7 @@ final class WeddingPlannerModulesTest extends TestCase
             ->get('/budget')
             ->assertOk()
             ->assertSee('Anggaran Pernikahan')
-            ->assertSee('Sewa Eksklusif The Glasshouse & Courtyard Plataran');
+            ->assertSee('Gedung/ballroom');
 
         $storeResponse = $this->actingAs($this->customerUser)->post('/budget', [
             'category' => WeddingCategory::Decoration->value,
@@ -181,7 +177,7 @@ final class WeddingPlannerModulesTest extends TestCase
             'title' => 'Verifikasi Berkas Wali Nikah KUA',
             'description' => 'Fotokopi KTP dan KK wali nikah',
             'category' => WeddingCategory::Documents->value,
-            'phase' => TimelinePhase::Months3->value,
+            'phase' => TimelinePhase::Finalization->value,
             'due_date' => now()->addDays(15)->toDateString(),
             'status' => TaskStatus::Todo->value,
             'priority' => 'high',
@@ -203,14 +199,14 @@ final class WeddingPlannerModulesTest extends TestCase
             ->get('/timeline')
             ->assertOk()
             ->assertSee('Linimasa & Jadwal')
-            ->assertSee('H-12 Bulan')
+            ->assertSee('Perencanaan')
             ->assertSee('Hari-H');
 
         $this->actingAs($this->customerUser)->post('/timeline', [
             'title' => 'Simulasi Prosesi Kirab Resepsi',
             'description' => 'Gladi resik bersama keluarga dan musik',
             'category' => WeddingCategory::Entertainment->value,
-            'phase' => TimelinePhase::Week1->value,
+            'phase' => TimelinePhase::Ceremony->value,
             'due_date' => now()->addDays(130)->toDateString(),
             'priority' => 'high',
             'assigned_to' => 'WO & Pasangan',
@@ -269,31 +265,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $response->assertSee('Buku Kerja &amp; Panduan Operasional Resmi Hari Pernikahan', false);
         $response->assertSee('Rundown Acara Menit-demi-Menit');
         $response->assertSee('Plataran Menteng Heritage Venue');
-        $response->assertSee('Daftar Tamu Kehormatan (VIP) &amp; Penataan Meja', false);
-    }
-
-    public function test_guest_list_module_creates_and_renders_rsvp_invitations(): void
-    {
-        $response = $this->actingAs($this->customerUser)->get('/guests');
-        $response->assertOk();
-        $response->assertSee('Buku Tamu &amp; RSVP', false);
-        $response->assertSee('Anies Rasyid Baswedan');
-
-        $this->actingAs($this->customerUser)->post('/guests', [
-            'name' => 'Prof. Dr. Mahfud MD',
-            'category' => 'Tamu VIP Kehormatan',
-            'pax' => 2,
-            'session' => 'Akad & Resepsi Malam',
-            'rsvp_status' => 'confirmed',
-            'table_number' => 'VIP-03',
-            'whatsapp_number' => '081233445566',
-            'notes' => 'Tamu kehormatan',
-        ])->assertRedirect(route('guests.index'));
-
-        $this->assertDatabaseHas('wedding_guests', [
-            'name' => 'Prof. Dr. Mahfud MD',
-            'table_number' => 'VIP-03',
-        ]);
+        $response->assertSee('Lembar Persetujuan Panduan Kerja', false);
     }
 
     public function test_timeline_rundown_and_vendor_payments_can_be_recorded(): void

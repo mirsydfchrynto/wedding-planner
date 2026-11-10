@@ -1,47 +1,36 @@
-@extends('layouts.app', ['title' => 'Executive Dashboard'])
+@extends('layouts.app', ['title' => 'Dashboard'])
 
 @section('content')
-    {{-- 1. COMPACT VISUAL HERO & LIVE COUNTDOWN --}}
+    {{-- 1. HERO: COUPLE, COUNTDOWN, ACTIONS --}}
     <section class="editorial-card batik-kawung-bg relative rounded-lg p-6" data-reveal>
         <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
             <div>
-                {{-- deslop-ignore-next-line 11 --}}
                 <h1 class="text-2xl font-bold tracking-tight text-espresso">
                     {{ $profile->bride_name }} &amp; {{ $profile->groom_name }}
                 </h1>
                 <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-taupe">
                     <span class="inline-flex items-center gap-1.5 font-medium text-charcoal">
                         <x-ui.icon name="calendar" class="h-3.5 w-3.5 text-champagne" />
-                        <span>{{ $summary['wedding_date_formatted'] }} ({{ $profile->wedding_time }})</span>
+                        <span>{{ $summary['wedding_date_formatted'] }} · {{ $profile->wedding_time }}</span>
                     </span>
                     <span class="inline-flex items-center gap-1.5">
                         <x-ui.icon name="building" class="h-3.5 w-3.5 text-champagne" />
                         <span>{{ $profile->venue_name }}, {{ $profile->city }}</span>
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 tabular-nums">
-                        <x-ui.icon name="users" class="h-3.5 w-3.5 text-champagne" />
-                        <span>{{ number_format($profile->guest_target, 0, ',', '.') }} Tamu</span>
                     </span>
                 </div>
 
                 <div class="mt-4 flex flex-wrap items-center gap-2 no-print">
                     <a href="{{ route('dashboard.editProfile') }}" class="editorial-btn-primary">
                         <x-ui.icon name="sliders" class="h-3.5 w-3.5" />
-                        <span>Edit Profil &amp; Plafon</span>
+                        <span>Edit Profil</span>
                     </a>
-                    <a
-                        href="{{ route('print.masterGuide') }}"
-                        target="_blank"
-                        class="editorial-btn-secondary"
-                        title="Buka Dokumen Panduan Master Pernikahan Siap Cetak A4 / PDF"
-                    >
+                    <a href="{{ route('print.masterGuide') }}" target="_blank" class="editorial-btn-secondary">
                         <x-ui.icon name="printer" class="h-3.5 w-3.5" />
-                        <span>Buku Panduan &amp; Cetak</span>
+                        <span>Cetak Panduan</span>
                     </a>
                 </div>
             </div>
 
-            {{-- Compact Live Countdown + Readiness Meter --}}
             <div
                 x-data="{
                     target: new Date('{{ $summary['wedding_date_iso'] }}').getTime(),
@@ -61,11 +50,10 @@
                 <div class="flex items-center justify-between text-sm">
                     <span class="inline-flex items-center gap-1.5 font-semibold text-charcoal">
                         <x-ui.icon name="clock" class="h-3.5 w-3.5 text-champagne" />
-                        <span>Menuju Akad Nikah</span>
+                        <span>Menuju hari-H</span>
                     </span>
-                    <span class="tabular-nums font-bold text-champagne">{{ $summary['readiness_score'] }}% Siap</span>
+                    <span class="tabular-nums font-bold text-champagne">{{ $summary['readiness_score'] }}% siap</span>
                 </div>
-                {{-- deslop-ignore-next-line 28 --}}
                 <div class="mt-2.5 grid grid-cols-3 gap-2 text-center">
                     <div class="rounded border border-stone-line bg-pearl py-2">
                         <span class="tabular-nums text-2xl font-bold text-espresso" x-text="days">{{ $summary['days_remaining'] }}</span>
@@ -84,7 +72,7 @@
         </div>
     </section>
 
-    {{-- 2. FOUR KPI CARDS WITH SVG ICONS --}}
+    {{-- 2. KPI CARDS --}}
     <section class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-ui.stat-card
             icon="wallet"
@@ -99,9 +87,9 @@
 
         <x-ui.stat-card
             icon="trending-up"
-            label="Total Pengeluaran"
+            label="Deal Vendor"
             :value="format_idr($summary['total_actual'])"
-            :subtitle="'Terbayar: ' . format_idr($summary['total_paid']) . ' (' . $summary['budget_paid_percent'] . '%)'"
+            :subtitle="'Terbayar: ' . format_idr($summary['total_paid'])"
             :badge="$summary['variance_amount'] >= 0 ? 'Hemat ' . format_idr($summary['variance_amount']) : 'Over'"
             :badgeTone="$summary['variance_amount'] >= 0 ? 'sage' : 'wine'"
         >
@@ -110,9 +98,9 @@
 
         <x-ui.stat-card
             icon="check-circle"
-            label="Checklist Tugas"
+            label="Checklist"
             :value="$summary['completion_percent'] . '%'"
-            :subtitle="$summary['completed_tasks'] . ' dari ' . $summary['total_tasks'] . ' selesai'"
+            :subtitle="$summary['completed_tasks'] . ' dari ' . $summary['total_tasks'] . ' tugas'"
             :badge="$summary['overdue_tasks_count'] > 0 ? $summary['overdue_tasks_count'] . ' Terlambat' : 'Tepat Waktu'"
             :badgeTone="$summary['overdue_tasks_count'] > 0 ? 'wine' : 'sage'"
         >
@@ -121,9 +109,9 @@
 
         <x-ui.stat-card
             icon="building"
-            label="Mitra Vendor"
+            label="Vendor"
             :value="$summary['booked_vendors'] . ' / ' . $summary['total_vendors'] . ' Mitra'"
-            :subtitle="'Sisa: ' . format_idr($summary['unpaid_balance'])"
+            :subtitle="'Sisa tagihan: ' . format_idr($summary['unpaid_balance'])"
             :badge="format_idr($summary['cost_per_guest']) . '/pax'"
             badgeTone="champagne"
         >
@@ -131,47 +119,48 @@
         </x-ui.stat-card>
     </section>
 
-    {{-- 3. MAIN VISUALIZATION GRID: CHARTS + URGENT ACTIONS --}}
+    {{-- 3. BUDGET: 3-LAYER BAR + CATEGORY BARS, TASKS & VENDOR PAYMENTS --}}
     <section class="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
-        {{-- Left 7 Cols: Interactive Bar & Doughnut Chart + Compact Category Bars --}}
-        <div class="editorial-card rounded-lg p-5 lg:col-span-7" x-data="{ chartMode: 'bar' }" data-reveal>
+        <div class="editorial-card rounded-lg p-5 lg:col-span-7" data-reveal>
             <div class="flex items-center justify-between border-b border-stone-line pb-3">
                 <div class="flex items-center gap-2">
                     <x-ui.icon name="wallet" class="h-4 w-4 text-champagne" />
-                    <h2 class="text-xl font-bold text-espresso">Distribusi Anggaran per Kategori</h2>
+                    <h2 class="text-xl font-bold text-espresso">Anggaran</h2>
                 </div>
-                <div class="flex items-center gap-1 no-print">
-                    <button
-                        type="button"
-                        @click="chartMode = 'bar'"
-                        :class="chartMode === 'bar' ? 'bg-espresso text-alabaster' : 'bg-ivory text-charcoal'"
-                        class="rounded px-2.5 py-1 text-xs font-semibold cursor-pointer"
-                    >
-                        Batang
-                    </button>
-                    <button
-                        type="button"
-                        @click="chartMode = 'doughnut'"
-                        :class="chartMode === 'doughnut' ? 'bg-espresso text-alabaster' : 'bg-ivory text-charcoal'"
-                        class="rounded px-2.5 py-1 text-xs font-semibold cursor-pointer"
-                    >
-                        Donat
-                    </button>
+                <a href="{{ route('budget.index') }}" class="text-xs font-semibold text-champagne hover:underline">Detail</a>
+            </div>
+
+            @php
+                $cap = max(1, $summary['total_budget_cap']);
+                $dealPct = min(100, (int) round($summary['total_actual'] / $cap * 100));
+                $paidPct = min(100, (int) round($summary['total_paid'] / $cap * 100));
+            @endphp
+
+            <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
+                <div>
+                    <span class="text-xs text-taupe">Rencana</span>
+                    <p class="tabular-nums font-bold text-espresso whitespace-nowrap">{{ format_idr($summary['total_budget_cap']) }}</p>
+                </div>
+                <div>
+                    <span class="text-xs text-taupe">Deal</span>
+                    <p class="tabular-nums font-bold text-espresso whitespace-nowrap">{{ format_idr($summary['total_actual']) }}</p>
+                </div>
+                <div>
+                    <span class="text-xs text-taupe">Terbayar</span>
+                    <p class="tabular-nums font-bold text-sage whitespace-nowrap">{{ format_idr($summary['total_paid']) }}</p>
                 </div>
             </div>
 
-            <div class="mt-4 h-60 w-full" x-show="chartMode === 'bar'">
-                <canvas id="budgetCategoryChart" aria-label="Grafik perbandingan estimasi dan aktual anggaran per kategori" role="img"></canvas>
-            </div>
-
-            <div class="mt-4 h-60 w-full" x-show="chartMode === 'doughnut'" x-cloak>
-                <canvas id="budgetShareDoughnutChart" aria-label="Grafik proporsi anggaran per kategori" role="img"></canvas>
+            <div class="mt-3 flex h-2.5 w-full overflow-hidden rounded-full bg-stone-line" role="img" aria-label="Porsi terbayar dan deal terhadap plafon anggaran">
+                <div class="h-full bg-sage" style="width: {{ $paidPct }}%"></div>
+                <div class="h-full bg-champagne" style="width: {{ max(0, $dealPct - $paidPct) }}%"></div>
             </div>
 
             <div class="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                 @foreach($summary['category_breakdown'] as $cat)
+                    @continue($cat['estimated'] === 0 && $cat['actual'] === 0)
                     <div class="rounded border border-stone-line bg-alabaster p-3 text-sm">
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between gap-2">
                             <span class="inline-flex items-center gap-1.5 font-semibold text-espresso">
                                 <x-ui.icon :name="$cat['case']->icon()" class="h-3.5 w-3.5 text-champagne" />
                                 <span>{{ $cat['short_label'] }}</span>
@@ -186,7 +175,6 @@
             </div>
         </div>
 
-        {{-- Right 5 Cols: Urgent Tasks & Vendor Payments --}}
         <div class="flex flex-col gap-6 lg:col-span-5">
             <div class="editorial-card rounded-lg p-5" data-reveal style="--delay: 80ms">
                 <div class="flex items-center justify-between border-b border-stone-line pb-3">
@@ -256,12 +244,12 @@
         </div>
     </section>
 
-    {{-- 4. COMPACT 7-PHASE TIMELINE STRIP --}}
+    {{-- 4. 7-PHASE TIMELINE STRIP --}}
     <section class="mt-6 editorial-card rounded-lg p-5" data-reveal>
         <div class="flex items-center justify-between border-b border-stone-line pb-3">
             <div class="flex items-center gap-2">
                 <x-ui.icon name="calendar" class="h-4 w-4 text-champagne" />
-                <h2 class="text-xl font-bold text-espresso">Progres 7 Fase Linimasa (H-12 Bulan s/d Hari-H)</h2>
+                <h2 class="text-xl font-bold text-espresso">Linimasa 7 Fase</h2>
             </div>
             <a href="{{ route('timeline.index') }}" class="text-xs font-semibold text-champagne hover:underline">Buka Timeline</a>
         </div>
@@ -283,181 +271,4 @@
             @endforeach
         </div>
     </section>
-
-    {{-- 5. NUSANTARA ADAT & WETON CALCULATOR (Compact Visual Layout) --}}
-    <section
-        class="mt-6 editorial-card rounded-lg p-5"
-        data-reveal
-        x-data="{
-            hariWanita: 5,
-            pasaranWanita: 8,
-            hariPria: 4,
-            pasaranPria: 9,
-            totalNeptu() {
-                return Number(this.hariWanita) + Number(this.pasaranWanita) + Number(this.hariPria) + Number(this.pasaranPria);
-            },
-            maknaWeton() {
-                const mod = this.totalNeptu() % 8;
-                const map = {
-                    1: { nama: 'Pegat', ket: 'Disarankan akad pagi 08:00 WIB & doa selamatan keluarga.' },
-                    2: { nama: 'Ratu (Harmoni)', ket: 'Dihormati lingkungan & membawa ketenteraman.' },
-                    3: { nama: 'Jodoh (Selaras)', ket: 'Pasangan serasi & saling menguatkan.' },
-                    4: { nama: 'Topo (Tangguh)', ket: 'Rumah tangga semakin matang & berkah.' },
-                    5: { nama: 'Tinari (Murah Rezeki)', ket: 'Diberkahi kemudahan rezeki & kebahagiaan.' },
-                    6: { nama: 'Padu (Musyawarah)', ket: 'Utamakan komunikasi terbuka dalam keluarga.' },
-                    7: { nama: 'Sujanan (Saling Jaga)', ket: 'Jaga kepercayaan kedua keluarga besar.' },
-                    0: { nama: 'Pesthi (Tentram)', ket: 'Rukun, damai, & harmonis hingga tua.' }
-                };
-                return map[mod] || map[3];
-            }
-        }"
-    >
-        <div class="flex items-center justify-between border-b border-stone-line pb-3">
-            <div class="flex items-center gap-2">
-                <x-ui.icon name="calendar" class="h-4 w-4 text-champagne" />
-                <h2 class="text-xl font-bold text-espresso">Tata Upacara Adat Jawa &amp; Perhitungan Weton Neptu</h2>
-            </div>
-            <x-ui.status-badge tone="champagne" label="Adat Nusantara" />
-        </div>
-
-        <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-12">
-            <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:col-span-7 text-sm">
-                <div class="rounded border border-stone-line bg-alabaster p-3">
-                    <span class="text-xs font-semibold text-sage">1. H-1 Pagi</span>
-                    <p class="mt-1 font-bold text-espresso">Siraman</p>
-                    <p class="mt-0.5 text-xs text-taupe">Air 7 sumber &amp; sungkeman</p>
-                </div>
-                <div class="rounded border border-stone-line bg-alabaster p-3">
-                    <span class="text-xs font-semibold text-sage">2. H-1 Malam</span>
-                    <p class="mt-1 font-bold text-espresso">Midodareni</p>
-                    <p class="mt-0.5 text-xs text-taupe">Seserahan &amp; doa keluarga</p>
-                </div>
-                <div class="rounded border border-stone-line bg-alabaster p-3">
-                    <span class="text-xs font-semibold text-champagne">3. Hari-H 08:30</span>
-                    <p class="mt-1 font-bold text-espresso">Ijab Qabul</p>
-                    <p class="mt-0.5 text-xs text-taupe">Akad nikah &amp; mahar</p>
-                </div>
-                <div class="rounded border border-stone-line bg-alabaster p-3">
-                    <span class="text-xs font-semibold text-champagne">4. Hari-H 18:30</span>
-                    <p class="mt-1 font-bold text-espresso">Panggih</p>
-                    <p class="mt-0.5 text-xs text-taupe">Adat panggih &amp; resepsi</p>
-                </div>
-            </div>
-
-            <div class="flex flex-col justify-between gap-3 rounded border border-stone-line bg-alabaster p-3.5 lg:col-span-5 text-xs">
-                <div class="grid grid-cols-4 gap-2">
-                    <select x-model="hariWanita" class="editorial-input !py-1 !px-2 !text-xs" aria-label="Hari Wanita">
-                        <option value="5">Minggu</option><option value="4">Senin</option><option value="3">Selasa</option><option value="7">Rabu</option><option value="8">Kamis</option><option value="6">Jumat</option><option value="9">Sabtu</option>
-                    </select>
-                    <select x-model="pasaranWanita" class="editorial-input !py-1 !px-2 !text-xs" aria-label="Pasaran Wanita">
-                        <option value="5">Legi</option><option value="9">Pahing</option><option value="7">Pon</option><option value="4">Wage</option><option value="8">Kliwon</option>
-                    </select>
-                    <select x-model="hariPria" class="editorial-input !py-1 !px-2 !text-xs" aria-label="Hari Pria">
-                        <option value="5">Minggu</option><option value="4">Senin</option><option value="3">Selasa</option><option value="7">Rabu</option><option value="8">Kamis</option><option value="6">Jumat</option><option value="9">Sabtu</option>
-                    </select>
-                    <select x-model="pasaranPria" class="editorial-input !py-1 !px-2 !text-xs" aria-label="Pasaran Pria">
-                        <option value="5">Legi</option><option value="9">Pahing</option><option value="7">Pon</option><option value="4">Wage</option><option value="8">Kliwon</option>
-                    </select>
-                </div>
-                <div class="flex items-center justify-between rounded border border-stone-line bg-pearl px-3 py-2">
-                    <div>
-                        <span class="font-bold text-espresso" x-text="maknaWeton().nama"></span>
-                        <span class="ml-1.5 text-[11px] text-taupe" x-text="maknaWeton().ket"></span>
-                    </div>
-                    <span class="tabular-nums font-bold text-champagne shrink-0" x-text="totalNeptu() + ' Neptu'">26 Neptu</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
 @endsection
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        if (typeof window.Chart === 'undefined') return;
-
-        const breakdown = @json($summary['category_breakdown']);
-        const labels = breakdown.map(item => item.short_label);
-        const estimatedData = breakdown.map(item => Math.round(item.estimated / 1000000));
-        const actualData = breakdown.map(item => Math.round(item.actual / 1000000));
-
-        const barCanvas = document.getElementById('budgetCategoryChart');
-        if (barCanvas) {
-            new window.Chart(barCanvas, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Estimasi (Juta Rp)',
-                            data: estimatedData,
-                            backgroundColor: '#E6E0D6',
-                            borderRadius: 4,
-                        },
-                        {
-                            label: 'Aktual (Juta Rp)',
-                            data: actualData,
-                            backgroundColor: '#735736',
-                            borderRadius: 4,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: { boxWidth: 12, font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 } }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) { return 'Rp ' + value + ' Jt'; },
-                                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
-                            },
-                            grid: { color: '#F3EFEA' }
-                        },
-                        x: {
-                            ticks: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 } },
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-        }
-
-        const doughnutCanvas = document.getElementById('budgetShareDoughnutChart');
-        if (doughnutCanvas) {
-            new window.Chart(doughnutCanvas, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: actualData,
-                        backgroundColor: [
-                            '#181512', '#735736', '#2E5A44', '#B45309',
-                            '#57504A', '#D4C9B8', '#5C4428', '#991B1B'
-                        ],
-                        borderColor: '#FFFFFF',
-                        borderWidth: 2,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: { boxWidth: 12, font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 } }
-                        }
-                    }
-                }
-            });
-        }
-    });
-</script>
-@endpush

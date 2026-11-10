@@ -6,7 +6,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GuestController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\TimelineController;
@@ -81,5 +80,4 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
         Route::post('/{vendor}/payments', [VendorController::class, 'storePayment'])->name('storePayment');
     });
 
-    Route::resource('guests', GuestController::class)->except(['show']);
 });
