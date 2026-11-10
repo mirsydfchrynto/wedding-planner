@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ isset($title) ? $title . ' — Atelier Vow' : 'Atelier Vow — Platform Perencanaan Pernikahan Nusantara' }}</title>
+    <title>{{ isset($title) ? $title . ' — Siap Nikah' : 'Siap Nikah — Perencanaan Pernikahan Nusantara' }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,10 +17,10 @@
     $isPublicPage = request()->routeIs('login');
     $hasProfile = isset($globalProfile) && $globalProfile->exists;
     $workspaceItems = [
-        ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
-        ['route' => 'budget.index', 'pattern' => 'budget.*', 'label' => 'Budget Planner', 'icon' => 'wallet'],
-        ['route' => 'checklist.index', 'pattern' => 'checklist.*', 'label' => 'Checklist', 'icon' => 'check-circle'],
-        ['route' => 'timeline.index', 'pattern' => 'timeline.*', 'label' => 'Timeline', 'icon' => 'calendar'],
+        ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Ringkasan', 'icon' => 'layout-dashboard'],
+        ['route' => 'budget.index', 'pattern' => 'budget.*', 'label' => 'Anggaran', 'icon' => 'wallet'],
+        ['route' => 'checklist.index', 'pattern' => 'checklist.*', 'label' => 'Tugas', 'icon' => 'check-circle'],
+        ['route' => 'timeline.index', 'pattern' => 'timeline.*', 'label' => 'Linimasa', 'icon' => 'calendar'],
         ['route' => 'vendors.index', 'pattern' => 'vendors.*', 'label' => 'Vendor', 'icon' => 'building'],
     ];
 @endphp
@@ -31,24 +31,21 @@
 
     <header class="sticky top-0 z-30 border-b border-stone-line bg-pearl">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
-            <a href="{{ route('home') }}" class="group flex items-center gap-2.5">
-                <div class="flex h-8 w-8 items-center justify-center rounded bg-espresso text-sm font-bold text-alabaster">
-                    AV
-                </div>
-                <span class="text-base font-bold tracking-tight text-espresso">Atelier Vow</span>
+            <a href="{{ route('home') }}" class="group flex items-baseline gap-2.5">
+                <span class="text-base font-bold tracking-tight text-espresso">Siap Nikah</span>
+                <span class="text-xs text-taupe">Nusantara</span>
             </a>
 
             @if(! $isPublicPage && $hasProfile)
-                <nav class="hidden lg:flex items-center gap-1 rounded-xl border border-black/[0.06] bg-white p-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]" aria-label="Navigasi Workspace Pengantin">
+                <nav class="hidden items-baseline gap-6 lg:flex" aria-label="Navigasi workspace pengantin">
                     @foreach($workspaceItems as $item)
                         @php $active = request()->routeIs($item['pattern']); @endphp
                         <a
                             href="{{ route($item['route']) }}"
-                            class="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition {{ $active ? 'bg-espresso text-alabaster shadow-sm' : 'text-taupe hover:bg-black/[0.03] hover:text-espresso' }}"
+                            class="text-sm font-semibold transition {{ $active ? 'text-espresso underline decoration-espresso underline-offset-4' : 'text-taupe hover:text-espresso' }}"
                             @if($active) aria-current="page" @endif
                         >
-                            <x-ui.icon :name="$item['icon']" class="h-3.5 w-3.5" />
-                            <span>{{ $item['label'] }}</span>
+                            {{ $item['label'] }}
                         </a>
                     @endforeach
                 </nav>
@@ -57,31 +54,24 @@
             <div class="flex items-center gap-3">
                 @auth
                     @if(! $isPublicPage)
-                        <div class="hidden xl:flex items-center gap-2 rounded-md border border-stone-line bg-alabaster px-3 py-1.5 text-xs">
-                            <x-ui.google-icon class="h-3.5 w-3.5" />
+                        <div class="hidden items-baseline gap-2 text-xs xl:flex">
                             <span class="font-semibold text-espresso">{{ auth()->user()->name }}</span>
                             @if(isset($globalProfile))
-                                <span class="h-3 w-px bg-stone-line"></span>
+                                <span class="text-stone-strong">·</span>
                                 <span class="tabular-nums font-semibold text-champagne">H-{{ $globalProfile->days_remaining }}</span>
                             @endif
                         </div>
 
                         <form method="POST" action="{{ route('logout') }}" class="hidden lg:inline-block">
                             @csrf
-                            <button type="submit" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">
+                            <button type="submit" class="text-xs font-semibold text-taupe underline decoration-stone-strong underline-offset-4 hover:text-espresso cursor-pointer">
                                 Keluar
                             </button>
                         </form>
                     @endif
                 @else
-                    <a
-                        href="{{ route('login') }}"
-                        class="inline-flex items-center gap-2 rounded bg-espresso px-4 py-2 text-sm font-semibold text-alabaster hover:bg-champagne"
-                    >
-                        <span class="flex h-5 w-5 items-center justify-center rounded-sm bg-pearl p-0.5">
-                            <x-ui.google-icon class="h-3.5 w-3.5" />
-                        </span>
-                        <span>Masuk dengan Google</span>
+                    <a href="{{ route('login') }}" class="text-sm font-semibold text-espresso underline decoration-stone-strong underline-offset-4 hover:decoration-espresso">
+                        Masuk
                     </a>
                 @endauth
 
@@ -167,9 +157,9 @@
         <div class="mx-auto max-w-7xl px-6 lg:px-10">
             <div class="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
                 <div>
-                    <p class="text-xl font-bold text-espresso">Atelier Vow Nusantara</p>
-                    <p class="mt-1 text-base text-taupe">
-                        Sistem Perencanaan Anggaran, Vendor, dan Adat Pernikahan Terpadu.
+                    <p class="text-base font-bold text-espresso">Siap Nikah</p>
+                    <p class="mt-1 text-sm text-taupe">
+                        Perencanaan anggaran, tugas, linimasa, dan vendor pernikahan Nusantara.
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-6 text-sm font-semibold">
@@ -184,9 +174,9 @@
     @if(!$isPublicPage && $hasProfile)
         @php
             $mobileBottomItems = [
-                ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
+                ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Ringkasan', 'icon' => 'layout-dashboard'],
                 ['route' => 'budget.index', 'pattern' => 'budget.*', 'label' => 'Anggaran', 'icon' => 'wallet'],
-                ['route' => 'checklist.index', 'pattern' => 'checklist.*', 'label' => 'Checklist', 'icon' => 'check-circle'],
+                ['route' => 'checklist.index', 'pattern' => 'checklist.*', 'label' => 'Tugas', 'icon' => 'check-circle'],
                 ['route' => 'timeline.index', 'pattern' => 'timeline.*', 'label' => 'Linimasa', 'icon' => 'calendar'],
                 ['route' => 'vendors.index', 'pattern' => 'vendors.*', 'label' => 'Vendor', 'icon' => 'building'],
             ];
@@ -200,7 +190,7 @@
                     @php $mobileActive = request()->routeIs($mobileItem['pattern']); @endphp
                     <a
                         href="{{ route($mobileItem['route']) }}"
-                        class="flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5 text-xs font-semibold transition {{ $mobileActive ? 'bg-espresso text-alabaster shadow-sm' : 'text-taupe hover:text-espresso' }}"
+                        class="flex min-h-[52px] flex-col items-center justify-center gap-1 border-t-2 px-1 py-1.5 text-xs font-semibold transition {{ $mobileActive ? 'border-espresso text-espresso' : 'border-transparent text-taupe hover:text-espresso' }}"
                         @if($mobileActive) aria-current="page" @endif
                     >
                         <x-ui.icon :name="$mobileItem['icon']" class="h-4 w-4" />

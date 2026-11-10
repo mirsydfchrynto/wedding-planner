@@ -1,267 +1,185 @@
-@extends('layouts.app', ['title' => 'Vendor Management'])
+@extends('layouts.app', ['title' => 'Vendor'])
 
 @section('content')
     <x-ui.section-header
         title="Mitra Vendor"
+        subtitle="Kontrak, kontak PIC, rekening, dan termin pembayaran dalam satu daftar."
     >
         <x-slot:actions>
             <a href="{{ route('vendors.create') }}" class="editorial-btn-primary">
-                + Tambah Mitra Vendor
+                + Mitra vendor
             </a>
         </x-slot:actions>
     </x-ui.section-header>
 
-    {{-- Vendor Financial & Booking Summary Cards --}}
-    <section class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {{-- Angka pokok --}}
+    <section aria-label="Ringkasan vendor" class="grid grid-cols-2 gap-x-8 gap-y-7 border-b border-stone-line py-7 lg:grid-cols-4">
         <x-ui.stat-card
-            label="Vendor Terdaftar"
-            :value="$summary['booked_vendors'] . ' / ' . $summary['total_vendors'] . ' Mitra'"
-            subtitle="Terkontrak & aktif"
-            badge="Direktori"
-            badgeTone="champagne"
+            label="Terkontrak"
+            :value="$summary['booked_vendors'] . ' / ' . $summary['total_vendors']"
+            subtitle="Mitra aktif"
         />
-
         <x-ui.stat-card
-            label="Total Kontrak"
+            label="Nilai kontrak"
             :value="format_idr($totalContract)"
-            subtitle="Nilai kerja sama aktif"
+            subtitle="Seluruh mitra"
         />
-
         <x-ui.stat-card
-            label="Sudah Terbayar"
+            label="Terbayar"
             :value="format_idr($totalPaid)"
-            :subtitle="($totalContract > 0 ? round(($totalPaid / $totalContract) * 100) : 0) . '% terbayar'"
-            badge="Terbayar"
-            badgeTone="sage"
+            :subtitle="'dari ' . format_idr($totalContract)"
         />
-
         <x-ui.stat-card
-            label="Sisa Tagihan"
+            label="Sisa tagihan"
             :value="format_idr($totalRemaining)"
-            subtitle="Kewajiban sebelum Hari-H"
-            :badge="$totalRemaining > 0 ? 'Belum Lunas' : 'Lunas'"
+            :badge="$totalRemaining > 0 ? 'Belum lunas' : 'Lunas'"
             :badgeTone="$totalRemaining > 0 ? 'ochre' : 'sage'"
         />
     </section>
 
-    {{-- Filter, Search & Sort Controls --}}
-    <section class="mt-6 editorial-card rounded-lg p-5">
-        <form method="GET" action="{{ route('vendors.index') }}" class="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
-            <div class="flex flex-wrap items-center gap-2">
-                <input
-                    type="search"
-                    name="search"
-                    value="{{ $searchQuery ?? '' }}"
-                    placeholder="Cari nama vendor atau PIC..."
-                    aria-label="Cari Nama Vendor atau PIC"
-                    class="editorial-input !w-full sm:!w-56 !py-1.5 !text-xs"
-                >
+    {{-- Filter --}}
+    <form method="GET" action="{{ route('vendors.index') }}" class="flex flex-wrap items-center gap-2 border-b border-stone-line py-4 no-print">
+        <input
+            type="search"
+            name="search"
+            value="{{ $searchQuery ?? '' }}"
+            placeholder="Cari nama vendor atau PIC..."
+            aria-label="Cari nama vendor atau PIC"
+            class="editorial-input !w-full sm:!w-56 !py-1.5 !text-xs"
+        >
 
-                <select name="category" aria-label="Filter Kategori Vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
-                    <option value="">Semua Kategori Vendor</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->value }}" @selected($selectedCategory === $category->value)>
-                            {{ $category->label() }}
-                        </option>
-                    @endforeach
-                </select>
+        <select name="category" aria-label="Filter kategori vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+            <option value="">Semua kategori</option>
+            @foreach($categories as $category)
+                <option value="{{ $category->value }}" @selected($selectedCategory === $category->value)>{{ $category->label() }}</option>
+            @endforeach
+        </select>
 
-                <select name="booking_status" aria-label="Filter Status Booking Vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
-                    <option value="">Semua Status Booking</option>
-                    @foreach($bookingStatuses as $status)
-                        <option value="{{ $status->value }}" @selected($selectedStatus === $status->value)>
-                            {{ $status->label() }}
-                        </option>
-                    @endforeach
-                </select>
+        <select name="booking_status" aria-label="Filter status booking" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+            <option value="">Semua status</option>
+            @foreach($bookingStatuses as $status)
+                <option value="{{ $status->value }}" @selected($selectedStatus === $status->value)>{{ $status->label() }}</option>
+            @endforeach
+        </select>
 
-                <select name="sort" aria-label="Urutkan Daftar Vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
-                    <option value="">Urutan Default (Kategori)</option>
-                    <option value="contract_desc" @selected(($selectedSort ?? null) === 'contract_desc')>Nilai Kontrak Terbesar</option>
-                    <option value="contract_asc" @selected(($selectedSort ?? null) === 'contract_asc')>Nilai Kontrak Terkecil</option>
-                    <option value="due_date_asc" @selected(($selectedSort ?? null) === 'due_date_asc')>Terdekat Jatuh Tempo</option>
-                    <option value="remaining_desc" @selected(($selectedSort ?? null) === 'remaining_desc')>Sisa Tagihan Terbesar</option>
-                </select>
+        <select name="sort" aria-label="Urutkan vendor" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
+            <option value="">Urutan kategori</option>
+            <option value="contract_desc" @selected(($selectedSort ?? null) === 'contract_desc')>Kontrak terbesar</option>
+            <option value="contract_asc" @selected(($selectedSort ?? null) === 'contract_asc')>Kontrak terkecil</option>
+            <option value="due_date_asc" @selected(($selectedSort ?? null) === 'due_date_asc')>Tenggat terdekat</option>
+            <option value="remaining_desc" @selected(($selectedSort ?? null) === 'remaining_desc')>Sisa terbesar</option>
+        </select>
 
-                <button type="submit" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">
-                    Cari
-                </button>
+        <button type="submit" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">Cari</button>
 
-                @if($selectedCategory || $selectedStatus || ($searchQuery ?? '') !== '' || $selectedSort)
-                    <a href="{{ route('vendors.index') }}" class="text-xs font-semibold text-champagne hover:underline">
-                        Reset Filter
-                    </a>
-                @endif
-            </div>
+        @if($selectedCategory || $selectedStatus || ($searchQuery ?? '') !== '' || $selectedSort)
+            <a href="{{ route('vendors.index') }}" class="text-xs font-semibold text-champagne hover:underline">Reset</a>
+        @endif
 
-            <p class="text-xs text-taupe tabular-nums">
-                Menampilkan <strong>{{ $vendors->count() }}</strong> mitra vendor
-            </p>
-        </form>
-    </section>
+        <span class="ml-auto text-xs text-taupe tabular-nums">{{ $vendors->count() }} mitra</span>
+    </form>
 
-    {{-- Vendor Editorial Directory Grid --}}
-    <section class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+    {{-- Daftar vendor --}}
+    <ul class="divide-y divide-stone-line/70">
         @forelse($vendors as $vendor)
-            <article class="editorial-card flex flex-col justify-between rounded-lg p-6">
-                <div>
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <span class="text-xs font-semibold text-champagne">{{ $vendor->category->label() }}</span>
-                            <h2 class="mt-0.5 font-editorial text-2xl font-semibold text-espresso">{{ $vendor->name }}</h2>
-                        </div>
-                        <div class="flex flex-wrap items-center justify-end gap-1.5">
-                            @if($vendor->is_payment_overdue)
-                                <x-ui.status-badge tone="wine" label="Jatuh Tempo Terlewat" />
-                            @endif
-                            <x-ui.status-badge :tone="$vendor->booking_status->badgeTone()" :label="$vendor->booking_status->label()" />
-                        </div>
+            @php
+                $vendorBankNumber = '8720' . str_pad((string) (($vendor->id * 184291) % 1000000), 6, '0', STR_PAD_LEFT);
+                $vendorBankLabel = 'BCA ' . $vendorBankNumber;
+            @endphp
+            <li class="py-6">
+                <div class="flex flex-col justify-between gap-2 sm:flex-row sm:items-baseline">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-champagne">{{ $vendor->category->label() }}</p>
+                        <h2 class="mt-0.5 text-xl font-bold text-espresso">{{ $vendor->name }}</h2>
                     </div>
+                    <p class="text-sm">
+                        <x-ui.status-badge :tone="$vendor->booking_status->badgeTone()" :label="$vendor->booking_status->label()" />
+                        @if($vendor->is_payment_overdue)
+                            <span class="ml-2 text-xs font-semibold text-wine">tenggat terlewat</span>
+                        @endif
+                    </p>
+                </div>
 
-                    @php
-                        $vendorBankNumber = '8720' . str_pad((string) (($vendor->id * 184291) % 1000000), 6, '0', STR_PAD_LEFT);
-                        $vendorBankLabel = 'BCA ' . $vendorBankNumber;
-                    @endphp
-                    <div class="mt-3 grid grid-cols-1 gap-2 rounded border border-stone-line bg-alabaster p-3.5 text-xs sm:grid-cols-2">
-                        <div>
-                            <span class="text-taupe">Kontak Darurat PIC:</span>
-                            <p class="font-semibold text-espresso">{{ $vendor->contact_person }}</p>
-                        </div>
-                        <div x-data="{ copiedPhone: false }">
-                            <span class="text-taupe">Telepon / WhatsApp PIC:</span>
-                            <div class="mt-0.5 flex flex-wrap items-center gap-2">
-                                <a href="{{ $vendor->whatsapp_url }}" target="_blank" rel="noopener" class="tabular-nums font-semibold text-champagne hover:underline">
-                                    {{ $vendor->phone }}
-                                </a>
-                                <button
-                                    type="button"
-                                    @click="window.copyToClipboard('{{ $vendor->phone }}'); copiedPhone = true; setTimeout(() => copiedPhone = false, 1800)"
-                                    class="inline-flex items-center gap-1 rounded border border-stone-line bg-pearl px-2 py-0.5 text-xs font-semibold text-charcoal hover:border-champagne cursor-pointer no-print"
-                                    title="Salin nomor kontak darurat PIC"
-                                >
-                                    <x-ui.icon name="copy" class="h-3 w-3 text-champagne" />
-                                    <span x-text="copiedPhone ? 'Tersalin ✓' : 'Salin Kontak'">Salin Kontak</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="sm:col-span-2 border-t border-stone-line/60 pt-2" x-data="{ copiedRek: false }">
-                            <span class="text-taupe">Rekening Pembayaran Mitra:</span>
-                            <div class="mt-0.5 flex flex-wrap items-center justify-between gap-2">
-                                <span class="tabular-nums font-mono font-semibold text-espresso">
-                                    {{ $vendorBankLabel }} <span class="font-sans font-normal text-taupe">a.n. {{ $vendor->name }}</span>
-                                </span>
-                                <button
-                                    type="button"
-                                    @click="window.copyToClipboard('{{ $vendorBankNumber }}'); copiedRek = true; setTimeout(() => copiedRek = false, 1800)"
-                                    class="inline-flex items-center gap-1 rounded border border-stone-line bg-pearl px-2 py-0.5 text-xs font-semibold text-charcoal hover:border-champagne cursor-pointer no-print"
-                                    title="Salin nomor rekening vendor"
-                                >
-                                    <x-ui.icon name="copy" class="h-3 w-3 text-champagne" />
-                                    <span x-text="copiedRek ? 'No. Rek Tersalin ✓' : 'Salin No. Rek'">Salin No. Rek</span>
-                                </button>
-                            </div>
-                        </div>
+                <div class="mt-3 grid grid-cols-1 gap-x-8 gap-y-2 text-xs sm:grid-cols-2">
+                    <p class="text-taupe">
+                        PIC <span class="font-semibold text-espresso">{{ $vendor->contact_person }}</span>
+                        @if($vendor->phone)
+                            · <a href="{{ $vendor->whatsapp_url }}" target="_blank" rel="noopener" class="font-semibold text-champagne hover:underline tabular-nums">{{ $vendor->phone }}</a>
+                            <button
+                                type="button"
+                                x-data="{ copiedPhone: false }"
+                                @click="window.copyToClipboard('{{ $vendor->phone }}'); copiedPhone = true; setTimeout(() => copiedPhone = false, 1800)"
+                                class="ml-1 font-semibold text-taupe hover:text-espresso cursor-pointer no-print"
+                                title="Salin nomor PIC"
+                            ><span x-text="copiedPhone ? 'Tersalin' : 'Salin'">Salin</span></button>
+                        @endif
+                    </p>
+                    <p class="text-taupe" x-data="{ copiedRek: false }">
+                        Rekening <span class="font-mono font-semibold text-espresso">{{ $vendorBankLabel }}</span>
+                        <button
+                            type="button"
+                            @click="window.copyToClipboard('{{ $vendorBankNumber }}'); copiedRek = true; setTimeout(() => copiedRek = false, 1800)"
+                            class="ml-1 font-semibold text-taupe hover:text-espresso cursor-pointer no-print"
+                            title="Salin nomor rekening"
+                        ><span x-text="copiedRek ? 'Tersalin' : 'Salin'">Salin</span></button>
                         @if($vendor->email)
-                            <div>
-                                <span class="text-taupe">Email:</span>
-                                <p class="truncate text-charcoal">{{ $vendor->email }}</p>
-                            </div>
+                            · {{ $vendor->email }}
                         @endif
                         @if($vendor->instagram)
-                            <div>
-                                <span class="text-taupe">Instagram:</span>
-                                <p class="font-medium text-charcoal">{{ $vendor->instagram }}</p>
-                            </div>
+                            · {{ $vendor->instagram }}
                         @endif
-                    </div>
-
-                    @if($vendor->notes)
-                        <p class="mt-3 text-xs leading-relaxed text-taupe">{{ $vendor->notes }}</p>
-                    @endif
+                    </p>
                 </div>
 
-                <div class="mt-5 border-t border-stone-line pt-4">
-                    <div class="grid grid-cols-3 gap-2 text-xs">
-                        <div>
-                            <span class="text-taupe">Nilai Kontrak</span>
-                            <p class="mt-0.5 tabular-nums font-semibold text-espresso whitespace-nowrap">{{ format_idr($vendor->contract_amount) }}</p>
-                        </div>
-                        <div>
-                            <span class="text-taupe">Sudah Dibayar</span>
-                            <p class="mt-0.5 tabular-nums font-semibold text-sage whitespace-nowrap">{{ format_idr($vendor->paid_amount) }}</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-taupe">Sisa Pelunasan</span>
-                            <p class="mt-0.5 tabular-nums font-semibold whitespace-nowrap {{ $vendor->remaining_balance > 0 ? 'text-wine' : 'text-taupe' }}">
-                                {{ format_idr($vendor->remaining_balance) }}
-                            </p>
-                        </div>
+                @if($vendor->notes)
+                    <p class="mt-2 text-xs leading-relaxed text-taupe">{{ $vendor->notes }}</p>
+                @endif
+
+                <div class="mt-3 grid grid-cols-3 gap-4 border-t border-stone-line/70 pt-3 text-xs">
+                    <p>
+                        <span class="block text-taupe">Kontrak</span>
+                        <span class="mt-0.5 block font-semibold text-espresso tabular-nums">{{ format_idr($vendor->contract_amount) }}</span>
+                    </p>
+                    <p>
+                        <span class="block text-taupe">Terbayar</span>
+                        <span class="mt-0.5 block font-semibold text-sage tabular-nums">{{ format_idr($vendor->paid_amount) }}</span>
+                    </p>
+                    <p class="text-right">
+                        <span class="block text-taupe">Sisa</span>
+                        <span class="mt-0.5 block font-semibold tabular-nums {{ $vendor->remaining_balance > 0 ? 'text-wine' : 'text-taupe' }}">{{ format_idr($vendor->remaining_balance) }}</span>
+                    </p>
+                </div>
+
+                @if($vendor->payments->isNotEmpty())
+                    <div class="mt-2 text-xs text-taupe">
+                        <span class="font-semibold text-charcoal">Termin:</span>
+                        @foreach($vendor->payments as $p)
+                            <span class="whitespace-nowrap">{{ $p->payment_stage }} {{ $p->paid_date->format('d/m/Y') }} <span class="font-mono font-semibold text-forest">{{ format_idr($p->amount) }}</span>@if(! $loop->last) · @endif</span>
+                        @endforeach
                     </div>
+                @endif
 
-                    <div class="mt-3">
-                        <x-ui.progress-bar
-                            size="sm"
-                            :percent="$vendor->payment_progress_percent"
-                            :tone="$vendor->payment_progress_percent === 100 ? 'sage' : 'champagne'"
-                            :label="'Progres Pembayaran (' . $vendor->payment_progress_percent . '%)'"
-                            :meta="$vendor->payment_due_date ? 'Jatuh tempo ' . $vendor->payment_due_date->format('d M Y') : 'Tanpa tenggat tetap'"
-                        />
-                    </div>
-                    @if($vendor->payments->isNotEmpty())
-                        <div class="mt-3 rounded-lg border border-black/[0.06] bg-alabaster/60 p-2.5 text-[11px]">
-                            <p class="font-bold text-espresso uppercase tracking-wider text-[10px]">Riwayat Termin ({{ $vendor->payments->count() }})</p>
-                            <div class="mt-1.5 space-y-1">
-                                @foreach($vendor->payments as $p)
-                                    <div class="flex items-center justify-between text-taupe">
-                                        <span>{{ $p->payment_stage }} &bull; {{ $p->paid_date->format('d/m/Y') }}</span>
-                                        <span class="font-mono font-bold text-forest whitespace-nowrap">{{ format_idr($p->amount) }}</span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    <div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-stone-line/60 pt-3 text-xs no-print">
-                        <span class="text-taupe">
-                            Terhubung ke {{ $vendor->budget_items_count }} pos anggaran &amp; {{ $vendor->tasks_count }} tugas
-                        </span>
-
-                        <div class="flex items-center gap-3">
-                            <a
-                                href="{{ $vendor->whatsapp_url }}"
-                                target="_blank"
-                                rel="noopener"
-                                class="font-semibold text-sage hover:underline"
-                            >
-                                WhatsApp PIC
-                            </a>
-                            <a
-                                href="{{ route('vendors.payments.create', $vendor) }}"
-                                class="font-semibold text-forest hover:underline"
-                            >
-                                + Catat Termin
-                            </a>
-                            <a
-                                href="{{ route('vendors.edit', $vendor) }}"
-                                class="font-semibold text-champagne hover:underline"
-                            >
-                                Edit
-                            </a>
-                            <form method="POST" action="{{ route('vendors.destroy', $vendor) }}" onsubmit="return confirm('Hapus vendor ini dari direktori?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="font-medium text-wine hover:underline">
-                                    Hapus
-                                </button>
-                            </form>
-                        </div>
+                <div class="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs no-print">
+                    <span class="text-taupe">
+                        {{ $vendor->budget_items_count }} pos anggaran · {{ $vendor->tasks_count }} tugas
+                        @if($vendor->payment_due_date)
+                            · tenggat {{ $vendor->payment_due_date->format('d M Y') }}
+                        @endif
+                    </span>
+                    <div class="flex items-center gap-4">
+                        <a href="{{ $vendor->whatsapp_url }}" target="_blank" rel="noopener" class="font-semibold text-sage hover:underline">WhatsApp</a>
+                        <a href="{{ route('vendors.payments.create', $vendor) }}" class="font-semibold text-forest hover:underline">+ Termin</a>
+                        <a href="{{ route('vendors.edit', $vendor) }}" class="font-semibold text-champagne hover:underline">Ubah</a>
+                        <form method="POST" action="{{ route('vendors.destroy', $vendor) }}" onsubmit="return confirm('Hapus vendor ini dari direktori?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="font-medium text-wine hover:underline">Hapus</button>
+                        </form>
                     </div>
                 </div>
-            </article>
+            </li>
         @empty
-            <div class="col-span-full editorial-card rounded-lg p-10 text-center">
-                <p class="text-sm text-taupe">Belum ada vendor pada kategori atau status yang dipilih.</p>
-            </div>
+            <li class="py-10 text-sm text-taupe">Belum ada vendor pada filter ini.</li>
         @endforelse
-    </section>
+    </ul>
 @endsection

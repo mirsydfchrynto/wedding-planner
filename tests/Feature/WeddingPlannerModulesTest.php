@@ -36,8 +36,8 @@ final class WeddingPlannerModulesTest extends TestCase
     {
         $this->get('/')
             ->assertOk()
-            ->assertSee('Rencanakan pernikahan tanpa spreadsheet.', false)
-            ->assertSee('Gratis, tanpa langganan', false);
+            ->assertSee('Rencana pernikahan yang jelas', false)
+            ->assertSee('Gratis, dan tetap gratis', false);
 
         $this->actingAs($this->customerUser)
             ->get('/')
@@ -88,7 +88,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $response->assertOk();
         $response->assertSee('Aurelia Larasati & Reza Mahendra');
         $response->assertSee('Rp 350.000.000');
-        $response->assertSee('Tugas Terdekat');
+        $response->assertSee('Tugas terdekat');
         $response->assertDontSee('Konsol Admin Privat');
     }
 
@@ -172,7 +172,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->actingAs($this->customerUser)
             ->get('/checklist?category=venue')
             ->assertOk()
-            ->assertSee('Checklist Persiapan');
+            ->assertSee('Daftar Tugas Persiapan');
         $this->actingAs($this->customerUser)->post('/checklist', [
             'title' => 'Verifikasi Berkas Wali Nikah KUA',
             'description' => 'Fotokopi KTP dan KK wali nikah',
@@ -198,7 +198,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->actingAs($this->customerUser)
             ->get('/timeline')
             ->assertOk()
-            ->assertSee('Linimasa & Jadwal')
+            ->assertSee('Linimasa & Rundown')
             ->assertSee('Perencanaan')
             ->assertSee('Hari-H');
 

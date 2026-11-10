@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Buku Panduan Pernikahan — {{ $profile->couple_names }} | Atelier Vow</title>
+    <title>Buku Panduan Pernikahan — {{ $profile->couple_names }} | Siap Nikah</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -59,7 +59,7 @@
             {{-- Header Badge --}}
             <div class="flex items-center justify-between border-b border-stone-line pb-6">
                 <div>
-                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-champagne">Atelier Vow Nusantara &bull; Master Wedding Guide</span>
+                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-champagne">Siap Nikah &bull; Buku Panduan Pernikahan</span>
                     <h1 class="mt-1 font-serif-editorial text-3xl sm:text-4xl font-bold text-espresso">{{ $profile->couple_names }}</h1>
                     <p class="mt-1 text-sm text-taupe font-medium">Buku Kerja &amp; Panduan Operasional Resmi Hari Pernikahan</p>
                 </div>
@@ -299,12 +299,12 @@
                     <div>
                         <p class="text-taupe">Lead Wedding Organizer</p>
                         <div class="mt-16 border-b border-stone-line pb-1">
-                            <p class="font-bold text-espresso">Atelier Vow Management</p>
+                            <p class="font-bold text-espresso">Siap Nikah</p>
                         </div>
                     </div>
                 </div>
                 <div class="mt-6 text-center text-[10px] text-taupe">
-                    Dicetak otomatis dari Sistem SaaS Atelier Vow Nusantara pada {{ now()->translatedFormat('l, d F Y H:i:s') }} WIB. Dokumen ini sah sebagai panduan kerja lapangan.
+                    Dicetak otomatis dari Siap Nikah pada {{ now()->translatedFormat('l, d F Y H:i:s') }} WIB. Dokumen ini sah sebagai panduan kerja lapangan.
                 </div>
             </div>
         </article>

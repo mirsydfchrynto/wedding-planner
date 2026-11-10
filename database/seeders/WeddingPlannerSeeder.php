@@ -57,7 +57,7 @@ final class WeddingPlannerSeeder extends Seeder
         ]);
 
         User::query()->create([
-            'name' => 'Administrator Atelier Vow',
+            'name' => 'Administrator Siap Nikah',
             'email' => 'admin@ateliervow.id',
             'password' => Hash::make('admin'),
             'role' => 'admin',
