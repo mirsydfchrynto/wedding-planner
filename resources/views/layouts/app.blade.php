@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ isset($title) ? $title . ' — Siap Nikah' : 'Siap Nikah — Perencanaan Pernikahan Nusantara' }}</title>
+    <title>{{ isset($title) ? $title . ' — Atelier Vow' : 'Atelier Vow — Platform Perencanaan Pernikahan Nusantara' }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +32,7 @@
     <header class="sticky top-0 z-30 border-b border-stone-line bg-pearl">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
             <a href="{{ route('home') }}" class="group flex items-baseline gap-2.5">
-                <span class="text-base font-bold tracking-tight text-espresso">Siap Nikah</span>
+                <span class="text-base font-bold tracking-tight text-espresso">Atelier Vow</span>
                 <span class="text-xs text-taupe">Nusantara</span>
             </a>
 
@@ -157,7 +157,7 @@
         <div class="mx-auto max-w-7xl px-6 lg:px-10">
             <div class="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
                 <div>
-                    <p class="text-base font-bold text-espresso">Siap Nikah</p>
+                    <p class="text-base font-bold text-espresso">Atelier Vow</p>
                     <p class="mt-1 text-sm text-taupe">
                         Perencanaan anggaran, tugas, linimasa, dan vendor pernikahan Nusantara.
                     </p>

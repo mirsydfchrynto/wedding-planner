@@ -1,4 +1,4 @@
-# Siap Nikah — Perencanaan Pernikahan Nusantara
+# Atelier Vow Nusantara — SaaS Wedding Planner Web Application
 
 Platform Software-as-a-Service (SaaS) manajemen perencanaan pernikahan Indonesia berbasis **Laravel 13 (PHP 8.3+)**, **Tailwind CSS v4**, **Alpine.js v3**, dan **Chart.js v4** dengan arahan visual **Apple Tactile Precision × Nusantara Batik Keraton** (*Kain Mori Alabaster `#FAF8F5` & Sogan Champagne Bronze `#735736`*).
 

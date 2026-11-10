@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center py-12">
-        <p class="text-sm font-semibold text-champagne">Siap Nikah</p>
+        <p class="text-sm font-semibold text-champagne">Atelier Vow</p>
         <h1 class="mt-2 text-3xl font-bold tracking-tight text-espresso">Masuk ke ruang kerja</h1>
         <p class="mt-3 text-sm leading-relaxed text-taupe">
             Satu akun untuk anggaran, daftar tugas, linimasa, dan vendor pernikahan Anda.

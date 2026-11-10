@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Siap Nikah - Perencanaan Pernikahan Nusantara</title>
+    <title>Atelier Vow - Perencanaan Pernikahan Nusantara</title>
     <meta name="description" content="Perencanaan pernikahan Indonesia: 29 pos anggaran hasil riset, daftar 124 tugas, linimasa, vendor, dan panduan cetak A4. Gratis.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
     <header class="sticky top-0 z-30 border-b border-stone-line bg-alabaster/95 backdrop-blur-md">
         <div class="mx-auto flex max-w-5xl items-baseline justify-between gap-6 px-6 py-4 lg:px-8">
             <a href="{{ route('home') }}" class="flex items-baseline gap-2.5">
-                <span class="text-base font-bold tracking-tight">Siap Nikah</span>
+                <span class="text-base font-bold tracking-tight">Atelier Vow</span>
                 <span class="text-xs text-taupe">Nusantara</span>
             </a>
 
@@ -134,7 +134,7 @@
 
     <footer class="border-t border-stone-line py-8">
         <div class="mx-auto flex max-w-5xl flex-col items-start justify-between gap-3 px-6 text-sm text-taupe sm:flex-row sm:items-baseline lg:px-8">
-            <p>Siap Nikah - perencanaan pernikahan Indonesia.</p>
+            <p>Atelier Vow - perencanaan pernikahan Indonesia.</p>
             <div class="flex items-center gap-6 font-semibold">
                 <a href="{{ route('login') }}" class="hover:text-espresso">Masuk</a>
                 <a href="#fitur" class="hover:text-espresso">Isi</a>
