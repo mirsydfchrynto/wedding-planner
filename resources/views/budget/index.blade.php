@@ -12,13 +12,9 @@
             >
                 Ubah Plafon Induk
             </button>
-            <button
-                type="button"
-                @click="$dispatch('open-modal', 'create-budget-item-modal')"
-                class="editorial-btn-primary"
-            >
+            <a href="{{ route('budget.create') }}" class="editorial-btn-primary">
                 + Tambah Pos Anggaran
-            </button>
+            </a>
         </x-slot:actions>
     </x-ui.section-header>
 
@@ -259,13 +255,9 @@
                             </td>
                             <td class="py-3.5 pl-3 text-right no-print">
                                 <div class="inline-flex items-center gap-2">
-                                    <button
-                                        type="button"
-                                        @click="$dispatch('open-modal', 'edit-budget-{{ $item->id }}')"
-                                        class="text-xs font-semibold text-champagne hover:underline"
-                                    >
+                                    <a href="{{ route('budget.edit', $item) }}" class="text-xs font-semibold text-champagne hover:underline">
                                         Edit
-                                    </button>
+                                    </a>
                                     <form method="POST" action="{{ route('budget.destroy', $item) }}" onsubmit="return confirm('Hapus pos anggaran ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -275,78 +267,6 @@
                                     </form>
                                 </div>
 
-                                {{-- Per-Row Edit Modal --}}
-                                <x-ui.modal name="edit-budget-{{ $item->id }}" :title="'Edit Pos: ' . $item->title" subtitle="Perbarui rincian biaya estimasi, kontrak aktual, dan nominal terbayar">
-                                    <form method="POST" action="{{ route('budget.update', $item) }}" class="space-y-4 text-left">
-                                        @csrf
-                                        @method('PUT')
-
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <div>
-                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                                                <select name="category" required class="editorial-input">
-                                                    @foreach($categories as $category)
-                                                        <option value="{{ $category->value }}" @selected($item->category === $category)>
-                                                            {{ $category->label() }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Mitra Vendor (Opsional)</label>
-                                                <select name="vendor_id" class="editorial-input">
-                                                    <option value="">-- Tanpa Vendor --</option>
-                                                    @foreach($vendors as $vendor)
-                                                        <option value="{{ $vendor->id }}" @selected($item->vendor_id === $vendor->id)>
-                                                            {{ $vendor->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Komponen Biaya</label>
-                                            <input type="text" name="title" value="{{ $item->title }}" required class="editorial-input">
-                                        </div>
-
-                                        {{-- deslop-ignore-next-line 28 --}}
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                            <div>
-                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Estimasi (Rp)</label>
-                                                <input type="number" name="estimated_cost" value="{{ $item->estimated_cost }}" min="0" data-rupiah required class="editorial-input tabular-nums">
-                                            </div>
-                                            <div>
-                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Aktual (Rp)</label>
-                                                <input type="number" name="actual_cost" value="{{ $item->actual_cost }}" min="0" data-rupiah required class="editorial-input tabular-nums">
-                                            </div>
-                                            <div>
-                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Sudah Dibayar (Rp)</label>
-                                                <input type="number" name="paid_amount" value="{{ $item->paid_amount }}" min="0" data-rupiah required class="editorial-input tabular-nums">
-                                            </div>
-                                        </div>
-
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <div>
-                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Jatuh Tempo</label>
-                                                <input type="date" name="due_date" value="{{ $item->due_date?->format('Y-m-d') }}" class="editorial-input tabular-nums">
-                                            </div>
-                                            <div>
-                                                <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan</label>
-                                                <input type="text" name="notes" value="{{ $item->notes }}" class="editorial-input">
-                                            </div>
-                                        </div>
-
-                                        <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                                            <button type="button" @click="$dispatch('close-modal', 'edit-budget-{{ $item->id }}')" class="editorial-btn-secondary">
-                                                Batal
-                                            </button>
-                                            <button type="submit" class="editorial-btn-primary">
-                                                Simpan Perubahan
-                                            </button>
-                                        </div>
-                                    </form>
-                                </x-ui.modal>
                             </td>
                         </tr>
                     @empty
@@ -360,74 +280,6 @@
             </table>
         </div>
     </section>
-
-    {{-- Modal: Create Budget Item --}}
-    <x-ui.modal name="create-budget-item-modal" title="Tambah Komponen Anggaran Baru" subtitle="Catat rencana pengeluaran baru beserta estimasi, biaya kontrak aktual, dan vendor">
-        <form method="POST" action="{{ route('budget.store') }}" class="space-y-5">
-            @csrf
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori Pengeluaran</label>
-                    <select name="category" required class="editorial-input">
-                        @foreach($categories as $category)
-                            <option value="{{ $category->value }}">{{ $category->label() }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Mitra Vendor (Opsional)</label>
-                    <select name="vendor_id" class="editorial-input">
-                        <option value="">-- Mandiri / Belum Ada Vendor --</option>
-                        @foreach($vendors as $vendor)
-                            <option value="{{ $vendor->id }}">{{ $vendor->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Komponen Biaya</label>
-                <input type="text" name="title" placeholder="Contoh: Paket Dekorasi Lorong & Lighting Resepsi" required class="editorial-input">
-            </div>
-
-            {{-- deslop-ignore-next-line 28 --}}
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Estimasi (Rp)</label>
-                    <input type="number" name="estimated_cost" value="15000000" min="0" step="100000" data-rupiah required class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Biaya Aktual (Rp)</label>
-                    <input type="number" name="actual_cost" value="0" min="0" step="100000" data-rupiah class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Sudah Dibayar (Rp)</label>
-                    <input type="number" name="paid_amount" value="0" min="0" step="100000" data-rupiah class="editorial-input tabular-nums">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Jatuh Tempo</label>
-                    <input type="date" name="due_date" class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Tambahan</label>
-                    <input type="text" name="notes" placeholder="Keterangan termin pembayaran..." class="editorial-input">
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                <button type="button" @click="$dispatch('close-modal', 'create-budget-item-modal')" class="editorial-btn-secondary">
-                    Batal
-                </button>
-                <button type="submit" class="editorial-btn-primary">
-                    Simpan Komponen Anggaran
-                </button>
-            </div>
-        </form>
-    </x-ui.modal>
 
     {{-- Modal: Update Master Budget Cap --}}
     <x-ui.modal name="update-budget-cap-modal" title="Ubah Plafon Total Anggaran" subtitle="Sesuaikan batas anggaran induk pernikahan" maxWidth="max-w-md">

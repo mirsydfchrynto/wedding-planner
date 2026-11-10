@@ -6,6 +6,8 @@ namespace Tests\Feature;
 
 use App\Enums\WeddingCategory;
 use App\Models\User;
+use App\Models\BudgetItem;
+use App\Models\WeddingTask;
 use App\Models\Vendor;
 use App\Models\WeddingProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -59,6 +61,11 @@ final class TenancyTest extends TestCase
         ])->assertRedirect('/dashboard');
 
         $this->assertSame($user->id, $user->fresh()->weddingProfile->user_id);
+
+        $profile = $user->fresh()->weddingProfile;
+
+        $this->assertGreaterThan(0, BudgetItem::query()->where('wedding_profile_id', $profile->id)->count());
+        $this->assertGreaterThan(0, WeddingTask::query()->where('wedding_profile_id', $profile->id)->count());
     }
 
     public function test_new_records_are_auto_assigned_to_the_signed_in_profile(): void

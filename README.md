@@ -6,22 +6,21 @@ Platform Software-as-a-Service (SaaS) manajemen perencanaan pernikahan Indonesia
 
 ## Arsitektur 3 Lapisan Utama
 
-1. **Web Utama Publik — Branding, Marketing & SaaS Landing Page (`GET /`)**
-   - Halaman utama ketika pengunjung membuka aplikasi: menampilkan nilai jual SaaS, pratinjau ruang kerja interaktif 3D (`spatialTilt`), **Simulasi Interaktif Anggaran & Adat Nusantara** (`100`–`1.000` tamu), 3 paket berlangganan (*Akad Intimate*, *Keraton Royal*, *Atelier Enterprise WO*), dan strategi kampanye pemasaran.
+1. **Akses Publik (`GET /` → `GET /login`)**
+   - Tidak ada landing page pemasaran. `/` hanya mengalihkan: tamu ke `/login`, pengguna berprofil ke `/dashboard`, akun baru tanpa profil ke `/onboarding`.
    - Isolasi data per akun: setiap pengantin hanya melihat anggaran, checklist, timeline, dan vendor miliknya sendiri (`WeddingProfile` global scope).
 2. **Gerbang Login Google OAuth & Workspace Calon Pengantin (`GET /login` → `GET /dashboard`)**
    - Pelanggan masuk menggunakan **Akun Google** (`POST /auth/google`, default terisi `aurelia.reza@gmail.com`) untuk membuka 5 modul utama yang saling terhubung:
      - **Executive Dashboard (`GET /dashboard`)** — Hitung mundur waktu nyata (Hari, Jam, Menit), Indeks Kesiapan Hari-H, grafik Estimasi vs Aktual, **Tata Upacara Adat Jawa (Siraman, Midodareni, Akad, Panggih)**, dan **Kalkulator Neptu Weton Mempelai**.
-     - **Budget Planner (`GET /budget`)** — Plafon anggaran induk, alokasi 8 kategori, estimasi vs aktual, pelacakan pembayaran, dan indikator hemat/overbudget.
-     - **Wedding Checklist (`GET /checklist`)** — Daftar tugas persiapan dengan filter kategori, status, PIC, dan centang selesai instan.
-     - **Wedding Timeline (`GET /timeline`)** — Peta linimasa kronologis dari fase **H-12 Bulan** hingga **Hari-H**.
-     - **Vendor Management (`GET /vendors`)** — Direktori mitra vendor pernikahan lengkap dengan kontak WhatsApp PIC, nilai kontrak, dan pelacakan DP/pelunasan.
+    - **Budget Planner (`GET /budget`)** — Plafon anggaran induk, alokasi 12 kategori riset, estimasi vs aktual, pelacakan pembayaran, dan indikator hemat/overbudget.
+    - **Wedding Checklist (`GET /checklist`)** — Daftar tugas persiapan dengan filter kategori, status, PIC, dan centang selesai instan.
+    - **Wedding Timeline (`GET /timeline`)** — Peta linimasa kronologis dari fase **H-12 Bulan** hingga **Hari-H**, plus rundown menit-demi-menit hari-H.
+    - **Vendor Management (`GET /vendors`)** — Direktori mitra vendor pernikahan lengkap dengan kontak WhatsApp PIC, nilai kontrak, dan pelacakan DP/pelunasan per termin.
+    - **Buku Tamu (`GET /guests`)** — Daftar tamu dengan kategori, jumlah pax, dan status RSVP.
      - **Master Wedding Guide Print A4 / PDF (`GET /print/master-guide`)** — Lembar panduan resmi siap cetak (4 halaman): Cover & Ringkasan Eksekutif, Rundown Menit-demi-Menit Hari-H, Direktori Kontak Darurat Vendor & Pelunasan, serta Penataan Meja Tamu Kehormatan VIP.
    - Akun baru tanpa profil diarahkan ke **Onboarding (`GET /onboarding`)** untuk membuat profil pernikahan sebelum workspace terbuka. Satu akun = satu profil pernikahan, sehingga data antar pengantin tidak pernah tercampur.
-3. **Konsol Admin & Operasional WO yang Tersembunyi & Privat (`GET /admin`)**
-   - **Tersembunyi sepenuhnya** dari pengunjung publik maupun pelanggan biasa (`EnsureAdminAccess` middleware — mengembalikan `403 Forbidden` jika diakses oleh akun non-admin).
-   - Diakses melalui menu **Otorisasi Privat Administrator & Lead WO** di halaman `/login` menggunakan kredensial Admin (`irsyad@ateliervow.id` / `AtelierAdmin2026!`).
-   - Menyediakan eskalasi 1-klik untuk tugas yang terlambat (`overdue`), audit pos anggaran berisiko tinggi, verifikasi SLA kontrak vendor, dan **Matriks Kepatuhan Twelve-Factor SaaS (12/12)**.
+3. **Akun Admin**
+   - Konsol `/admin` sudah dihapus (commit `3f3a236`). Akun ber-`role=admin` masuk lewat alur Google yang sama dan tidak memiliki profil pernikahan.
 
 ---
 
@@ -31,7 +30,7 @@ Setiap anggota tim bekerja pada *branch* dan berkas masing-masing sehingga bebas
 
 | Anggota Tim | Akun GitHub | Branch Git | Peran & Modul yang Dikerjakan | Berkas Utama (*File Ownership*) |
 | :--- | :--- | :--- | :--- | :--- |
-| **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` | **Lead Architecture, SaaS Landing Page (`/`), Google Auth & Private Admin (`/admin`), serta Modul #5: Executive Dashboard (`/dashboard`)** | `app/Http/Controllers/{Saas,Auth,Admin,Dashboard}Controller.php`<br>`app/Http/Middleware/EnsureAdminAccess.php`<br>`resources/views/{saas,auth,admin,dashboard}/*`<br>`resources/views/layouts/app.blade.php` & `components/ui/*` |
+| **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` | **Lead Architecture, Google Auth, serta Modul #5: Executive Dashboard (`/dashboard`)** | `app/Http/Controllers/{Auth,Dashboard}Controller.php`<br>`resources/views/{auth,dashboard}/*`<br>`resources/views/layouts/app.blade.php` & `components/ui/*` |
 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Modul #1: Budget Planner (`/budget`)** | `app/Http/Controllers/BudgetController.php`<br>`app/Http/Requests/*BudgetItemRequest.php`<br>`resources/views/budget/index.blade.php` |
 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Modul #3: Wedding Timeline (`/timeline`) & Modul #4: Vendor Management (`/vendors`)** | `app/Http/Controllers/TimelineController.php`<br>`app/Http/Controllers/VendorController.php`<br>`resources/views/timeline/index.blade.php`<br>`resources/views/vendors/index.blade.php` |
 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Modul #2: Wedding Checklist (`/checklist`)** | `app/Http/Controllers/ChecklistController.php`<br>`resources/views/checklist/index.blade.php` |
@@ -63,11 +62,8 @@ php artisan serve
 
 ### Akun Demo Bawaan (Otomatis dari Seeder)
 - **Login Customer (Google Sign-In di `/login`):** `aurelia.reza@gmail.com` (langsung klik tombol **"Lanjutkan dengan Akun Google"**)
-- **Login Admin Privat (Klik "Otorisasi Privat Administrator & Lead WO" di `/login`):**
-  - Email: `irsyad@ateliervow.id`
-  - Kunci Otorisasi: `AtelierAdmin2026!`
 
 ### Isolasi Data & Kunci Google Sign-In
 - Semua tabel modul (`vendors`, `budget_items`, `wedding_tasks`) memiliki `wedding_profile_id`; record baru otomatis ditandai sesuai profil pengguna yang sedang masuk.
 - `POST /auth/google` memakai **demo sign-in tanpa kata sandi** (membuat/masuk akun dari email). Kunci ini aktif hanya saat `GOOGLE_DEMO_LOGIN=true` (default non-production) dan mengembalikan `403` di produksi sampai Google OAuth asli dikonfigurasi.
-- Admin (`role=admin`) tidak memiliki profil pernikahan: konsol `/admin` sengaja membaca seluruh data lintas akun.
+- Akun (`role=admin`) tidak memiliki profil pernikahan dan tidak lagi punya konsol khusus.

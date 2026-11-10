@@ -81,6 +81,28 @@ final class ChecklistController extends Controller
         ]);
     }
 
+    public function create(): View
+    {
+        return view('checklist.form', [
+            'task' => null,
+            'categories' => WeddingCategory::cases(),
+            'statuses' => TaskStatus::cases(),
+            'phases' => TimelinePhase::cases(),
+            'vendors' => Vendor::query()->orderBy('name')->get(),
+        ]);
+    }
+
+    public function edit(WeddingTask $weddingTask): View
+    {
+        return view('checklist.form', [
+            'task' => $weddingTask,
+            'categories' => WeddingCategory::cases(),
+            'statuses' => TaskStatus::cases(),
+            'phases' => TimelinePhase::cases(),
+            'vendors' => Vendor::query()->orderBy('name')->get(),
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([

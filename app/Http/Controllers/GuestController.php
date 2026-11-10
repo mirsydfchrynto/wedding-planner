@@ -51,7 +51,7 @@ final class GuestController extends Controller
         $pendingGuests = (int) $guests->where('rsvp_status', 'pending')->sum('pax');
         $declinedGuests = (int) $guests->where('rsvp_status', 'declined')->sum('pax');
 
-        $categories = ['Tamu VIP Kehormatan', 'Keluarga CPW', 'Keluarga CPP', 'Sahabat Pengantin', 'Rekan Kerja & Partner', 'Teman Pengantin', 'Kolega Bisnis'];
+        $categories = self::categories();
 
         return view('guests.index', [
             'summary' => $summary,
@@ -66,6 +66,30 @@ final class GuestController extends Controller
             'pendingGuests' => $pendingGuests,
             'declinedGuests' => $declinedGuests,
         ]);
+    }
+
+    public function create(): View
+    {
+        return view('guests.form', [
+            'guest' => null,
+            'categories' => self::categories(),
+        ]);
+    }
+
+    public function edit(WeddingGuest $guest): View
+    {
+        return view('guests.form', [
+            'guest' => $guest,
+            'categories' => self::categories(),
+        ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function categories(): array
+    {
+        return ['Tamu VIP Kehormatan', 'Keluarga CPW', 'Keluarga CPP', 'Sahabat Pengantin', 'Rekan Kerja & Partner', 'Teman Pengantin', 'Kolega Bisnis'];
     }
 
     public function store(Request $request): RedirectResponse

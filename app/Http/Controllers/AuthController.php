@@ -61,42 +61,6 @@ final class AuthController extends Controller
             ->with('success', 'Berhasil masuk dengan akun Google ('.$user->email.'). Selamat datang di Portal Pengantin.');
     }
 
-    /**
-     * Simple unified username/email & password login for testing and production.
-     */
-    public function loginWithPassword(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'login' => ['required', 'string'],
-            'password' => ['required', 'string'],
-        ]);
-
-        $login = trim($validated['login']);
-        $password = $validated['password'];
-
-        if ($login === 'user' || $login === 'user@ateliervow.id' || $login === 'aurelia.reza@gmail.com') {
-            $user = User::query()->where('role', 'customer')->first();
-            $passValid = $password === 'user' || ($user && Hash::check($password, (string) $user->password));
-
-            if ($user && $passValid) {
-                Auth::login($user, true);
-                $request->session()->regenerate();
-
-                return redirect()->intended(route('dashboard.index'))->with('success', 'Berhasil masuk sebagai Pengantin.');
-            }
-        }
-
-        $user = User::query()->where('email', $login)->first();
-        if ($user && Hash::check($password, (string) $user->password)) {
-            Auth::login($user, true);
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('dashboard.index'))->with('success', 'Berhasil masuk.');
-        }
-
-        return back()->withErrors(['login' => 'Email atau kata sandi tidak cocok.'])->onlyInput('login');
-    }
-
 
     public function logout(Request $request): RedirectResponse
     {
@@ -105,7 +69,7 @@ final class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()
-            ->route('saas.landing')
+            ->route('home')
             ->with('success', 'Sesi Anda telah diakhiri.');
     }
 }

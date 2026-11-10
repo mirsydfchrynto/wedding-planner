@@ -51,7 +51,7 @@ final class BudgetController extends Controller
             'summary' => $summary,
             'profile' => $summary['profile'],
             'items' => $items,
-            'categories' => WeddingCategory::cases(),
+            'categories' => WeddingCategory::budgetCases(),
             'vendors' => $vendors,
             'selectedCategory' => $selectedCategory,
             'selectedStatus' => $selectedStatus,
@@ -69,6 +69,24 @@ final class BudgetController extends Controller
                     'allocations' => ['venue' => 30, 'catering' => 30, 'attire' => 12, 'decoration' => 14, 'documentation' => 10, 'other' => 4],
                 ],
             ],
+        ]);
+    }
+
+    public function create(): View
+    {
+        return view('budget.form', [
+            'item' => null,
+            'categories' => WeddingCategory::budgetCases(),
+            'vendors' => Vendor::query()->orderBy('name')->get(),
+        ]);
+    }
+
+    public function edit(BudgetItem $budgetItem): View
+    {
+        return view('budget.form', [
+            'item' => $budgetItem,
+            'categories' => WeddingCategory::budgetCases(),
+            'vendors' => Vendor::query()->orderBy('name')->get(),
         ]);
     }
 

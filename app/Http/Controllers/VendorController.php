@@ -41,7 +41,7 @@ final class VendorController extends Controller
         return view('vendors.index', [
             'summary' => $summary,
             'vendors' => $vendors,
-            'categories' => WeddingCategory::cases(),
+            'categories' => WeddingCategory::vendorCases(),
             'bookingStatuses' => VendorBookingStatus::cases(),
             'selectedCategory' => $selectedCategory,
             'selectedStatus' => $selectedStatus,
@@ -51,6 +51,29 @@ final class VendorController extends Controller
             'totalPaid' => $totalPaid,
             'totalRemaining' => $totalRemaining,
         ]);
+    }
+
+    public function create(): View
+    {
+        return view('vendors.form', [
+            'vendor' => null,
+            'categories' => WeddingCategory::vendorCases(),
+            'bookingStatuses' => VendorBookingStatus::cases(),
+        ]);
+    }
+
+    public function edit(Vendor $vendor): View
+    {
+        return view('vendors.form', [
+            'vendor' => $vendor,
+            'categories' => WeddingCategory::vendorCases(),
+            'bookingStatuses' => VendorBookingStatus::cases(),
+        ]);
+    }
+
+    public function createPayment(Vendor $vendor): View
+    {
+        return view('vendors.payment', ['vendor' => $vendor]);
     }
 
     public function store(Request $request): RedirectResponse

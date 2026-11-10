@@ -14,8 +14,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 @php
-    $isLandingPage = request()->routeIs('saas.*') || request()->is('/');
-    $isPublicPage = $isLandingPage || request()->routeIs('login');
+    $isPublicPage = request()->routeIs('login');
     $hasProfile = isset($globalProfile) && $globalProfile->exists;
     $workspaceItems = [
         ['route' => 'dashboard.index', 'pattern' => 'dashboard.*', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
@@ -31,27 +30,16 @@
         Lewati ke konten utama
     </a>
 
-    {{-- Top Navigation Bar: Tone-separated on Landing Page (no hairline border), bordered on internal Workspace --}}
-    <header class="sticky top-0 z-30 {{ $isLandingPage ? 'bg-alabaster' : 'border-b border-stone-line bg-pearl' }}">
+    <header class="sticky top-0 z-30 border-b border-stone-line bg-pearl">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('saas.landing') }}" class="group flex items-center gap-2.5">
-                    <div class="flex h-8 w-8 items-center justify-center rounded bg-espresso text-sm font-bold text-alabaster">
-                        AV
-                    </div>
-                    <span class="text-base font-bold tracking-tight text-espresso">Atelier Vow</span>
-                </a>
-            </div>
+            <a href="{{ route('home') }}" class="group flex items-center gap-2.5">
+                <div class="flex h-8 w-8 items-center justify-center rounded bg-espresso text-sm font-bold text-alabaster">
+                    AV
+                </div>
+                <span class="text-base font-bold tracking-tight text-espresso">Atelier Vow</span>
+            </a>
 
-            @if($isPublicPage)
-                <nav class="hidden lg:flex items-center gap-7 text-sm font-semibold text-charcoal" aria-label="Navigasi Produk SaaS">
-                    <a href="{{ route('saas.landing') }}#simulasi-adat" class="hover:text-champagne">Simulasi Anggaran</a>
-                    <a href="{{ route('saas.landing') }}#alur-bisnis" class="hover:text-champagne">Alur Kerja</a>
-                    <a href="{{ route('saas.landing') }}#paket-saas" class="hover:text-champagne">Harga Paket</a>
-                    <a href="{{ route('saas.landing') }}#faq-section" class="hover:text-champagne">FAQ</a>
-                </nav>
-            @else
-                @if($hasProfile)
+            @if(! $isPublicPage && $hasProfile)
                 <nav class="hidden lg:flex items-center gap-1 rounded-xl border border-black/[0.06] bg-white p-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]" aria-label="Navigasi Workspace Pengantin">
                     @foreach($workspaceItems as $item)
                         @php $active = request()->routeIs($item['pattern']); @endphp
@@ -65,17 +53,11 @@
                         </a>
                     @endforeach
                 </nav>
-                @endif
             @endif
 
             <div class="flex items-center gap-3">
                 @auth
-                    @if($isPublicPage)
-                        <a href="{{ route('dashboard.index') }}" class="editorial-btn-primary !py-2 !px-4 !text-sm">
-                            <span>Buka Workspace</span>
-                        </a>
-                    @else
-
+                    @if(! $isPublicPage)
                         <div class="hidden xl:flex items-center gap-2 rounded-md border border-stone-line bg-alabaster px-3 py-1.5 text-xs">
                             <x-ui.google-icon class="h-3.5 w-3.5" />
                             <span class="font-semibold text-espresso">{{ auth()->user()->name }}</span>
@@ -104,54 +86,49 @@
                     </a>
                 @endauth
 
-                <button
-                    type="button"
-                    @click="mobileNavOpen = !mobileNavOpen"
-                    class="inline-flex items-center justify-center rounded bg-ivory p-2.5 text-charcoal lg:hidden"
-                    aria-label="Buka menu navigasi"
-                >
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
+                @auth
+                    @if(! $isPublicPage)
+                        <button
+                            type="button"
+                            @click="mobileNavOpen = !mobileNavOpen"
+                            class="inline-flex items-center justify-center rounded bg-ivory p-2.5 text-charcoal lg:hidden"
+                            aria-label="Buka menu navigasi"
+                        >
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    @endif
+                @endauth
             </div>
         </div>
 
-        <div x-show="mobileNavOpen" x-cloak class="bg-ivory px-6 py-4 lg:hidden">
-            @if($isPublicPage)
-                <div class="flex flex-col gap-2.5">
-                    <a href="{{ route('saas.landing') }}#simulasi-adat" class="rounded px-3 py-2 text-base font-medium text-charcoal">Simulasi Anggaran</a>
-                    <a href="{{ route('saas.landing') }}#alur-bisnis" class="rounded px-3 py-2 text-base font-medium text-charcoal">Alur Kerja</a>
-                    <a href="{{ route('saas.landing') }}#paket-saas" class="rounded px-3 py-2 text-base font-medium text-charcoal">Harga Paket</a>
-                    <a href="{{ route('saas.landing') }}#faq-section" class="rounded px-3 py-2 text-base font-medium text-charcoal">FAQ</a>
-                    <a href="{{ route('login') }}" class="mt-1 inline-flex items-center justify-center gap-2 rounded bg-espresso px-4 py-3 text-sm font-semibold text-alabaster">
-                        <x-ui.google-icon class="h-4 w-4" />
-                        <span>Masuk dengan Google</span>
-                    </a>
-                </div>
-            @else
-                <div class="flex flex-col gap-1">
-                    @if($hasProfile)
-                    @foreach($workspaceItems as $item)
-                        @php $active = request()->routeIs($item['pattern']); @endphp
-                        <a
-                            href="{{ route($item['route']) }}"
-                            class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium {{ $active ? 'bg-espresso text-alabaster' : 'text-charcoal hover:bg-pearl' }}"
-                        >
-                            <x-ui.icon :name="$item['icon']" class="h-4 w-4" />
-                            <span>{{ $item['label'] }}</span>
-                        </a>
-                    @endforeach
-                    @endif
-                    <form method="POST" action="{{ route('logout') }}" class="mt-2 pt-2">
-                        @csrf
-                        <button type="submit" class="w-full rounded bg-pearl px-3 py-2.5 text-center text-sm font-semibold text-charcoal">
-                            Keluar
-                        </button>
-                    </form>
+        @auth
+            @if(! $isPublicPage)
+                <div x-show="mobileNavOpen" x-cloak class="bg-ivory px-6 py-4 lg:hidden">
+                    <div class="flex flex-col gap-1">
+                        @if($hasProfile)
+                            @foreach($workspaceItems as $item)
+                                @php $active = request()->routeIs($item['pattern']); @endphp
+                                <a
+                                    href="{{ route($item['route']) }}"
+                                    class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium {{ $active ? 'bg-espresso text-alabaster' : 'text-charcoal hover:bg-pearl' }}"
+                                >
+                                    <x-ui.icon :name="$item['icon']" class="h-4 w-4" />
+                                    <span>{{ $item['label'] }}</span>
+                                </a>
+                            @endforeach
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" class="mt-2 pt-2">
+                            @csrf
+                            <button type="submit" class="w-full rounded bg-pearl px-3 py-2.5 text-center text-sm font-semibold text-charcoal">
+                                Keluar
+                            </button>
+                        </form>
+                    </div>
                 </div>
             @endif
-        </div>
+        @endauth
     </header>
 
     @if(session('success'))
@@ -183,36 +160,25 @@
         </div>
     @endif
 
-    @if($isLandingPage)
-        <main id="main-content" class="w-full">
-            @yield('content')
-        </main>
-    @else
-        <main id="main-content" class="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
-            @yield('content')
-        </main>
-    @endif
+    <main id="main-content" class="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
+        @yield('content')
+    </main>
 
-    <footer class="{{ $isLandingPage ? 'bg-espresso text-alabaster py-14' : 'mt-16 border-t border-stone-line bg-pearl pt-10 pb-24 lg:pb-10 text-taupe' }} no-print">
+    <footer class="mt-16 border-t border-stone-line bg-pearl pt-10 pb-24 lg:pb-10 text-taupe no-print">
         <div class="mx-auto max-w-7xl px-6 lg:px-10">
             <div class="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
                 <div>
-                    <p class="text-xl font-bold {{ $isLandingPage ? 'text-alabaster' : 'text-espresso' }}">Atelier Vow Nusantara</p>
-                    <p class="mt-1 text-base {{ $isLandingPage ? 'text-stone-strong' : 'text-taupe' }}">
+                    <p class="text-xl font-bold text-espresso">Atelier Vow Nusantara</p>
+                    <p class="mt-1 text-base text-taupe">
                         Sistem Perencanaan Anggaran, Vendor, dan Adat Pernikahan Terpadu.
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-6 text-sm font-semibold">
-                    <a href="{{ route('saas.landing') }}" class="hover:underline">Beranda SaaS</a>
+                    <a href="{{ route('home') }}" class="hover:underline">Beranda</a>
                     <a href="{{ route('login') }}" class="hover:underline">Masuk Akun Google</a>
                     <a href="{{ route('dashboard.index') }}" class="hover:underline">Workspace Pengantin</a>
                 </div>
             </div>
-            @if($isLandingPage)
-                <p class="mt-8 text-sm text-stone-strong">
-                    Fotografi suasana (Unsplash Licence via Picsum): Billy Lam (#302), Paul Jarvis (#989), Jon Ottosson (#255), Jill Heyer (#269).
-                </p>
-            @endif
         </div>
     </footer>
 

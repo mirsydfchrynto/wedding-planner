@@ -99,6 +99,21 @@ final class TimelineController extends Controller
         ]);
     }
 
+    public function create(): View
+    {
+        return view('timeline.form', [
+            'task' => null,
+            'categories' => WeddingCategory::cases(),
+            'phases' => TimelinePhase::cases(),
+            'vendors' => Vendor::query()->orderBy('name')->get(),
+        ]);
+    }
+
+    public function createRundown(): View
+    {
+        return view('timeline.rundown');
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([

@@ -25,14 +25,10 @@
                 </div>
 
                 <div class="mt-4 flex flex-wrap items-center gap-2 no-print">
-                    <button
-                        type="button"
-                        @click="$dispatch('open-modal', 'edit-profile-modal')"
-                        class="editorial-btn-primary"
-                    >
+                    <a href="{{ route('dashboard.editProfile') }}" class="editorial-btn-primary">
                         <x-ui.icon name="sliders" class="h-3.5 w-3.5" />
                         <span>Edit Profil &amp; Plafon</span>
-                    </button>
+                    </a>
                     <a
                         href="{{ route('print.masterGuide') }}"
                         target="_blank"
@@ -374,71 +370,6 @@
         </div>
     </section>
 
-    {{-- Modal: Edit Couple Profile & Budget Cap --}}
-    <x-ui.modal name="edit-profile-modal" title="Pengaturan Profil Pernikahan" subtitle="Perbarui identitas pasangan, jadwal akad, lokasi venue, dan plafon anggaran induk">
-        <form method="POST" action="{{ route('dashboard.updateProfile') }}" class="space-y-5">
-            @csrf
-            @method('PATCH')
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Mempelai Wanita</label>
-                    <input type="text" name="bride_name" value="{{ old('bride_name', $profile->bride_name) }}" required class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Mempelai Pria</label>
-                    <input type="text" name="groom_name" value="{{ old('groom_name', $profile->groom_name) }}" required class="editorial-input">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Pernikahan (Hari-H)</label>
-                    <input type="date" name="wedding_date" value="{{ old('wedding_date', $profile->wedding_date->format('Y-m-d')) }}" required class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Waktu Prosesi</label>
-                    <input type="text" name="wedding_time" value="{{ old('wedding_time', $profile->wedding_time) }}" required class="editorial-input">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Venue Utama</label>
-                    <input type="text" name="venue_name" value="{{ old('venue_name', $profile->venue_name) }}" required class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Kota</label>
-                    <input type="text" name="city" value="{{ old('city', $profile->city) }}" required class="editorial-input">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Plafon Total Anggaran (Rp)</label>
-                    <input type="number" name="total_budget" value="{{ old('total_budget', $profile->total_budget) }}" min="1000000" step="500000" data-rupiah required class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Target Jumlah Tamu</label>
-                    <input type="number" name="guest_target" value="{{ old('guest_target', $profile->guest_target) }}" min="10" required class="editorial-input tabular-nums">
-                </div>
-            </div>
-
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Tema Konsep</label>
-                <input type="text" name="theme_concept" value="{{ old('theme_concept', $profile->theme_concept) }}" required class="editorial-input">
-            </div>
-
-            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                <button type="button" @click="$dispatch('close-modal', 'edit-profile-modal')" class="editorial-btn-secondary">
-                    Batal
-                </button>
-                <button type="submit" class="editorial-btn-primary">
-                    Simpan Perubahan Profil
-                </button>
-            </div>
-        </form>
-    </x-ui.modal>
 @endsection
 
 @push('scripts')

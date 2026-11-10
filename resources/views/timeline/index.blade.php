@@ -24,23 +24,21 @@
                     Rundown Hari-H ({{ $rundowns->count() }})
                 </button>
             </div>
-            <button
-                type="button"
+            <a
+                href="{{ route('timeline.create') }}"
                 x-show="currentTab === 'timeline'"
-                @click="$dispatch('open-modal', 'create-timeline-modal')"
                 class="editorial-btn-primary"
             >
                 + Agenda Linimasa
-            </button>
-            <button
-                type="button"
+            </a>
+            <a
+                href="{{ route('timeline.rundowns.create') }}"
                 x-show="currentTab === 'rundown'"
                 x-cloak
-                @click="$dispatch('open-modal', 'create-rundown-modal')"
                 class="editorial-btn-primary"
             >
                 + Sesi Rundown
-            </button>
+            </a>
         </x-slot:actions>
     </x-ui.section-header>
 
@@ -286,132 +284,4 @@
         </section>
     </div>
 </div>
-
-    {{-- Modal Tambah Sesi Rundown Hari-H --}}
-    <x-ui.modal name="create-rundown-modal" title="Tambah Sesi Rundown Hari-H">
-        <form method="POST" action="{{ route('timeline.storeRundown') }}" class="space-y-4">
-            @csrf
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Jam Mulai (WIB)</label>
-                    <input type="text" name="start_time" placeholder="Contoh: 08:00" required class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Jam Selesai (WIB)</label>
-                    <input type="text" name="end_time" placeholder="Contoh: 09:30" required class="editorial-input">
-                </div>
-            </div>
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Sesi Acara</label>
-                <input type="text" name="session_name" placeholder="Contoh: Akad Nikah / Kirab Pengantin" required class="editorial-input">
-            </div>
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Rincian Aktivitas</label>
-                <textarea name="activity" rows="2" placeholder="Deskripsi tahapan acara..." required class="editorial-input !min-h-0"></textarea>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Lokasi / Ruangan</label>
-                    <input type="text" name="location" placeholder="Contoh: Pendopo Utama" class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nama PIC</label>
-                    <input type="text" name="pic_name" placeholder="Contoh: Lead WO Irsyad" class="editorial-input">
-                </div>
-            </div>
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor Telepon PIC (WhatsApp)</label>
-                <input type="text" name="pic_phone" placeholder="Contoh: 08123456789" class="editorial-input">
-            </div>
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Khusus (Opsional)</label>
-                <input type="text" name="notes" placeholder="Contoh: Gamelan standby 15 menit sebelum kirab" class="editorial-input">
-            </div>
-            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                <button type="button" @click="$dispatch('close-modal', 'create-rundown-modal')" class="editorial-btn-secondary">
-                    Batal
-                </button>
-                <button type="submit" class="editorial-btn-primary">
-                    Simpan Rundown
-                </button>
-            </div>
-        </form>
-    </x-ui.modal>
-
-    {{-- Modal: Schedule Timeline Milestone --}}
-    <x-ui.modal name="create-timeline-modal" title="Jadwalkan Milestone Linimasa Baru" subtitle="Tambahkan agenda penting ke dalam peta persiapan H-12 Bulan hingga Hari-H">
-        <form method="POST" action="{{ route('timeline.store') }}" class="space-y-4">
-            @csrf
-
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Agenda / Milestone</label>
-                <input type="text" name="title" placeholder="Contoh: Gladi Bersih Prosesi Kirab & Soundcheck Quartet" required class="editorial-input">
-            </div>
-
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Keterangan Pelaksanaan</label>
-                <textarea name="description" rows="2" placeholder="Catatan waktu dan koordinasi pihak terkait..." class="editorial-input"></textarea>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Fase Persiapan</label>
-                    <select name="phase" required class="editorial-input">
-                        @foreach($allPhases as $phase)
-                            <option value="{{ $phase->value }}">{{ $phase->value }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                    <select name="category" required class="editorial-input">
-                        @foreach($categories as $category)
-                            <option value="{{ $category->value }}">{{ $category->label() }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            {{-- deslop-ignore-next-line 28 --}}
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Target</label>
-                    <input type="date" name="due_date" value="{{ now()->addDays(21)->format('Y-m-d') }}" required class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Prioritas</label>
-                    <select name="priority" required class="editorial-input">
-                        <option value="high" selected>Prioritas Tinggi</option>
-                        <option value="medium">Penting</option>
-                        <option value="low">Standar</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">PIC</label>
-                    <input type="text" name="assigned_to" value="WO & Pasangan" required class="editorial-input">
-                </div>
-            </div>
-
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Mitra Vendor Terkait (Opsional)</label>
-                <select name="vendor_id" class="editorial-input">
-                    <option value="">-- Tidak Ada --</option>
-                    @foreach($vendors as $vendor)
-                        <option value="{{ $vendor->id }}">{{ $vendor->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <input type="hidden" name="is_milestone" value="1">
-
-            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                <button type="button" @click="$dispatch('close-modal', 'create-timeline-modal')" class="editorial-btn-secondary">
-                    Batal
-                </button>
-                <button type="submit" class="editorial-btn-primary">
-                    Simpan ke Linimasa
-                </button>
-            </div>
-        </form>
-    </x-ui.modal>
 @endsection

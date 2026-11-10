@@ -51,6 +51,16 @@ final class WeddingProfile extends Model
         return $this->hasMany(VendorPayment::class)->latest('paid_date');
     }
 
+    public function budgetItems(): HasMany
+    {
+        return $this->hasMany(BudgetItem::class);
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(WeddingTask::class);
+    }
+
     protected $fillable = [
         'user_id',
         'groom_name',

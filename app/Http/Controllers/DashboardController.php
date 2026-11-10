@@ -25,6 +25,15 @@ final class DashboardController extends Controller
         ]);
     }
 
+    public function editProfile(): View
+    {
+        $summary = $this->metricsService->getDashboardSummary();
+
+        return view('dashboard.profile', [
+            'profile' => $summary['profile'],
+        ]);
+    }
+
     public function updateProfile(Request $request): RedirectResponse
     {
         $validated = $request->validate([

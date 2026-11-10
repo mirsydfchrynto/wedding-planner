@@ -11,6 +11,7 @@ use App\Enums\WeddingCategory;
 use App\Models\BudgetItem;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Models\WeddingGuest;
 use App\Models\WeddingProfile;
 use App\Models\WeddingTask;
 use Database\Seeders\WeddingPlannerSeeder;
@@ -32,19 +33,41 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->customerUser = User::query()->where('role', 'customer')->firstOrFail();
     }
 
-    public function test_public_root_renders_saas_branding_landing_page_and_hides_admin_console(): void
+    public function test_root_redirects_guest_to_login_and_customer_to_dashboard(): void
     {
-        $response = $this->get('/');
+        $this->get('/')->assertRedirect('/login');
 
-        $response->assertOk();
-        $response->assertSee('Satu buku kerja untuk anggaran, vendor, dan adat pernikahan.');
-        $response->assertSee('Simulasi Interaktif Anggaran & Adat Nusantara');
-        $response->assertSee('Keraton Royal');
-        $response->assertSee('Masuk dengan Google');
+        $this->actingAs($this->customerUser)
+            ->get('/')
+            ->assertRedirect(route('dashboard.index'));
+    }
+
+    public function test_module_form_pages_render_for_authenticated_customer(): void
+    {
+        $this->actingAs($this->customerUser);
+
+        $vendor = Vendor::query()->firstOrFail();
+        $task = WeddingTask::query()->firstOrFail();
+        $item = BudgetItem::query()->firstOrFail();
+        $guest = WeddingGuest::query()->firstOrFail();
+
+        $this->get('/profile/edit')->assertOk();
+        $this->get('/budget/create')->assertOk();
+        $this->get("/budget/{$item->id}/edit")->assertOk();
+        $this->get('/checklist/create')->assertOk();
+        $this->get("/checklist/{$task->id}/edit")->assertOk();
+        $this->get('/timeline/create')->assertOk();
+        $this->get('/timeline/rundowns/create')->assertOk();
+        $this->get('/vendors/create')->assertOk();
+        $this->get("/vendors/{$vendor->id}/edit")->assertOk();
+        $this->get("/vendors/{$vendor->id}/payments/create")->assertOk();
+        $this->get('/guests/create')->assertOk();
+        $this->get("/guests/{$guest->id}/edit")->assertOk();
     }
 
     public function test_guest_is_redirected_to_login_when_accessing_customer_or_admin_routes(): void
     {
+        $this->get('/login')->assertOk();
         $this->get('/dashboard')->assertRedirect('/login');
         $this->get('/budget')->assertRedirect('/login');
         $this->get('/checklist')->assertRedirect('/login');
@@ -303,28 +326,4 @@ final class WeddingPlannerModulesTest extends TestCase
         ]);
     }
 
-    public function test_login_with_invalid_credentials_returns_error(): void
-    {
-        $response = $this->post('/login', [
-            'login' => 'wrong@example.com',
-            'password' => 'wrongpassword',
-        ]);
-
-        $response->assertSessionHasErrors('login');
-        $this->assertGuest();
-    }
-
-    public function test_login_with_shorthand_credentials(): void
-    {
-        $userResponse = $this->post('/login', [
-            'login' => 'user',
-            'password' => 'user',
-        ]);
-        $userResponse->assertRedirect(route('dashboard.index'));
-        $this->assertAuthenticated();
-
-        $this->post('/logout');
-        $this->assertGuest();
-
-    }
 }

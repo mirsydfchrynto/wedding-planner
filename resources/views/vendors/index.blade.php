@@ -5,13 +5,9 @@
         title="Mitra Vendor"
     >
         <x-slot:actions>
-            <button
-                type="button"
-                @click="$dispatch('open-modal', 'create-vendor-modal')"
-                class="editorial-btn-primary"
-            >
+            <a href="{{ route('vendors.create') }}" class="editorial-btn-primary">
                 + Tambah Mitra Vendor
-            </button>
+            </a>
         </x-slot:actions>
     </x-ui.section-header>
 
@@ -239,20 +235,18 @@
                             >
                                 WhatsApp PIC
                             </a>
-                            <button
-                                type="button"
-                                @click="$dispatch('open-modal', 'add-payment-{{ $vendor->id }}')"
-                                class="font-semibold text-forest hover:underline cursor-pointer"
+                            <a
+                                href="{{ route('vendors.payments.create', $vendor) }}"
+                                class="font-semibold text-forest hover:underline"
                             >
                                 + Catat Termin
-                            </button>
-                            <button
-                                type="button"
-                                @click="$dispatch('open-modal', 'edit-vendor-{{ $vendor->id }}')"
-                                class="font-semibold text-champagne hover:underline cursor-pointer"
+                            </a>
+                            <a
+                                href="{{ route('vendors.edit', $vendor) }}"
+                                class="font-semibold text-champagne hover:underline"
                             >
                                 Edit
-                            </button>
+                            </a>
                             <form method="POST" action="{{ route('vendors.destroy', $vendor) }}" onsubmit="return confirm('Hapus vendor ini dari direktori?')">
                                 @csrf
                                 @method('DELETE')
@@ -263,144 +257,6 @@
                         </div>
                     </div>
                 </div>
-
-                {{-- Modal: Catat Termin Pembayaran --}}
-                <x-ui.modal name="add-payment-{{ $vendor->id }}" :title="'Catat Termin: ' . $vendor->name">
-                    <form method="POST" action="{{ route('vendors.storePayment', $vendor) }}" class="space-y-4 text-left">
-                        @csrf
-                        <div class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-line bg-alabaster p-3 text-xs" x-data="{ copiedModalRek: false }">
-                            <div>
-                                <span class="text-taupe">Rekening Tujuan Transfer:</span>
-                                <p class="font-mono font-bold text-espresso">{{ $vendorBankLabel }} <span class="font-sans font-normal text-taupe">(Sisa: {{ format_idr($vendor->remaining_balance) }})</span></p>
-                            </div>
-                            <button
-                                type="button"
-                                @click="window.copyToClipboard('{{ $vendorBankNumber }}'); copiedModalRek = true; setTimeout(() => copiedModalRek = false, 1800)"
-                                class="inline-flex items-center gap-1 rounded border border-stone-line bg-pearl px-2.5 py-1 text-xs font-semibold text-charcoal hover:border-champagne cursor-pointer"
-                            >
-                                <x-ui.icon name="copy" class="h-3.5 w-3.5 text-champagne" />
-                                <span x-text="copiedModalRek ? 'Tersalin ✓' : 'Salin Rekening'">Salin Rekening</span>
-                            </button>
-                        </div>
-                        <div>
-                            <label class="mb-1 block text-xs font-semibold text-charcoal">Tahap Termin</label>
-                            <input type="text" name="payment_stage" placeholder="Contoh: DP 30% / Termin 2 / Pelunasan" required class="editorial-input">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Nominal Dibayar (Rp)</label>
-                                <input type="number" name="amount" min="1000" placeholder="25.000.000" data-rupiah required class="editorial-input tabular-nums">
-                            </div>
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Bayar</label>
-                                <input type="date" name="paid_date" value="{{ now()->toDateString() }}" required class="editorial-input">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor Referensi Kwitansi / Transfer</label>
-                            <input type="text" name="receipt_ref" placeholder="Contoh: BCA-TRF-99018" class="editorial-input">
-                        </div>
-                        <div>
-                            <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Transaksi</label>
-                            <input type="text" name="notes" placeholder="Contoh: Diserahkan via transfer rekening bendahara" class="editorial-input">
-                        </div>
-                        <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                            <button type="button" @click="$dispatch('close-modal', 'add-payment-{{ $vendor->id }}')" class="editorial-btn-secondary">
-                                Batal
-                            </button>
-                            <button type="submit" class="editorial-btn-primary">
-                                Simpan Bukti Pembayaran
-                            </button>
-                        </div>
-                    </form>
-                </x-ui.modal>
-                {{-- Modal: Edit Vendor --}}
-                <x-ui.modal name="edit-vendor-{{ $vendor->id }}" :title="'Edit Vendor: ' . $vendor->name" subtitle="Perbarui rincian kontak, status kontrak, dan progres pembayaran">
-                    <form method="POST" action="{{ route('vendors.update', $vendor) }}" class="space-y-4 text-left">
-                        @csrf
-                        @method('PUT')
-
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Perusahaan / Vendor</label>
-                                <input type="text" name="name" value="{{ $vendor->name }}" required class="editorial-input">
-                            </div>
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                                <select name="category" required class="editorial-input">
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->value }}" @selected($vendor->category === $category)>
-                                            {{ $category->label() }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Kontak PIC</label>
-                                <input type="text" name="contact_person" value="{{ $vendor->contact_person }}" required class="editorial-input">
-                            </div>
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor Telepon / WhatsApp</label>
-                                <input type="text" name="phone" value="{{ $vendor->phone }}" required class="editorial-input tabular-nums">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Email</label>
-                                <input type="email" name="email" value="{{ $vendor->email }}" class="editorial-input">
-                            </div>
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Akun Instagram</label>
-                                <input type="text" name="instagram" value="{{ $vendor->instagram }}" class="editorial-input">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Nilai Kontrak (Rp)</label>
-                                <input type="number" name="contract_amount" value="{{ $vendor->contract_amount }}" min="0" data-rupiah required class="editorial-input tabular-nums">
-                            </div>
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Sudah Dibayar (Rp)</label>
-                                <input type="number" name="paid_amount" value="{{ $vendor->paid_amount }}" min="0" data-rupiah required class="editorial-input tabular-nums">
-                            </div>
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Status Booking</label>
-                                <select name="booking_status" required class="editorial-input">
-                                    @foreach($bookingStatuses as $status)
-                                        <option value="{{ $status->value }}" @selected($vendor->booking_status === $status)>
-                                            {{ $status->label() }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Tanggal Jatuh Tempo Pelunasan</label>
-                                <input type="date" name="payment_due_date" value="{{ $vendor->payment_due_date?->format('Y-m-d') }}" class="editorial-input tabular-nums">
-                            </div>
-                            <div>
-                                <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Kontrak / Deliverables</label>
-                                <input type="text" name="notes" value="{{ $vendor->notes }}" class="editorial-input">
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                            <button type="button" @click="$dispatch('close-modal', 'edit-vendor-{{ $vendor->id }}')" class="editorial-btn-secondary">
-                                Batal
-                            </button>
-                            <button type="submit" class="editorial-btn-primary">
-                                Simpan Perubahan Vendor
-                            </button>
-                        </div>
-                    </form>
-                </x-ui.modal>
             </article>
         @empty
             <div class="col-span-full editorial-card rounded-lg p-10 text-center">
@@ -408,89 +264,4 @@
             </div>
         @endforelse
     </section>
-
-    {{-- Modal: Create New Vendor --}}
-    <x-ui.modal name="create-vendor-modal" title="Tambah Mitra Vendor Baru" subtitle="Catat vendor baru ke dalam direktori mitra pernikahan">
-        <form method="POST" action="{{ route('vendors.store') }}" class="space-y-4">
-            @csrf
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Perusahaan / Vendor</label>
-                    <input type="text" name="name" placeholder="Contoh: Sovereign Wedding Lighting & Sound" required class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                    <select name="category" required class="editorial-input">
-                        @foreach($categories as $category)
-                            <option value="{{ $category->value }}">{{ $category->label() }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Kontak PIC</label>
-                    <input type="text" name="contact_person" placeholder="Nama Account Manager" required class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor Telepon / WhatsApp</label>
-                    <input type="text" name="phone" placeholder="0812xxxxxxxx" required class="editorial-input tabular-nums">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Email (Opsional)</label>
-                    <input type="email" name="email" placeholder="contact@vendor.id" class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Instagram (Opsional)</label>
-                    <input type="text" name="instagram" placeholder="@nama.vendor" class="editorial-input">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nilai Kontrak (Rp)</label>
-                    <input type="number" name="contract_amount" value="25000000" min="0" step="500000" data-rupiah required class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">DP / Terbayar (Rp)</label>
-                    <input type="number" name="paid_amount" value="5000000" min="0" step="500000" data-rupiah class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Status Booking</label>
-                    <select name="booking_status" required class="editorial-input">
-                        @foreach($bookingStatuses as $status)
-                            <option value="{{ $status->value }}" @selected($status->value === 'booked')>
-                                {{ $status->label() }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Jatuh Tempo Pelunasan</label>
-                    <input type="date" name="payment_due_date" class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Deliverables</label>
-                    <input type="text" name="notes" placeholder="Rincian paket layanan..." class="editorial-input">
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                <button type="button" @click="$dispatch('close-modal', 'create-vendor-modal')" class="editorial-btn-secondary">
-                    Batal
-                </button>
-                <button type="submit" class="editorial-btn-primary">
-                    Simpan Mitra Vendor
-                </button>
-            </div>
-        </form>
-    </x-ui.modal>
 @endsection

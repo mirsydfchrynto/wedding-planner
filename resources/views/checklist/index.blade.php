@@ -5,13 +5,9 @@
         title="Checklist Persiapan"
     >
         <x-slot:actions>
-            <button
-                type="button"
-                @click="$dispatch('open-modal', 'create-checklist-modal')"
-                class="editorial-btn-primary"
-            >
+            <a href="{{ route('checklist.create') }}" class="editorial-btn-primary">
                 + Tambah Tugas Baru
-            </button>
+            </a>
         </x-slot:actions>
     </x-ui.section-header>
 
@@ -183,13 +179,9 @@
                         </div>
 
                         <div class="flex items-center gap-2 no-print">
-                            <button
-                                type="button"
-                                @click="$dispatch('open-modal', 'edit-task-{{ $task->id }}')"
-                                class="text-xs font-semibold text-champagne hover:underline"
-                            >
+                            <a href="{{ route('checklist.edit', $task) }}" class="text-xs font-semibold text-champagne hover:underline">
                                 Edit
-                            </button>
+                            </a>
                             <form method="POST" action="{{ route('checklist.destroy', $task) }}" onsubmit="return confirm('Hapus tugas persiapan ini?')">
                                 @csrf
                                 @method('DELETE')
@@ -199,104 +191,6 @@
                             </form>
                         </div>
 
-                        {{-- Modal: Edit Checklist Task --}}
-                        <x-ui.modal name="edit-task-{{ $task->id }}" :title="'Edit Tugas: ' . $task->title" subtitle="Perbarui status, tenggat waktu, kategori, atau penanggung jawab">
-                            <form method="POST" action="{{ route('checklist.update', $task) }}" class="space-y-4 text-left">
-                                @csrf
-                                @method('PUT')
-
-                                <div>
-                                    <label class="mb-1 block text-xs font-semibold text-charcoal">Judul Tugas Persiapan</label>
-                                    <input type="text" name="title" value="{{ $task->title }}" required class="editorial-input">
-                                </div>
-
-                                <div>
-                                    <label class="mb-1 block text-xs font-semibold text-charcoal">Deskripsi / Catatan Koordinasi</label>
-                                    <textarea name="description" rows="2" class="editorial-input">{{ $task->description }}</textarea>
-                                </div>
-
-                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                                        <select name="category" required class="editorial-input">
-                                            @foreach($categories as $category)
-                                                <option value="{{ $category->value }}" @selected($task->category === $category)>
-                                                    {{ $category->label() }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Fase Linimasa</label>
-                                        <select name="phase" required class="editorial-input">
-                                            @foreach($phases as $phase)
-                                                <option value="{{ $phase->value }}" @selected($task->phase === $phase->value)>
-                                                    {{ $phase->value }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {{-- deslop-ignore-next-line 28 --}}
-                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Tenggat Waktu</label>
-                                        <input type="date" name="due_date" value="{{ $task->due_date->format('Y-m-d') }}" required class="editorial-input tabular-nums">
-                                    </div>
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Status</label>
-                                        <select name="status" required class="editorial-input">
-                                            @foreach($statuses as $status)
-                                                <option value="{{ $status->value }}" @selected($task->status === $status)>
-                                                    {{ $status->label() }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Prioritas</label>
-                                        <select name="priority" required class="editorial-input">
-                                            <option value="high" @selected($task->priority === 'high')>Prioritas Tinggi</option>
-                                            <option value="medium" @selected($task->priority === 'medium')>Penting</option>
-                                            <option value="low" @selected($task->priority === 'low')>Standar</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Penanggung Jawab (PIC)</label>
-                                        <input type="text" name="assigned_to" value="{{ $task->assigned_to }}" required class="editorial-input">
-                                    </div>
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Mitra Vendor Terkait</label>
-                                        <select name="vendor_id" class="editorial-input">
-                                            <option value="">-- Tidak Ada --</option>
-                                            @foreach($vendors as $vendor)
-                                                <option value="{{ $vendor->id }}" @selected($task->vendor_id === $vendor->id)>
-                                                    {{ $vendor->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <label class="inline-flex items-center gap-2 text-xs font-medium text-charcoal">
-                                    <input type="checkbox" name="is_milestone" value="1" @checked($task->is_milestone)>
-                                    Tandai sebagai Milestone Utama pada Linimasa
-                                </label>
-
-                                <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                                    <button type="button" @click="$dispatch('close-modal', 'edit-task-{{ $task->id }}')" class="editorial-btn-secondary">
-                                        Batal
-                                    </button>
-                                    <button type="submit" class="editorial-btn-primary">
-                                        Simpan Perubahan
-                                    </button>
-                                </div>
-                            </form>
-                        </x-ui.modal>
                     </div>
                 </div>
             @empty
@@ -306,94 +200,4 @@
             @endforelse
         </div>
     </section>
-
-    {{-- Modal: Create New Checklist Task --}}
-    <x-ui.modal name="create-checklist-modal" title="Tambah Tugas Checklist Baru" subtitle="Susun agenda persiapan pernikahan baru beserta jadwal dan PIC">
-        <form method="POST" action="{{ route('checklist.store') }}" class="space-y-4">
-            @csrf
-
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Judul Tugas Persiapan</label>
-                <input type="text" name="title" placeholder="Contoh: Pengambilan Bukti Pendaftaran KUA & Konfirmasi Saksi" required class="editorial-input">
-            </div>
-
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Deskripsi / Catatan Detail</label>
-                <textarea name="description" rows="2" placeholder="Rincian berkas atau hal yang perlu disiapkan..." class="editorial-input"></textarea>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                    <select name="category" required class="editorial-input">
-                        @foreach($categories as $category)
-                            <option value="{{ $category->value }}">{{ $category->label() }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Fase Linimasa</label>
-                    <select name="phase" required class="editorial-input">
-                        @foreach($phases as $phase)
-                            <option value="{{ $phase->value }}">{{ $phase->value }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            {{-- deslop-ignore-next-line 28 --}}
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Tenggat Waktu</label>
-                    <input type="date" name="due_date" value="{{ now()->addDays(14)->format('Y-m-d') }}" required class="editorial-input tabular-nums">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Status Awal</label>
-                    <select name="status" required class="editorial-input">
-                        @foreach($statuses as $status)
-                            <option value="{{ $status->value }}">{{ $status->label() }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Prioritas</label>
-                    <select name="priority" required class="editorial-input">
-                        <option value="high">Prioritas Tinggi</option>
-                        <option value="medium" selected>Penting</option>
-                        <option value="low">Standar</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Penanggung Jawab (PIC)</label>
-                    <input type="text" name="assigned_to" value="Aurelia & Reza" required class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Mitra Vendor Terkait (Opsional)</label>
-                    <select name="vendor_id" class="editorial-input">
-                        <option value="">-- Tidak Ada --</option>
-                        @foreach($vendors as $vendor)
-                            <option value="{{ $vendor->id }}">{{ $vendor->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <label class="inline-flex items-center gap-2 text-xs font-medium text-charcoal">
-                <input type="checkbox" name="is_milestone" value="1" checked>
-                Tampilkan sebagai Milestone Utama pada Peta Linimasa
-            </label>
-
-            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                <button type="button" @click="$dispatch('close-modal', 'create-checklist-modal')" class="editorial-btn-secondary">
-                    Batal
-                </button>
-                <button type="submit" class="editorial-btn-primary">
-                    Simpan Tugas Baru
-                </button>
-            </div>
-        </form>
-    </x-ui.modal>
 @endsection

@@ -31,68 +31,11 @@
                         <span>Lanjutkan dengan Akun Google</span>
                     </button>
                 </form>
-
-                {{-- Divider --}}
-                <div class="relative my-6 text-center">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-stone-line/70"></div>
-                    </div>
-                    <span class="relative bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-taupe">
-                        atau gunakan akun
-                    </span>
-                </div>
-
-                {{-- 2. Standard Unified Email & Password Form --}}
-                <form method="POST" action="{{ route('login.password') }}" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label for="login_field" class="block text-xs font-semibold text-charcoal mb-1.5">
-                            Email atau Nama Pengguna
-                        </label>
-                        <input
-                            id="login_field"
-                            type="text"
-                            name="login"
-                            value="{{ old('login') }}"
-                            placeholder="nama@email.com"
-                            required
-                            autofocus
-                            class="editorial-input"
-                        >
-                        @error('login')
-                            <p class="mt-1 text-xs text-wine font-medium">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label for="password_field" class="block text-xs font-semibold text-charcoal">
-                                Kata Sandi
-                            </label>
-                            <span class="text-[11px] text-taupe">Demo: user / user</span>
-                        </div>
-                        <input
-                            id="password_field"
-                            type="password"
-                            name="password"
-                            placeholder="••••••••"
-                            required
-                            class="editorial-input"
-                        >
-                    </div>
-
-                    <button
-                        type="submit"
-                        class="editorial-btn-primary w-full !min-h-[2.85rem] !text-sm shadow-sm hover:shadow"
-                    >
-                        Masuk ke Workspace
-                    </button>
-                </form>
             </div>
 
             {{-- Discrete Professional Footer --}}
             <div class="flex items-center justify-between text-xs text-taupe px-2">
-                <a href="{{ route('saas.landing') }}" class="hover:text-espresso transition flex items-center gap-1">
+                <a href="{{ route('home') }}" class="hover:text-espresso transition flex items-center gap-1">
                     <span>&larr; Kembali ke Beranda</span>
                 </a>
             </div>

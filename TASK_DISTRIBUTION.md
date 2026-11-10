@@ -9,7 +9,7 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 
 | No | Nama Anggota | Akun GitHub | Branch Git | Peran Utama (*Core Role*) | Cakupan Kerja & Modul | Status |
 |:---|:---|:---|:---|:---|:---|:---|
-| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` / `main` | **Project Lead, Project Manager & System Integrator** | Memimpin proyek, integrasi seluruh modul, melengkapi kekurangan sistem, Konsol Admin (`/admin`), Cetak Master Guide (`/print/master-guide`), Keamanan Multi-Tenancy, dan Rilis Docker | **100% Selesai & Teruji** |
+| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` / `main` | **Project Lead, Project Manager & System Integrator** | Memimpin proyek, integrasi seluruh modul, melengkapi kekurangan sistem, Cetak Master Guide (`/print/master-guide`), Keamanan Multi-Tenancy, dan Rilis Docker | **100% Selesai & Teruji** |
 | 2 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Lead Frontend Engineer (Web Utuh UI/UX)** | Seluruh Antarmuka Pengguna Web Utuh (Design System Vogue, Blade Views, Alpine.js, Responsivitas Mobile, Apple HIG & Refactoring UI Polish untuk 6 Modul Utama) | **100% Selesai & Teruji** |
 | 3 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Senior Backend Engineer (Financial & Vendors)** | Data Layer & Logika Bisnis Modul Budget Planner (`/budget`), Kalkulasi Deviasi, Smart Adat Allocator Logic, dan Arsitektur Multi-Termin Vendor (`VendorPayment`) | **100% Selesai & Teruji** |
 | 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Senior Backend Engineer (Guests & Workflows)** | Data Layer & Logika Bisnis Modul Buku Tamu Digital & RSVP (`WeddingGuest`), Workflow Checklist Tugas (`WeddingTask`), WhatsApp Link Generator, dan Otomasi Pengujian PHPUnit | **100% Selesai & Teruji** |
@@ -25,21 +25,20 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
      - Mengatur branching strategy Git, me-review Pull Request dari branch `adam`, `marsha`, dan `dinda`, serta menggabungkannya ke `main` tanpa konflik kode (*zero merge conflicts*).
      - Menyatukan API contracts antara antarmuka Blade/Alpine dengan controller dan database.
      - Menyisir dan melengkapi fitur yang belum tuntas (*finishing & gap-filling*) pada seluruh modul agar aplikasi 100% siap pakai.
-  2. **Konsol Administrator & Lead WO (`/admin`)**:
-     - Antarmuka dan backend khusus backoffice operasional WO yang diproteksi middleware `EnsureAdminAccess` (`403 Forbidden` untuk non-admin).
-     - Eskalasi 1-klik tugas terlambat, verifikasi SLA kontrak vendor, dan **Matriks Kepatuhan Twelve-Factor SaaS (12/12 Faktor)**.
+  2. **Konsol Administrator (`/admin`) — dihapus**:
+     - Konsol admin beserta middleware `EnsureAdminAccess` dihapus pada commit `3f3a236` (simplifikasi fokus pelanggan).
   3. **Mesin Cetak Dokumen Resmi Master Guide A4/PDF (`/print/master-guide`)**:
      - Generator cetak presisi 4 halaman A4 (*Vogue Bridal Editorial*) untuk buku panduan lapangan panitia dan pengantin tanpa internet.
   4. **Arsitektur Multi-Tenancy & Keamanan**:
      - Trait `BelongsToWeddingProfile` dengan Global Scope Eloquent agar seluruh data pasangan terisolasi aman.
-     - Gerbang onboarding otomatis (`/onboarding`) dan mitigasi eskalasi akun admin pada alur Google OAuth.
+     - Gerbang onboarding otomatis (`/onboarding`) dan penanganan akun admin tanpa profil pernikahan pada alur Google OAuth.
   5. **DevOps & Kontainerisasi**:
      - `Dockerfile` multi-stage (PHP 8.4-FPM + Node 22 Vite Build + OPcache).
      - `docker-compose.yml` (App, PostgreSQL 16, Redis 7, Nginx Reverse Proxy).
      - Skrip deployment otomatis satu baris `./deploy.sh`.
 - **Berkas yang Dikelola**:
-  - `app/Http/Controllers/{AuthController,OnboardingController,PrintController,AdminController,DashboardController}.php`
-  - `app/Models/Concerns/BelongsToWeddingProfile.php` & `app/Http/Middleware/EnsureAdminAccess.php`
+  - `app/Http/Controllers/{AuthController,OnboardingController,PrintController,DashboardController}.php`
+  - `app/Models/Concerns/BelongsToWeddingProfile.php`
   - `Dockerfile`, `docker-compose.yml`, `docker/nginx.conf`, `deploy.sh`, `TASK_DISTRIBUTION.md`
 
 ---
@@ -52,7 +51,7 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
      - Menerapkan radius sudut Apple-style (`rounded-2xl` untuk kartu, `rounded-xl` untuk tombol/input).
      - Menghapus paragraf penjelasan berlebih (*decluttering*) pada seluruh header dan kartu KPI.
   2. **Pengembangan Seluruh Tampilan Modul (Blade Views)**:
-     - **Landing Page SaaS (`resources/views/saas/landing.blade.php`)**: Hero interaktif, simulasi adat, paket harga, dan FAQ.
+    - **Landing Page SaaS** — dihapus pada commit `3f3a236`; `/` kini hanya mengalihkan ke login/dashboard/onboarding.
      - **Dashboard Pengantin (`resources/views/dashboard/index.blade.php`)**: Kartu hitung mundur Hari-H, 4 kartu ringkasan KPI, grafik distribusi anggaran, dan kalkulator weton neptu.
      - **Budget Planner UI (`resources/views/budget/index.blade.php`)**: Widget *Smart Budget Allocator* untuk adat Jawa/Sunda/Modern, kartu alokasi, dan tabel rincian pos biaya.
      - **Checklist UI (`resources/views/checklist/index.blade.php`)**: Daftar tugas interaktif dengan checkbox instan, filter kategori pil, dan filter PIC.

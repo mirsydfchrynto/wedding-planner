@@ -3,13 +3,9 @@
 @section('content')
     <x-ui.section-header title="Buku Tamu & RSVP">
         <x-slot:actions>
-            <button
-                type="button"
-                @click="$dispatch('open-modal', 'create-guest-modal')"
-                class="editorial-btn-primary"
-            >
+            <a href="{{ route('guests.create') }}" class="editorial-btn-primary">
                 + Tambah Tamu
-            </button>
+            </a>
         </x-slot:actions>
     </x-ui.section-header>
 
@@ -155,13 +151,12 @@
                                             Kirim WA
                                         </a>
                                     @endif
-                                    <button
-                                        type="button"
-                                        @click="$dispatch('open-modal', 'edit-guest-{{ $guest->id }}')"
-                                        class="font-semibold text-champagne hover:underline cursor-pointer"
+                                    <a
+                                        href="{{ route('guests.edit', $guest) }}"
+                                        class="font-semibold text-champagne hover:underline"
                                     >
                                         Edit
-                                    </button>
+                                    </a>
                                     <form method="POST" action="{{ route('guests.destroy', $guest) }}" onsubmit="return confirm('Hapus tamu ini dari daftar?')">
                                         @csrf
                                         @method('DELETE')
@@ -172,68 +167,6 @@
                                 </div>
                             </td>
                         </tr>
-
-                        {{-- Modal Edit Tamu --}}
-                        <x-ui.modal name="edit-guest-{{ $guest->id }}" :title="'Edit Tamu: ' . $guest->name">
-                            <form method="POST" action="{{ route('guests.update', $guest) }}" class="space-y-4 text-left">
-                                @csrf
-                                @method('PUT')
-                                <div>
-                                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Tamu Undangan</label>
-                                    <input type="text" name="name" value="{{ $guest->name }}" required class="editorial-input">
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                                        <select name="category" required class="editorial-input">
-                                            @foreach($categories as $c)
-                                                <option value="{{ $c }}" @selected($guest->category === $c)>{{ $c }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Jumlah Undangan (Pax)</label>
-                                        <input type="number" name="pax" min="1" max="20" value="{{ $guest->pax }}" required class="editorial-input">
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Sesi Acara</label>
-                                        <input type="text" name="session" value="{{ $guest->session }}" required class="editorial-input">
-                                    </div>
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Status RSVP</label>
-                                        <select name="rsvp_status" required class="editorial-input">
-                                            <option value="pending" @selected($guest->rsvp_status === 'pending')>Menunggu Konfirmasi</option>
-                                            <option value="confirmed" @selected($guest->rsvp_status === 'confirmed')>Konfirmasi Hadir</option>
-                                            <option value="declined" @selected($guest->rsvp_status === 'declined')>Berhalangan</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor Meja</label>
-                                        <input type="text" name="table_number" value="{{ $guest->table_number }}" class="editorial-input">
-                                    </div>
-                                    <div>
-                                        <label class="mb-1 block text-xs font-semibold text-charcoal">WhatsApp</label>
-                                        <input type="text" name="whatsapp_number" value="{{ $guest->whatsapp_number }}" class="editorial-input">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Khusus</label>
-                                    <input type="text" name="notes" value="{{ $guest->notes }}" class="editorial-input">
-                                </div>
-                                <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                                    <button type="button" @click="$dispatch('close-modal', 'edit-guest-{{ $guest->id }}')" class="editorial-btn-secondary">
-                                        Batal
-                                    </button>
-                                    <button type="submit" class="editorial-btn-primary">
-                                        Simpan Perubahan
-                                    </button>
-                                </div>
-                            </form>
-                        </x-ui.modal>
                     @empty
                         <tr>
                             <td colspan="7" class="py-8 text-center text-taupe">Belum ada tamu pada filter ini.</td>
@@ -244,64 +177,4 @@
         </div>
     </section>
 
-    {{-- Modal Tambah Tamu Baru --}}
-    <x-ui.modal name="create-guest-modal" title="Tambah Tamu Undangan Baru">
-        <form method="POST" action="{{ route('guests.store') }}" class="space-y-4 text-left">
-            @csrf
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Nama Tamu Undangan</label>
-                <input type="text" name="name" placeholder="Contoh: Bpk. Bambang Soesatyo & Ibu" required class="editorial-input">
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                    <select name="category" required class="editorial-input">
-                        @foreach($categories as $c)
-                            <option value="{{ $c }}">{{ $c }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Jumlah Undangan (Pax)</label>
-                    <input type="number" name="pax" min="1" max="20" value="2" required class="editorial-input">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Sesi Acara</label>
-                    <input type="text" name="session" value="Resepsi Malam" required class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Status RSVP</label>
-                    <select name="rsvp_status" required class="editorial-input">
-                        <option value="pending" selected>Menunggu Konfirmasi</option>
-                        <option value="confirmed">Konfirmasi Hadir</option>
-                        <option value="declined">Berhalangan</option>
-                    </select>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor Meja (Opsional)</label>
-                    <input type="text" name="table_number" placeholder="Contoh: VIP-01 / Meja 04" class="editorial-input">
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-semibold text-charcoal">Nomor WhatsApp</label>
-                    <input type="text" name="whatsapp_number" placeholder="Contoh: 08123456789" class="editorial-input">
-                </div>
-            </div>
-            <div>
-                <label class="mb-1 block text-xs font-semibold text-charcoal">Catatan Khusus (Opsional)</label>
-                <input type="text" name="notes" placeholder="Contoh: Vegetarian / Akomodasi kursi roda" class="editorial-input">
-            </div>
-            <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                <button type="button" @click="$dispatch('close-modal', 'create-guest-modal')" class="editorial-btn-secondary">
-                    Batal
-                </button>
-                <button type="submit" class="editorial-btn-primary">
-                    Simpan Tamu
-                </button>
-            </div>
-        </form>
-    </x-ui.modal>
 @endsection
