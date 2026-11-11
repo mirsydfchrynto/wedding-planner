@@ -33,6 +33,9 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/login', [AdminController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminController::class, 'login'])->name('login.submit');
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/export', [AdminController::class, 'exportCsv'])->name('export');
+    Route::post('/profiles/{profile}/impersonate', [AdminController::class, 'impersonate'])->name('profiles.impersonate');
+    Route::post('/stop-impersonate', [AdminController::class, 'stopImpersonate'])->name('stopImpersonate');
     Route::delete('/profiles/{profile}', [AdminController::class, 'destroyProfile'])->name('profiles.destroy');
     Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 });

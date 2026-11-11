@@ -15,6 +15,10 @@
             </div>
 
             <div class="flex items-center gap-3">
+                <a href="{{ route('admin.export') }}" class="rounded-lg border border-[#E7E4DF] bg-white px-3 py-1.5 text-xs font-semibold text-[#2B2520] hover:bg-[#F5F2EB] transition flex items-center gap-1.5 shadow-xs">
+                    <x-ui.icon name="wallet" class="h-3.5 w-3.5 text-[#8C5835]" />
+                    <span>Download Rekap CSV</span>
+                </a>
                 <span class="text-xs text-[#6E665E] hidden sm:inline">Admin: {{ auth()->user()->email }}</span>
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
@@ -99,13 +103,21 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-3 text-right">
-                                    <form method="POST" action="{{ route('admin.profiles.destroy', $p) }}" onsubmit="return confirm('Hapus data pengantin {{ $p->couple_names }}?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-xs font-semibold text-[#9E352B] hover:underline cursor-pointer">
-                                            Hapus
-                                        </button>
-                                    </form>
+                                    <div class="inline-flex items-center gap-2">
+                                        <form method="POST" action="{{ route('admin.profiles.impersonate', $p) }}">
+                                            @csrf
+                                            <button type="submit" class="rounded-md border border-[#8C5835]/30 bg-[#F4ECE4]/50 px-2.5 py-1 text-xs font-semibold text-[#8C5835] hover:bg-[#8C5835] hover:text-white transition cursor-pointer" title="Inspeksi buku kerja pengantin ini">
+                                                Buka Workspace &rarr;
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.profiles.destroy', $p) }}" onsubmit="return confirm('Hapus seluruh data pengantin {{ $p->couple_names }}?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-xs font-semibold text-[#9E352B] hover:underline cursor-pointer px-1">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

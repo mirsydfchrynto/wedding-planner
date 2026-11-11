@@ -102,6 +102,62 @@ final class AdminController extends Controller
             ->with('success', 'Buku kerja pengantin "' . $names . '" berhasil dihapus dari platform.');
     }
 
+    public function impersonate(WeddingProfile $profile): RedirectResponse
+    {
+        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403);
+
+        session(['impersonated_profile_id' => $profile->id]);
+
+        return redirect()
+            ->route('dashboard.index')
+            ->with('success', 'Mode Inspeksi Admin Aktif: Sedang memeriksa buku kerja ' . $profile->couple_names . '.');
+    }
+
+    public function stopImpersonate(): RedirectResponse
+    {
+        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403);
+
+        session()->forget('impersonated_profile_id');
+
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('success', 'Keluar dari mode inspeksi. Kembali ke Konsol Administrator.');
+    }
+
+    public function exportCsv(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403);
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="tatanikah-rekap-pengantin-' . date('Y-m-d') . '.csv"',
+        ];
+
+        return response()->stream(function (): void {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['ID', 'Nama Mempelai Wanita', 'Nama Mempelai Pria', 'Email Google', 'Tanggal Resepsi', 'Kota', 'Target Budget (Rp)', 'Target Tamu', 'Mode Pelaksanaan', 'Tanggal Daftar']);
+
+            WeddingProfile::query()->with('user')->chunk(100, function ($profiles) use ($handle): void {
+                foreach ($profiles as $p) {
+                    fputcsv($handle, [
+                        $p->id,
+                        $p->bride_name,
+                        $p->groom_name,
+                        $p->user?->email,
+                        $p->wedding_date?->format('Y-m-d'),
+                        $p->city,
+                        $p->total_budget,
+                        $p->guest_target,
+                        $p->helper_mode,
+                        $p->created_at?->format('Y-m-d H:i:s'),
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();

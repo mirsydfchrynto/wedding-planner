@@ -87,4 +87,38 @@ final class AdminConsoleTest extends TestCase
         $response->assertRedirect('/admin');
         $this->assertDatabaseMissing('wedding_profiles', ['id' => $profileId]);
     }
+
+    public function test_admin_can_impersonate_couple_and_inspect_workspace(): void
+    {
+        $admin = User::query()->where('role', 'admin')->firstOrFail();
+        $profile = WeddingProfile::query()->firstOrFail();
+
+        $response = $this->actingAs($admin)->post("/admin/profiles/{$profile->id}/impersonate");
+        $response->assertRedirect('/dashboard');
+
+        $dashboardResponse = $this->actingAs($admin)->get('/dashboard');
+        $dashboardResponse->assertOk();
+        $dashboardResponse->assertSee('Mode Inspeksi Admin');
+        $dashboardResponse->assertSee($profile->couple_names);
+    }
+
+    public function test_admin_can_stop_impersonation_and_return_to_admin(): void
+    {
+        $admin = User::query()->where('role', 'admin')->firstOrFail();
+        $profile = WeddingProfile::query()->firstOrFail();
+
+        $this->actingAs($admin)->post("/admin/profiles/{$profile->id}/impersonate");
+        $response = $this->actingAs($admin)->post('/admin/stop-impersonate');
+        $response->assertRedirect('/admin');
+        $this->assertFalse(session()->has('impersonated_profile_id'));
+    }
+
+    public function test_admin_can_export_platform_data_to_csv(): void
+    {
+        $admin = User::query()->where('role', 'admin')->firstOrFail();
+
+        $response = $this->actingAs($admin)->get('/admin/export');
+        $response->assertOk();
+        $this->assertStringContainsString('text/csv', (string) $response->headers->get('content-type'));
+    }
 }

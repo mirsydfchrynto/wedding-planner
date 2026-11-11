@@ -23,13 +23,25 @@ final class WeddingProfile extends Model
 
     public static function currentId(): ?int
     {
-        return self::$tenancyOverride ?? Auth::user()?->weddingProfile?->id;
+        if (self::$tenancyOverride !== null) {
+            return self::$tenancyOverride;
+        }
+
+        if (Auth::user()?->isAdmin() && session()->has('impersonated_profile_id')) {
+            return (int) session('impersonated_profile_id');
+        }
+
+        return Auth::user()?->weddingProfile?->id;
     }
 
     public static function current(): ?self
     {
         if (self::$tenancyOverride !== null) {
             return self::query()->find(self::$tenancyOverride);
+        }
+
+        if (Auth::user()?->isAdmin() && session()->has('impersonated_profile_id')) {
+            return self::query()->find(session('impersonated_profile_id'));
         }
 
         return Auth::user()?->weddingProfile;

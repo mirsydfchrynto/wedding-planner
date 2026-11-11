@@ -29,6 +29,20 @@
         Lewati ke konten utama
     </a>
 
+    @if(session()->has('impersonated_profile_id') && auth()->check() && auth()->user()->isAdmin())
+        <div class="bg-[#8C5835] text-white px-4 py-2 text-xs font-medium flex items-center justify-between no-print sticky top-0 z-50">
+            <div class="flex items-center gap-2">
+                <span class="rounded bg-black/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">Mode Inspeksi Admin</span>
+                <span>Sedang memeriksa buku kerja: <strong>{{ $globalProfile->couple_names }}</strong></span>
+            </div>
+            <form method="POST" action="{{ route('admin.stopImpersonate') }}">
+                @csrf
+                <button type="submit" class="rounded bg-white px-2.5 py-1 text-xs font-semibold text-[#8C5835] hover:bg-[#F5F2EB] transition cursor-pointer">
+                    &larr; Kembali ke Konsol Admin
+                </button>
+            </form>
+        </div>
+    @endif
     <header class="border-b border-[#E7E4DF] bg-[#FAF8F5]/90 backdrop-blur-md sticky top-0 z-30">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
             <div class="flex items-center gap-3">
