@@ -15,8 +15,9 @@ return [
     */
 
     'google' => [
-        // Demo sign-in creates/logs in a user from a posted email with no password.
-        // ponytail: disabled by default in production; wire real Google OAuth credentials before enabling there.
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', env('APP_URL', 'http://localhost:8000') . '/auth/google/callback'),
         'demo_login' => env('GOOGLE_DEMO_LOGIN', env('APP_ENV') !== 'production'),
     ],
 

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\VendorBookingStatus;
 use App\Enums\WeddingCategory;
+use App\Models\BudgetItem;
 use App\Models\Vendor;
 use App\Services\WeddingMetricsService;
 use Illuminate\Http\RedirectResponse;
@@ -94,8 +95,32 @@ final class VendorController extends Controller
 
         $validated['paid_amount'] = (int) ($validated['paid_amount'] ?? 0);
 
-        Vendor::query()->create($validated);
+        $vendor = Vendor::query()->create($validated);
 
+        // Hubungkan langsung dengan item pengeluaran di Budget Planner (anti pencatatan ganda)
+        $budgetItem = BudgetItem::query()
+            ->where('category', $vendor->category)
+            ->whereNull('vendor_id')
+            ->first();
+
+        if ($budgetItem) {
+            $budgetItem->update([
+                'vendor_id' => $vendor->id,
+                'actual_cost' => $vendor->contract_amount,
+                'paid_amount' => $vendor->paid_amount,
+            ]);
+        } else {
+            BudgetItem::query()->create([
+                'category' => $vendor->category,
+                'title' => 'Vendor: ' . $vendor->name,
+                'estimated_cost' => $vendor->contract_amount,
+                'actual_cost' => $vendor->contract_amount,
+                'paid_amount' => $vendor->paid_amount,
+                'vendor_id' => $vendor->id,
+                'due_date' => $vendor->payment_due_date,
+                'notes' => 'Pos biaya terhubung langsung dari direktori vendor.',
+            ]);
+        }
         return redirect()
             ->route('vendors.index')
             ->with('success', 'Mitra vendor "' . $validated['name'] . '" berhasil ditambahkan ke direktori.');
@@ -119,30 +144,31 @@ final class VendorController extends Controller
 
         $vendor->update($validated);
 
+        BudgetItem::query()
+            ->where('vendor_id', $vendor->id)
+            ->update([
+                'actual_cost' => $vendor->contract_amount,
+                'paid_amount' => $vendor->paid_amount,
+            ]);
+
         return redirect()
             ->route('vendors.index')
             ->with('success', 'Data vendor "' . $vendor->name . '" berhasil diperbarui.');
     }
 
-    public function updatePayment(Request $request, Vendor $vendor): RedirectResponse
-    {
-        $validated = $request->validate([
-            'paid_amount' => ['required', 'integer', 'min:0'],
-            'booking_status' => ['required', Rule::enum(VendorBookingStatus::class)],
-        ]);
-
-        $vendor->update($validated);
-
-        return redirect()
-            ->route('vendors.index')
-            ->with('success', 'Catatan pembayaran vendor "' . $vendor->name . '" berhasil diperbarui.');
-    }
 
     public function destroy(Vendor $vendor): RedirectResponse
     {
+        BudgetItem::query()
+            ->where('vendor_id', $vendor->id)
+            ->update([
+                'vendor_id' => null,
+                'actual_cost' => 0,
+                'paid_amount' => 0,
+            ]);
+
         $name = $vendor->name;
         $vendor->delete();
-
         return redirect()
             ->route('vendors.index')
             ->with('success', 'Vendor "' . $name . '" telah dihapus dari direktori.');
@@ -167,6 +193,11 @@ final class VendorController extends Controller
             $vendor->update(['booking_status' => VendorBookingStatus::DpPaid]);
         }
 
+        BudgetItem::query()
+            ->where('vendor_id', $vendor->id)
+            ->update([
+                'paid_amount' => $vendor->paid_amount,
+            ]);
         return redirect()->route('vendors.index')
             ->with('success', 'Bukti pembayaran termin berhasil dicatat.');
     }

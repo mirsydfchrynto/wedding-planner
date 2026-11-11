@@ -1,27 +1,38 @@
-@extends('layouts.app', ['title' => 'Buka Buku Kerja Baru'])
+@extends('layouts.app', ['title' => 'Mulai Buku Kerja Pernikahan'])
 
 @section('content')
 <div
     class="mx-auto max-w-2xl py-6"
     x-data="{
         step: 1,
-        totalSteps: 6,
-        eventType: 'akad_resepsi',
+        totalSteps: 3,
         weddingDate: '',
-        city: 'Jakarta',
-        venueName: '',
-        venueType: 'Gedung / Ballroom',
-        weddingTime: '08:00 – 13:00 WIB',
-        budgetChoice: '350000000',
-        guestChoice: '500',
-        groomName: '',
+        budgetChoice: '70000000',
+        guestChoice: '300',
         brideName: '',
+        groomName: '',
+        city: 'Jakarta',
+        eventType: 'akad_resepsi',
         helperMode: 'self',
-        themeConcept: '',
+        setDateInDays(days) {
+            const d = new Date();
+            d.setDate(d.getDate() + days);
+            this.weddingDate = d.toISOString().split('T')[0];
+        },
         setDateInMonths(months) {
             const d = new Date();
             d.setMonth(d.getMonth() + months);
             this.weddingDate = d.toISOString().split('T')[0];
+        },
+        daysLeft() {
+            if (!this.weddingDate) return 0;
+            const target = new Date(this.weddingDate);
+            const now = new Date();
+            return Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+        },
+        isUrgentMode() {
+            const d = this.daysLeft();
+            return d > 0 && d <= 45;
         },
         formatIdr(num) {
             return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
@@ -31,286 +42,255 @@
                 return Number(document.getElementById('budget_custom')?.value || 0);
             }
             return Number(this.budgetChoice);
-        },
-        currentGuests() {
-            if (this.guestChoice === 'custom') {
-                return Number(document.getElementById('guest_custom')?.value || 0);
-            }
-            return Number(this.guestChoice);
         }
     }"
-    x-init="setDateInMonths(6)"
+    x-init="setDateInMonths(3)"
 >
-    <div class="paper-card relative border-2 border-sketch bg-paper p-6 sm:p-8">
-        <div class="tape"></div>
+    <div class="rounded-xl border border-[#E7E4DF] bg-white p-6 sm:p-8 shadow-sm space-y-6">
 
-        {{-- Progress Header --}}
-        <div class="border-b border-sketch pb-4">
+        {{-- Header Stepper 3-Langkah --}}
+        <div class="border-b border-[#F0ECE4] pb-5">
             <div class="flex items-center justify-between text-xs">
-                <span class="stamp">Mulai Perencanaan Pernikahan</span>
-                <span class="font-bold text-soga font-mono" x-text="'Langkah ' + step + ' dari ' + totalSteps"></span>
+                <span class="font-semibold text-[#8C5835]">
+                    Setup Cepat 3-Langkah (Siap Langsung Pakai)
+                </span>
+                <span class="font-medium text-[#6E665E] tabular-nums" x-text="'Langkah ' + step + ' dari ' + totalSteps"></span>
             </div>
-            <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-espresso sm:text-3xl">
-                Buka Buku Catatan Pernikahan
+            <h1 class="mt-1.5 text-2xl font-bold tracking-tight text-[#2B2520]">
+                Mulai Perencanaan Pernikahan
             </h1>
-            <p class="text-xs text-taupe mt-0.5">
-                Isi 6 langkah dasar untuk menyusun rencana anggaran, tanggal relatif, dan daftar tugas otomatis.
+            <p class="text-xs text-[#6E665E] mt-0.5">
+                Sistem otomatis menyusun jadwal tugas, batas anggaran, dan linimasa sesuai situasi Anda.
             </p>
 
-            {{-- Progress bar --}}
-            <div class="mt-3 h-1.5 w-full bg-paper-2 border border-sketch">
-                <div class="h-full bg-soga transition-all duration-200" :style="'width: ' + ((step / totalSteps) * 100) + '%'"></div>
+            {{-- SVG Stepper 3-Langkah Minimalis --}}
+            <div class="pt-4">
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="h-1.5 rounded-full transition-colors" :class="step >= 1 ? 'bg-[#8C5835]' : 'bg-[#E7E4DF]'"></div>
+                    <div class="h-1.5 rounded-full transition-colors" :class="step >= 2 ? 'bg-[#8C5835]' : 'bg-[#E7E4DF]'"></div>
+                    <div class="h-1.5 rounded-full transition-colors" :class="step >= 3 ? 'bg-[#8C5835]' : 'bg-[#E7E4DF]'"></div>
+                </div>
+                <div class="flex justify-between text-[11px] font-medium text-[#6E665E] pt-1.5">
+                    <span :class="step === 1 ? 'text-[#8C5835] font-semibold' : ''">1. Tanggal Hari-H</span>
+                    <span :class="step === 2 ? 'text-[#8C5835] font-semibold' : ''">2. Target Anggaran</span>
+                    <span :class="step === 3 ? 'text-[#8C5835] font-semibold' : ''">3. Data Pasangan</span>
+                </div>
             </div>
         </div>
 
-        <form method="POST" action="{{ route('onboarding.store') }}" class="mt-6 space-y-6">
+        <form method="POST" action="{{ route('onboarding.store') }}" class="space-y-6">
             @csrf
+            <input type="hidden" name="event_type" :value="eventType">
+            <input type="hidden" name="helper_mode" :value="helperMode">
+            <input type="hidden" name="venue_name" value="Gedung / Tempat Acara">
 
-            {{-- LANGKAH 1: Rangkaian Acara --}}
-            <div x-show="step === 1" class="space-y-4">
-                <h2 class="font-display text-xl font-bold text-espresso">1. Pilih Konsep Rangkaian Acara</h2>
-                <p class="text-xs text-taupe">Pilihan ini menentukan daftar tugas yang relevan dan pos anggaran awal.</p>
-
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <label
-                        class="paper-card block p-4 cursor-pointer border transition"
-                        :class="eventType === 'akad_only' ? 'border-soga bg-paper-2' : 'border-sketch hover:border-soga'"
-                    >
-                        <input type="radio" name="event_type" value="akad_only" x-model="eventType" class="sr-only">
-                        <span class="stamp !text-[0.6rem] !py-0">Khidmat</span>
-                        <p class="font-display font-bold text-espresso text-base mt-1.5">Akad Nikah Saja</p>
-                        <p class="text-[0.72rem] text-taupe mt-1">Fokus pada administrasi KUA, mahar, busana akad, dan jamuan keluarga inti.</p>
-                    </label>
-
-                    <label
-                        class="paper-card block p-4 cursor-pointer border transition"
-                        :class="eventType === 'akad_resepsi' ? 'border-soga bg-paper-2' : 'border-sketch hover:border-soga'"
-                    >
-                        <input type="radio" name="event_type" value="akad_resepsi" x-model="eventType" class="sr-only">
-                        <span class="stamp !text-[0.6rem] !py-0">Populer</span>
-                        <p class="font-display font-bold text-espresso text-base mt-1.5">Akad &amp; Resepsi Modern</p>
-                        <p class="text-[0.72rem] text-taupe mt-1">Rangkaian lengkap akad nikah dan pesta perayaan resepsi bersama tamu undangan.</p>
-                    </label>
-
-                    <label
-                        class="paper-card block p-4 cursor-pointer border transition"
-                        :class="eventType === 'jawa_inti' ? 'border-soga bg-paper-2' : 'border-sketch hover:border-soga'"
-                    >
-                        <input type="radio" name="event_type" value="jawa_inti" x-model="eventType" class="sr-only">
-                        <span class="stamp !text-[0.6rem] !py-0">Tradisi</span>
-                        <p class="font-display font-bold text-espresso text-base mt-1.5">Adat Jawa Inti</p>
-                        <p class="text-[0.72rem] text-taupe mt-1">Akad, siraman, midodareni, dan panggih inti dengan tatanan adat luhur.</p>
-                    </label>
-
-                    <label
-                        class="paper-card block p-4 cursor-pointer border transition"
-                        :class="eventType === 'jawa_lengkap' ? 'border-soga bg-paper-2' : 'border-sketch hover:border-soga'"
-                    >
-                        <input type="radio" name="event_type" value="jawa_lengkap" x-model="eventType" class="sr-only">
-                        <span class="stamp !text-[0.6rem] !py-0">Adat Agung</span>
-                        <p class="font-display font-bold text-espresso text-base mt-1.5">Adat Jawa Lengkap &amp; Kirab</p>
-                        <p class="text-[0.72rem] text-taupe mt-1">Seluruh prosesi adat Jawa lengkap, gamelan, kirab pengantin agung, dan resepsi.</p>
-                    </label>
+            {{-- LANGKAH 1: TANGGAL RESEPSI & DETEKSI OTOMATIS MODE KILAT --}}
+            <div x-show="step === 1" class="space-y-5">
+                <div>
+                    <h2 class="text-base font-semibold text-[#2B2520]">Kapan Hari Pernikahan Anda?</h2>
+                    <p class="text-xs text-[#6E665E] mt-0.5">
+                        Pilih tanggal hari-H. Sistem otomatis menyesuaikan jadwal persiapan baik waktu mepet maupun santai.
+                    </p>
                 </div>
 
-                <div class="flex justify-end pt-3 border-t border-sketch">
-                    <button type="button" @click="step = 2" class="editorial-btn-primary !py-1.5 !px-4 !text-xs">
-                        Lanjut ke Tanggal &rarr;
+                {{-- Pilihan Cepat --}}
+                <div class="space-y-2">
+                    <span class="text-xs font-medium text-[#2B2520] block">Pilihan Cepat Waktu:</span>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <button type="button" @click="setDateInDays(30)" class="rounded-lg border px-3 py-1.5 font-medium transition cursor-pointer" :class="daysLeft() <= 35 && daysLeft() > 0 ? 'border-[#8C5835] bg-[#F4ECE4] text-[#8C5835] font-semibold' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'">
+                            1 Bulan Lagi (Mendesak)
+                        </button>
+                        <button type="button" @click="setDateInDays(45)" class="rounded-lg border px-3 py-1.5 font-medium transition cursor-pointer" :class="daysLeft() > 35 && daysLeft() <= 50 ? 'border-[#8C5835] bg-[#F4ECE4] text-[#8C5835] font-semibold' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'">
+                            1,5 Bulan Lagi
+                        </button>
+                        <button type="button" @click="setDateInMonths(3)" class="rounded-lg border px-3 py-1.5 font-medium transition cursor-pointer" :class="daysLeft() > 50 && daysLeft() <= 100 ? 'border-[#8C5835] bg-[#F4ECE4] text-[#8C5835] font-semibold' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'">
+                            3 Bulan Lagi
+                        </button>
+                        <button type="button" @click="setDateInMonths(6)" class="rounded-lg border px-3 py-1.5 font-medium transition cursor-pointer" :class="daysLeft() > 100 ? 'border-[#8C5835] bg-[#F4ECE4] text-[#8C5835] font-semibold' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'">
+                            6 Bulan Lagi
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="wedding_date" class="mb-1.5 block text-xs font-medium text-[#2B2520]">
+                        Pilih Tanggal di Kalender:
+                    </label>
+                    <input
+                        id="wedding_date"
+                        type="date"
+                        name="wedding_date"
+                        x-model="weddingDate"
+                        min="{{ now()->addDay()->toDateString() }}"
+                        required
+                        class="editorial-input tabular-nums font-medium"
+                    >
+                </div>
+
+                {{-- Kotak Status Adaptif Waktu --}}
+                <div class="rounded-xl border p-4 text-xs transition" :class="isUrgentMode() ? 'border-[#F6E6CC] bg-[#FEF7EC] text-[#A06414]' : 'border-[#D3E6DA] bg-[#EAF4EE] text-[#2E5E3E]'">
+                    <div class="flex items-center gap-2 font-semibold text-sm">
+                        <template x-if="isUrgentMode()">
+                            <span>⚡ Mode Kilat &amp; Persiapan Cepat Aktif</span>
+                        </template>
+                        <template x-if="!isUrgentMode()">
+                            <span>✓ Mode Terencana Aktif</span>
+                        </template>
+                    </div>
+                    <p class="mt-1 leading-relaxed text-xs text-[#2B2520]">
+                        <template x-if="isUrgentMode()">
+                            <span>Sisa waktu <strong class="tabular-nums" x-text="daysLeft()"></strong> hari. Sistem otomatis mengunci prioritas terdepan: Berkas KUA dan pemilihan Venue diletakkan di minggu pertama agar pernikahan tetap siap tepat waktu.</span>
+                        </template>
+                        <template x-if="!isUrgentMode()">
+                            <span>Sisa waktu <strong class="tabular-nums" x-text="daysLeft()"></strong> hari. Waktu persiapan Anda ideal. Rangkaian tugas disebar secara merata dan tenang hingga hari-H.</span>
+                        </template>
+                    </p>
+                </div>
+
+                <div class="flex justify-end pt-4 border-t border-[#F0ECE4]">
+                    <button
+                        type="button"
+                        @click="if(weddingDate) step = 2; else alert('Pilih tanggal pernikahan terlebih dahulu');"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-[#2B2520] px-5 py-2 text-xs font-semibold text-white transition hover:bg-[#1C1815] cursor-pointer"
+                    >
+                        <span>Lanjut ke Anggaran</span>
+                        <span aria-hidden="true">&rarr;</span>
                     </button>
                 </div>
             </div>
 
-            {{-- LANGKAH 2: Hari & Tanggal --}}
-            <div x-show="step === 2" x-cloak class="space-y-4">
-                <h2 class="font-display text-xl font-bold text-espresso">2. Hari &amp; Tanggal Pernikahan</h2>
-                <p class="text-xs text-taupe">Jadwal seluruh tugas akan otomatis dihitung mundur (back-scheduling) dari tanggal ini.</p>
-
-                <div class="space-y-3">
-                    <div class="flex items-center gap-2 text-xs">
-                        <span class="text-taupe">Pilihan Cepat Target:</span>
-                        <button type="button" @click="setDateInMonths(3)" class="chip !min-h-0 !py-1 !px-2">3 Bulan Lagi</button>
-                        <button type="button" @click="setDateInMonths(6)" class="chip !min-h-0 !py-1 !px-2">6 Bulan Lagi</button>
-                        <button type="button" @click="setDateInMonths(12)" class="chip !min-h-0 !py-1 !px-2">1 Tahun Lagi</button>
-                    </div>
-
-                    <div>
-                        <label for="wedding_date" class="mb-1 block text-xs font-bold text-charcoal uppercase tracking-wider">
-                            Pilih Tanggal Hari H
-                        </label>
-                        <input
-                            id="wedding_date"
-                            type="date"
-                            name="wedding_date"
-                            x-model="weddingDate"
-                            min="{{ now()->addDay()->toDateString() }}"
-                            required
-                            class="editorial-input tabular-nums"
-                        >
-                    </div>
-
-                    <div class="paper-card-soft p-3 text-xs text-charcoal border border-sketch/70">
-                        <p>Tanggal Akad: <strong class="text-soga" x-text="weddingDate || 'Belum dipilih'"></strong></p>
-                        <p class="text-taupe text-[0.7rem] mt-0.5">Semua 124 tugas akan tersusun rapi hingga hari H tersebut.</p>
-                    </div>
+            {{-- LANGKAH 2: TARGET ANGGARAN & JUMLAH TAMU --}}
+            <div x-show="step === 2" x-cloak class="space-y-5">
+                <div>
+                    <h2 class="text-base font-semibold text-[#2B2520]">Berapa Estimasi Anggaran Anda?</h2>
+                    <p class="text-xs text-[#6E665E] mt-0.5">
+                        Pilih nominal pagu. Sistem akan otomatis membagi proporsi katering, venue, dan pos biaya lainnya secara ideal.
+                    </p>
                 </div>
 
-                <div class="flex items-center justify-between pt-3 border-t border-sketch">
-                    <button type="button" @click="step = 1" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">&larr; Kembali</button>
-                    <button type="button" @click="step = 3" class="editorial-btn-primary !py-1.5 !px-4 !text-xs">Lanjut ke Lokasi &rarr;</button>
-                </div>
-            </div>
-
-            {{-- LANGKAH 3: Lokasi & Jam Acara --}}
-            <div x-show="step === 3" x-cloak class="space-y-4">
-                <h2 class="font-display text-xl font-bold text-espresso">3. Kota, Venue, &amp; Jam Acara</h2>
-
-                <div class="space-y-3 text-xs">
-                    <div>
-                        <label for="city" class="mb-1 block font-bold text-charcoal uppercase tracking-wider">Kota Penyelenggaraan</label>
-                        <input id="city" type="text" name="city" x-model="city" placeholder="Contoh: Jakarta / Yogyakarta / Surabaya" required class="editorial-input">
-                    </div>
-
-                    <div>
-                        <label for="venue_name" class="mb-1 block font-bold text-charcoal uppercase tracking-wider">Nama Gedung / Tempat Acara</label>
-                        <input id="venue_name" type="text" name="venue_name" x-model="venueName" placeholder="Contoh: Plataran Menteng / Gedung Sasana Kriya / Rumah Mempelai" required class="editorial-input">
-                    </div>
-
-                    <div>
-                        <label class="mb-1 block font-bold text-charcoal uppercase tracking-wider">Waktu Pelaksanaan</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                            <label class="chip cursor-pointer" :class="weddingTime === '08:00 – 12:00 WIB' ? 'chip-active' : ''">
-                                <input type="radio" name="wedding_time" value="08:00 – 12:00 WIB" x-model="weddingTime" class="sr-only">
-                                Pagi (08.00–12.00)
-                            </label>
-                            <label class="chip cursor-pointer" :class="weddingTime === '11:00 – 14:00 WIB' ? 'chip-active' : ''">
-                                <input type="radio" name="wedding_time" value="11:00 – 14:00 WIB" x-model="weddingTime" class="sr-only">
-                                Siang (11.00–14.00)
-                            </label>
-                            <label class="chip cursor-pointer" :class="weddingTime === '15:30 – 21:00 WIB' ? 'chip-active' : ''">
-                                <input type="radio" name="wedding_time" value="15:30 – 21:00 WIB" x-model="weddingTime" class="sr-only">
-                                Sore/Malam (15.30–21.00)
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between pt-3 border-t border-sketch">
-                    <button type="button" @click="step = 2" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">&larr; Kembali</button>
-                    <button type="button" @click="step = 4" class="editorial-btn-primary !py-1.5 !px-4 !text-xs">Lanjut ke Anggaran &rarr;</button>
-                </div>
-            </div>
-
-            {{-- LANGKAH 4: Pagu Anggaran --}}
-            <div x-show="step === 4" x-cloak class="space-y-4">
-                <h2 class="font-display text-xl font-bold text-espresso">4. Pagu Anggaran Pernikahan</h2>
-                <p class="text-xs text-taupe">Pilih estimasi total anggaran. Sistem akan otomatis membagi ke dalam 29 pos biaya.</p>
-
-                <div class="space-y-3">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        @foreach(['150000000' => '150 Juta', '250000000' => '250 Juta', '350000000' => '350 Juta', '500000000' => '500 Juta', '750000000' => '750 Juta', '1000000000' => '1 Miliar'] as $val => $label)
-                            <label class="chip cursor-pointer text-center" :class="budgetChoice === '{{ $val }}' ? 'chip-active' : ''">
+                {{-- Preset Chips Anggaran --}}
+                <div class="space-y-2">
+                    <span class="text-xs font-medium text-[#2B2520] block">Pilihan Pagu Anggaran:</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        @foreach(['35000000' => 'Rp 35 Juta', '50000000' => 'Rp 50 Juta', '70000000' => 'Rp 70 Juta', '100000000' => 'Rp 100 Juta', '150000000' => 'Rp 150 Juta', '250000000' => 'Rp 250 Juta', '350000000' => 'Rp 350 Juta', 'custom' => 'Nominal Lain'] as $val => $label)
+                            <label class="flex items-center justify-center rounded-lg border p-2.5 text-xs font-medium cursor-pointer transition text-center" :class="budgetChoice === '{{ $val }}' ? 'border-[#2B2520] bg-[#2B2520] text-white font-semibold' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'">
                                 <input type="radio" name="total_budget" value="{{ $val }}" x-model="budgetChoice" class="sr-only">
-                                {{ $label }}
+                                <span>{{ $label }}</span>
                             </label>
                         @endforeach
                     </div>
-
-                    <label class="chip w-full cursor-pointer justify-center" :class="budgetChoice === 'custom' ? 'chip-active' : ''">
-                        <input type="radio" name="total_budget" value="custom" x-model="budgetChoice" class="sr-only">
-                        Nominal Lainnya (Custom)
-                    </label>
 
                     <div x-show="budgetChoice === 'custom'" class="pt-2">
-                        <label for="budget_custom" class="mb-1 block text-xs font-bold text-charcoal uppercase tracking-wider">Tentukan Nominal Anggaran (Rp)</label>
-                        <input id="budget_custom" type="number" name="budget_custom" min="1000000" step="1000000" placeholder="Contoh: 400000000" class="editorial-input tabular-nums">
+                        <label for="budget_custom" class="mb-1 block text-xs font-medium text-[#2B2520]">Ketikkan Nominal Anggaran (Rp)</label>
+                        <input id="budget_custom" type="number" name="budget_custom" min="10000000" step="1000000" placeholder="Contoh: 80000000" class="editorial-input tabular-nums">
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-3 border-t border-sketch">
-                    <button type="button" @click="step = 3" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">&larr; Kembali</button>
-                    <button type="button" @click="step = 5" class="editorial-btn-primary !py-1.5 !px-4 !text-xs">Lanjut ke Tamu &rarr;</button>
-                </div>
-            </div>
-
-            {{-- LANGKAH 5: Jumlah Tamu Undangan --}}
-            <div x-show="step === 5" x-cloak class="space-y-4">
-                <h2 class="font-display text-xl font-bold text-espresso">5. Target Jumlah Tamu Undangan</h2>
-                <p class="text-xs text-taupe">Digunakan untuk menghitung rasio katering, suvenir, dan kapasitas ruangan.</p>
-
-                <div class="space-y-3">
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                        @foreach(['100' => '100', '200' => '200', '300' => '300', '500' => '500', '800' => '800', '1000' => '1.000'] as $val => $label)
-                            <label class="chip cursor-pointer text-center" :class="guestChoice === '{{ $val }}' ? 'chip-active' : ''">
+                {{-- Pilihan Tamu Undangan --}}
+                <div class="space-y-2 pt-2 border-t border-[#F0ECE4]">
+                    <span class="text-xs font-medium text-[#2B2520] block">Perkiraan Jumlah Tamu:</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        @foreach(['100' => '100 Tamu (Intimate)', '300' => '300 Tamu', '500' => '500 Tamu (Standar)', '800' => '800+ Tamu'] as $val => $label)
+                            <label class="flex items-center justify-center rounded-lg border p-2.5 text-xs font-medium cursor-pointer transition text-center" :class="guestChoice === '{{ $val }}' ? 'border-[#2B2520] bg-[#2B2520] text-white font-semibold' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'">
                                 <input type="radio" name="guest_target" value="{{ $val }}" x-model="guestChoice" class="sr-only">
-                                {{ $label }} Tamu
+                                <span>{{ $label }}</span>
                             </label>
                         @endforeach
                     </div>
+                </div>
 
-                    <label class="chip w-full cursor-pointer justify-center" :class="guestChoice === 'custom' ? 'chip-active' : ''">
-                        <input type="radio" name="guest_target" value="custom" x-model="guestChoice" class="sr-only">
-                        Jumlah Tamu Kustom
-                    </label>
-
-                    <div x-show="guestChoice === 'custom'" class="pt-2">
-                        <label for="guest_custom" class="mb-1 block text-xs font-bold text-charcoal uppercase tracking-wider">Jumlah Tamu</label>
-                        <input id="guest_custom" type="number" name="guest_custom" min="10" max="5000" placeholder="Contoh: 450" class="editorial-input tabular-nums">
+                {{-- Visual Alokasi Otomatis --}}
+                <div class="rounded-xl border border-[#E7E4DF] bg-[#FAF8F5] p-3.5 text-xs space-y-2">
+                    <span class="font-semibold text-[#2B2520] block">Estimasi Pembagian Proporsi Otomatis:</span>
+                    <div class="h-3 w-full rounded-full overflow-hidden flex">
+                        <div class="bg-[#8C5835]" style="width: 40%" title="Venue & Katering 40%"></div>
+                        <div class="bg-[#A06414]" style="width: 15%" title="Dekorasi 15%"></div>
+                        <div class="bg-[#483725]" style="width: 15%" title="Busana & Rias 15%"></div>
+                        <div class="bg-[#2E5E3E]" style="width: 10%" title="Dokumentasi 10%"></div>
+                        <div class="bg-[#6E665E]" style="width: 10%" title="Dokumen KUA 10%"></div>
+                        <div class="bg-[#D3E6DA]" style="width: 10%" title="Dana Cadangan 10%"></div>
+                    </div>
+                    <div class="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[#6E665E] pt-1">
+                        <span>• Venue &amp; Katering: 40%</span>
+                        <span>• Dekorasi: 15%</span>
+                        <span>• MUA &amp; Busana: 15%</span>
+                        <span>• Foto/Video: 10%</span>
+                        <span>• Dokumen KUA: 10%</span>
+                        <span>• Cadangan: 10%</span>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-3 border-t border-sketch">
-                    <button type="button" @click="step = 4" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">&larr; Kembali</button>
-                    <button type="button" @click="step = 6" class="editorial-btn-primary !py-1.5 !px-4 !text-xs">Lanjut ke Data Pasangan &rarr;</button>
+                <div class="flex items-center justify-between pt-4 border-t border-[#F0ECE4]">
+                    <button type="button" @click="step = 1" class="rounded-lg border border-[#E7E4DF] bg-white px-4 py-2 text-xs font-semibold text-[#6E665E] hover:text-[#2B2520] hover:bg-[#F5F2EB] transition cursor-pointer">&larr; Kembali</button>
+                    <button type="button" @click="step = 3" class="inline-flex items-center gap-1.5 rounded-lg bg-[#2B2520] px-5 py-2 text-xs font-semibold text-white transition hover:bg-[#1C1815] cursor-pointer">
+                        <span>Lanjut ke Data Diri</span>
+                        <span aria-hidden="true">&rarr;</span>
+                    </button>
                 </div>
             </div>
 
-            {{-- LANGKAH 6: Pasangan & Tim Bantuan --}}
-            <div x-show="step === 6" x-cloak class="space-y-4">
-                <h2 class="font-display text-xl font-bold text-espresso">6. Nama Pasangan &amp; Tim Kerja</h2>
+            {{-- LANGKAH 3: NAMA MEMPELAI & KOTA (SUBMIT) --}}
+            <div x-show="step === 3" x-cloak class="space-y-5">
+                <div>
+                    <h2 class="text-base font-semibold text-[#2B2520]">Data Pasangan &amp; Lokasi Acara</h2>
+                    <p class="text-xs text-[#6E665E] mt-0.5">
+                        Isikan nama Anda berdua untuk judul lembar kerja dan laporan.
+                    </p>
+                </div>
 
-                <div class="space-y-3 text-xs">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label for="groom_name" class="mb-1 block font-bold text-charcoal uppercase tracking-wider">Nama Calon Mempelai Pria</label>
-                            <input id="groom_name" type="text" name="groom_name" x-model="groomName" placeholder="Contoh: Reza Mahendra" required class="editorial-input">
-                        </div>
-                        <div>
-                            <label for="bride_name" class="mb-1 block font-bold text-charcoal uppercase tracking-wider">Nama Calon Mempelai Wanita</label>
-                            <input id="bride_name" type="text" name="bride_name" x-model="brideName" placeholder="Contoh: Aurelia Larasati" required class="editorial-input">
-                        </div>
-                    </div>
-
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                        <label class="mb-1 block font-bold text-charcoal uppercase tracking-wider">Siapa yang Akan Mengeksekusi Tugas?</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                            <label class="chip cursor-pointer" :class="helperMode === 'self' ? 'chip-active' : ''">
-                                <input type="radio" name="helper_mode" value="self" x-model="helperMode" class="sr-only">
-                                Mandiri Berdua (Pengantin)
-                            </label>
-                            <label class="chip cursor-pointer" :class="helperMode === 'family' ? 'chip-active' : ''">
-                                <input type="radio" name="helper_mode" value="family" x-model="helperMode" class="sr-only">
-                                Dibantu Keluarga Inti
-                            </label>
-                            <label class="chip cursor-pointer" :class="helperMode === 'wo' ? 'chip-active' : ''">
-                                <input type="radio" name="helper_mode" value="wo" x-model="helperMode" class="sr-only">
-                                Didampingi Wedding Organizer
-                            </label>
-                        </div>
+                        <label for="bride_name" class="mb-1.5 block font-medium text-[#2B2520]">Nama Calon Pengantin Wanita</label>
+                        <input id="bride_name" type="text" name="bride_name" x-model="brideName" placeholder="Contoh: Aurelia Larasati" required class="editorial-input">
                     </div>
-
-                    {{-- Ringkasan Akhir Sebelum Simpan --}}
-                    <div class="paper-card-soft border border-sketch p-3 text-xs space-y-1 mt-4">
-                        <span class="stamp !text-[0.6rem] !py-0">Siap Dibuat</span>
-                        <p class="font-bold text-espresso text-sm mt-1" x-text="(brideName || 'Mempelai Wanita') + ' & ' + (groomName || 'Mempelai Pria')"></p>
-                        <p class="text-taupe" x-text="'Tanggal: ' + (weddingDate || '-') + ' di ' + (venueName || '-') + ', ' + city"></p>
-                        <p class="text-taupe" x-text="'Pagu Anggaran: ' + formatIdr(currentBudget()) + ' · ' + currentGuests() + ' Tamu Undangan'"></p>
+                    <div>
+                        <label for="groom_name" class="mb-1.5 block font-medium text-[#2B2520]">Nama Calon Pengantin Pria</label>
+                        <input id="groom_name" type="text" name="groom_name" x-model="groomName" placeholder="Contoh: Reza Mahendra" required class="editorial-input">
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-3 border-t border-sketch">
-                    <button type="button" @click="step = 5" class="editorial-btn-secondary !py-1.5 !px-3 !text-xs">&larr; Kembali</button>
-                    <button type="submit" class="editorial-btn-primary !py-2 !px-5 !text-xs">
-                        Buka Buku Catatan &amp; Masuk ke Dashboard &rarr;
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <label for="city" class="mb-1.5 block font-medium text-[#2B2520]">Kota Acara</label>
+                        <select id="city" name="city" x-model="city" class="editorial-input">
+                            <option value="Jakarta">Jakarta</option>
+                            <option value="Bandung">Bandung</option>
+                            <option value="Surabaya">Surabaya</option>
+                            <option value="Yogyakarta">Yogyakarta</option>
+                            <option value="Semarang">Semarang</option>
+                            <option value="Medan">Medan</option>
+                            <option value="Makassar">Makassar</option>
+                            <option value="Kota Lain">Kota Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="wedding_time" class="mb-1.5 block font-medium text-[#2B2520]">Waktu Resepsi</label>
+                        <select id="wedding_time" name="wedding_time" class="editorial-input">
+                            <option value="08:00 – 13:00 WIB (Pagi/Siang)">Pagi / Siang (08.00 – 13.00)</option>
+                            <option value="15:30 – 21:00 WIB (Sore/Malam)">Sore / Malam (15.30 – 21.00)</option>
+                            <option value="09:00 – 17:00 WIB (Seharian)">Seharian Penuh</option>
+                        </select>
+                    </div>
+                </div>
+
+                {{-- Rangkuman Siap Generate --}}
+                <div class="rounded-xl border border-[#D3E6DA] bg-[#EAF4EE] p-4 text-xs space-y-1.5">
+                    <span class="inline-flex items-center rounded-md border border-[#D3E6DA] bg-white px-2 py-0.5 text-xs font-semibold text-[#2E5E3E]">
+                        Rencana Siap Dibuat Otomatis
+                    </span>
+                    <p class="font-semibold text-sm text-[#2B2520]" x-text="(brideName || 'Calon Pengantin') + ' & ' + (groomName || 'Pasangan')"></p>
+                    <p class="text-[#6E665E]" x-text="'Target Tanggal: ' + weddingDate + ' (' + daysLeft() + ' hari lagi) di ' + city"></p>
+                    <p class="text-[#6E665E]" x-text="'Pagu Anggaran: ' + formatIdr(currentBudget()) + ' · Target ' + guestChoice + ' Tamu'"></p>
+                </div>
+
+                <div class="flex items-center justify-between pt-4 border-t border-[#F0ECE4]">
+                    <button type="button" @click="step = 2" class="rounded-lg border border-[#E7E4DF] bg-white px-4 py-2 text-xs font-semibold text-[#6E665E] hover:text-[#2B2520] hover:bg-[#F5F2EB] transition cursor-pointer">&larr; Kembali</button>
+                    <button
+                        type="submit"
+                        class="inline-flex items-center gap-2 rounded-lg bg-[#2E5E3E] px-6 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[#254F34] cursor-pointer"
+                    >
+                        <span>Buat Rencana Otomatis &amp; Buka Dashboard</span>
+                        <span aria-hidden="true">&rarr;</span>
                     </button>
                 </div>
             </div>

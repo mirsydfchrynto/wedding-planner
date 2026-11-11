@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Pusat Kontrol Pengantin'])
+@extends('layouts.app', ['title' => 'Dashboard Pengantin'])
 
 @section('content')
 <div
@@ -14,392 +14,221 @@
         closeModal() {
             this.modalOpen = false;
         },
-        shareToFamily() {
-            window.shareToFamilyWhatsApp({
-                couple: '{{ addslashes($profile->bride_name) }} & {{ addslashes($profile->groom_name) }}',
-                date: '{{ addslashes($summary['wedding_date_formatted']) }}',
-                days: {{ $summary['days_remaining'] }},
-                venue: '{{ addslashes($profile->venue_name) }}, {{ addslashes($profile->city) }}',
-                budgetCap: '{{ format_idr($summary['total_budget_cap']) }}',
-                remaining: '{{ format_idr($summary['remaining_budget']) }}',
-                tasksDone: {{ $summary['completed_tasks'] }},
-                tasksTotal: {{ $summary['total_tasks'] }},
-                vendorsBooked: {{ $summary['booked_vendors'] }}
-            });
-        }
     }"
     class="space-y-6"
 >
-    {{-- Header Baris Status Cepat --}}
-    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b-2 border-ink pb-3">
-        <div class="flex items-center gap-2">
-            <span class="stamp !bg-kunyit font-extrabold">Pusat Kontrol 5 Detik</span>
-            <span class="text-xs font-bold text-taupe">{{ $profile->theme_concept ?: 'Konsep Pernikahan Indonesia' }}</span>
+    {{-- 1. HEADER RINGKASAN PROFIL & HITUNG MUNDUR HARI-H --}}
+    <div class="rounded-2xl border border-[#E7E4DF] bg-white p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <span class="text-xs font-semibold text-[#8C5835]">Buku Kerja Pernikahan</span>
+            <h1 class="text-2xl font-bold tracking-tight text-[#2B2520] sm:text-3xl mt-0.5">
+                {{ $profile->bride_name }} &amp; {{ $profile->groom_name }}
+            </h1>
+            <p class="text-xs text-[#6E665E] mt-1">
+                {{ $summary['wedding_date_formatted'] }} · {{ $profile->city }} ({{ number_format($profile->guest_target, 0, ',', '.') }} Tamu Undangan)
+            </p>
         </div>
-        <div class="flex items-center gap-2 no-print">
-            <button
-                type="button"
-                @click="shareToFamily()"
-                class="btn-neo-wa !py-1 !px-3 !text-xs cursor-pointer flex items-center gap-1.5"
-                title="Kirim pesan ringkasan rapi ke grup WhatsApp keluarga"
-            >
-                <x-ui.icon name="phone" class="h-3.5 w-3.5" />
-                <span>Bagikan Ringkasan ke WA Keluarga</span>
-            </button>
-            <a href="{{ route('dashboard.editProfile') }}" class="btn-neo-secondary !py-1 !px-3 !text-xs">
-                Ubah Profil
-            </a>
-            <a href="{{ route('print.masterGuide') }}" target="_blank" class="btn-neo-secondary !py-1 !px-3 !text-xs">
-                Cetak A4
+
+        <div class="flex items-center gap-3 shrink-0">
+            <div class="rounded-xl border border-[#D3E6DA] bg-[#EAF4EE] px-4 py-2.5 text-center">
+                <span class="block text-[11px] font-semibold text-[#2E5E3E]">Hitung Mundur</span>
+                <span class="text-xl font-bold text-[#2E5E3E] tabular-nums">
+                    {{ $summary['days_remaining'] > 0 ? $summary['days_remaining'] . ' Hari Lagi' : 'Hari Pernikahan!' }}
+                </span>
+            </div>
+            <a href="{{ route('dashboard.editProfile') }}" class="inline-flex items-center rounded-lg border border-[#E7E4DF] bg-white px-3 py-2 text-xs font-semibold text-[#2B2520] hover:bg-[#F5F2EB] transition no-print">
+                Ubah
             </a>
         </div>
     </div>
 
-    {{-- BENTO GRID UTAMA (5 Kompartemen dalam Satu Layar) --}}
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-
-        {{-- BENTO 1: Hero Fokus Hari Ini (Span 7 Kolom — Kuning Kunyit) --}}
-        <div class="bento-card bento-kunyit md:col-span-7 p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
-            <div class="tape"></div>
-            
-            <div>
-                {{-- Maskot SVG + Speech Bubble Asisten --}}
-                <div class="flex items-start gap-3">
-                    <div class="shrink-0">
-                        {{-- Maskot Kuncup Melati Ramah --}}
-                        <svg class="w-11 h-11" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="4" y="4" width="56" height="56" rx="2" fill="#FAF5EC" stroke="#2B2118" stroke-width="3"/>
-                            <path d="M32 14C24 22 18 32 20 44C26 48 38 48 44 44C46 32 40 22 32 14Z" fill="#CDE7D8" stroke="#2B2118" stroke-width="2.5"/>
-                            <circle cx="27" cy="34" r="2.5" fill="#2B2118"/>
-                            <circle cx="37" cy="34" r="2.5" fill="#2B2118"/>
-                            <path d="M29 39C31 41 33 41 35 39" stroke="#2B2118" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M32 8L32 14" stroke="#7A4425" stroke-width="2.5" stroke-linecap="round"/>
-                            <circle cx="32" cy="7" r="2.5" fill="#F6D365" stroke="#2B2118" stroke-width="1.5"/>
-                        </svg>
-                    </div>
-                    <div class="speech-bubble flex-1">
-                        @if($summary['next_task'])
-                            Fokus utama kita hari ini: segera selesaikan <strong>"{{ $summary['next_task']->title }}"</strong>.
-                        @else
-                            Luar biasa! Semua tugas terdekat sudah beres. Saatnya istirahat &amp; gladi bersih.
-                        @endif
-                    </div>
-                </div>
-
-                {{-- Tugas Prioritas Utama --}}
-                @if($summary['next_task'])
-                    @php
-                        $nextTask = $summary['next_task'];
-                        $guide = $summary['next_task_guide'];
-                    @endphp
-                    <div class="mt-4 pt-3 border-t-2 border-ink">
-                        <div class="flex items-center gap-2">
-                            <span class="stamp !bg-paper">Prioritas Hari Ini</span>
-                            <span class="text-xs font-bold text-ink">
-                                Tenggat: <span class="text-wine underline underline-offset-2">{{ $nextTask->due_date->translatedFormat('l, d F Y') }}</span>
-                            </span>
-                        </div>
-                        <h2 class="mt-2 font-display text-2xl font-extrabold text-ink leading-tight sm:text-3xl">
-                            {{ $nextTask->title }}
-                        </h2>
-                        <p class="text-xs font-semibold text-taupe mt-1">
-                            Kategori: {{ $nextTask->category->label() }} · PIC: <strong class="text-ink">{{ $nextTask->assigned_to }}</strong>
-                            @if($nextTask->vendor)
-                                · Vendor: <strong class="text-soga">{{ $nextTask->vendor->name }}</strong>
-                            @endif
-                        </p>
-                    </div>
-                @endif
+    {{-- 2. KARTU FOKUS UTAMA: LANGKAH PRIORITAS ANDA HARI INI (TUNGGAL & TO-THE-POINT) --}}
+    <section class="rounded-2xl border-2 border-[#8C5835]/30 bg-gradient-to-br from-white to-[#FAF8F5] p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#8C5835] animate-pulse"></span>
+                <span class="font-bold uppercase tracking-wider text-[#8C5835]">Langkah Prioritas Anda Hari Ini</span>
             </div>
-
-            {{-- Tombol Aksi 1-Klik Taktil --}}
-            <div class="mt-5 pt-3 border-t-2 border-ink flex flex-wrap items-center gap-2.5 no-print">
-                @if($summary['next_task'])
-                    <form method="POST" action="{{ route('checklist.toggle', $summary['next_task']) }}">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn-neo !bg-forest hover:!bg-[#2E5A36] !text-paper !py-1.5 !px-3.5 !text-xs cursor-pointer flex items-center gap-1.5">
-                            <x-ui.icon name="check" class="h-3.5 w-3.5" />
-                            <span>Tandai Selesai 1-Klik</span>
-                        </button>
-                    </form>
-                    <button
-                        type="button"
-                        @click="openModal({{ Js::from($summary['next_task_guide']) }})"
-                        class="btn-neo-secondary !py-1.5 !px-3 !text-xs cursor-pointer flex items-center gap-1.5"
-                    >
-                        <x-ui.icon name="lightbulb" class="h-3.5 w-3.5 text-soga" />
-                        <span>Cara Urus &amp; WA</span>
-                    </button>
-                @endif
-                <a href="{{ route('checklist.index') }}" class="btn-neo-secondary !py-1.5 !px-3 !text-xs ml-auto">
-                    Semua Tugas &rarr;
-                </a>
-            </div>
+            @if($summary['next_task'])
+                <span class="text-xs text-[#6E665E]">
+                    Tenggat: <strong class="text-[#9E352B]">{{ $summary['next_task']->due_date->translatedFormat('d M Y') }}</strong>
+                </span>
+            @endif
         </div>
 
-        {{-- BENTO 2: Countdown & Pasangan (Span 5 Kolom — Kertas Krem `#FAF5EC`) --}}
-        <div class="bento-card bento-paper md:col-span-5 p-5 sm:p-6 flex flex-col justify-between text-center relative">
+        @if($summary['next_task'])
+            @php
+                $nextTask = $summary['next_task'];
+                $guide = $summary['next_task_guide'];
+            @endphp
             <div>
-                <span class="stamp !bg-kunyit">Hari Bahagia</span>
-                <h2 class="mt-2 font-display text-3xl font-extrabold text-ink sm:text-4xl">
-                    {{ $profile->bride_name }} &amp; {{ $profile->groom_name }}
+                <h2 class="text-xl sm:text-2xl font-bold text-[#2B2520] leading-snug">
+                    {{ $nextTask->title }}
                 </h2>
-                <p class="text-xs font-semibold text-taupe mt-1">
-                    {{ $summary['wedding_date_formatted'] }} · {{ $profile->wedding_time }}
-                </p>
-                <p class="text-xs text-taupe mt-0.5">
-                    {{ $profile->venue_name }}, {{ $profile->city }} ({{ number_format($profile->guest_target, 0, ',', '.') }} Tamu)
-                </p>
-
-                {{-- Countdown Raksasa --}}
-                <div class="mt-4 bento-card bento-kunyit p-3 border-2 border-ink inline-block min-w-[200px]">
-                    <span class="text-[0.68rem] font-extrabold uppercase tracking-widest text-ink block">Hitung Mundur Hari</span>
-                    <span class="hand text-5xl sm:text-6xl font-black text-ink block leading-none mt-1">
-                        H-{{ $summary['days_remaining'] }}
+                <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#6E665E]">
+                    <span class="rounded-md border border-[#E7E4DF] bg-white px-2.5 py-0.5 font-medium text-[#2B2520]">
+                        {{ $nextTask->category->label() }}
                     </span>
-                    <span class="text-[0.72rem] font-bold text-taupe block mt-1">
-                        {{ $summary['hours_remaining'] }} jam lagi menuju akad nikah
-                    </span>
-                </div>
-            </div>
-
-            <div class="mt-4 pt-3 border-t-2 border-ink">
-                <button
-                    type="button"
-                    @click="shareToFamily()"
-                    class="btn-neo-wa w-full !py-2 !text-xs font-extrabold cursor-pointer flex items-center justify-center gap-2"
-                >
-                    <x-ui.icon name="phone" class="h-3.5 w-3.5" />
-                    <span>Bagikan Ringkasan ke WA Keluarga</span>
-                </button>
-            </div>
-        </div>
-
-        {{-- BENTO 3: Radar Anggaran & Kas (Span 4 Kolom — Hijau Mint `#CDE7D8`) --}}
-        <div class="bento-card bento-mint md:col-span-4 p-5 flex flex-col justify-between">
-            <div>
-                <div class="flex items-center justify-between border-b-2 border-ink pb-2">
-                    <span class="font-display text-lg font-extrabold text-ink">Buku Kas &amp; Pagu</span>
-                    <span class="stamp !bg-paper {{ $summary['remaining_budget'] >= 0 ? '!border-forest !text-forest' : '!border-wine !text-wine' }}">
-                        {{ $summary['remaining_budget'] >= 0 ? 'Aman / Hemat' : 'Lewat Batas' }}
-                    </span>
-                </div>
-
-                <div class="mt-3 space-y-2.5">
-                    <div>
-                        <span class="text-[0.68rem] font-extrabold uppercase tracking-wider text-taupe block">Pagu Anggaran Induk</span>
-                        <span class="rupiah text-xl font-black text-ink block">{{ format_idr($summary['total_budget_cap']) }}</span>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-ink/40 text-xs">
-                        <div>
-                            <span class="text-[0.65rem] font-bold text-taupe block">Komitmen Vendor</span>
-                            <span class="rupiah font-extrabold text-ink">{{ format_idr($summary['total_actual']) }}</span>
-                        </div>
-                        <div>
-                            <span class="text-[0.65rem] font-bold text-taupe block">Sisa Dana Aman</span>
-                            <span class="rupiah font-extrabold {{ $summary['remaining_budget'] >= 0 ? 'text-forest' : 'text-wine' }}">
-                                {{ format_idr($summary['remaining_budget']) }}
-                            </span>
-                        </div>
-                    </div>
-
-                    {{-- Visual Progress Bar Kas --}}
-                    <div class="pt-1">
-                        <div class="h-3 w-full bg-paper border-2 border-ink">
-                            <div class="h-full bg-soga" style="width: {{ $summary['budget_utilization_percent'] }}%"></div>
-                        </div>
-                        <span class="text-[0.68rem] font-bold text-taupe mt-1 block">
-                            {{ $summary['budget_utilization_percent'] }}% pagu dialokasikan ({{ format_idr($summary['total_paid']) }} terbayar)
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-4 pt-2 border-t-2 border-ink">
-                <a href="{{ route('budget.index') }}" class="btn-neo-secondary w-full !py-1.5 !text-xs text-center font-bold">
-                    Buka Buku Kas &rarr;
-                </a>
-            </div>
-        </div>
-
-        {{-- BENTO 4: Progres Checklist Kebutuhan (Span 4 Kolom — Kertas Krem `#FAF5EC`) --}}
-        <div class="bento-card bento-paper md:col-span-4 p-5 flex flex-col justify-between">
-            <div>
-                <div class="flex items-center justify-between border-b-2 border-ink pb-2">
-                    <h2 class="font-display text-lg font-extrabold text-ink">Tugas terdekat</h2>
-                    <span class="stamp !bg-kunyit font-black">{{ $summary['completed_tasks'] }}/{{ $summary['total_tasks'] }}</span>
-                </div>
-
-                <div class="mt-2.5">
-                    <p class="text-xs text-taupe font-semibold">
-                        {{ $summary['completion_percent'] }}% kebutuhan persiapan selesai
-                    </p>
-                    <div class="h-2.5 w-full bg-paper-2 border-2 border-ink mt-1">
-                        <div class="h-full bg-forest" style="width: {{ $summary['completion_percent'] }}%"></div>
-                    </div>
-                </div>
-
-                {{-- 3 Item Kebutuhan Terdekat dengan Centang 1-Klik Instan --}}
-                <ul class="mt-3 divide-y divide-ink/30 text-xs">
-                    @forelse($summary['urgent_tasks']->take(3) as $task)
-                        <li class="py-2 flex items-center justify-between gap-2">
-                            <div class="flex items-center gap-2 min-w-0">
-                                <form method="POST" action="{{ route('checklist.toggle', $task) }}" class="shrink-0">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button
-                                        type="submit"
-                                        class="h-4 w-4 border-2 border-ink bg-paper flex items-center justify-center hover:bg-kunyit cursor-pointer text-transparent hover:text-ink font-bold"
-                                        title="Centang selesai 1-klik"
-                                    >
-                                        <x-ui.icon name="check" class="h-3 w-3" />
-                                    </button>
-                                </form>
-                                <span class="truncate font-bold text-ink">{{ $task->title }}</span>
-                            </div>
-                            <span class="rupiah text-[0.68rem] font-bold shrink-0 {{ $task->is_overdue ? 'text-wine' : 'text-taupe' }}">
-                                {{ $task->is_overdue ? 'Terlambat' : $task->due_date->format('d M') }}
-                            </span>
-                        </li>
-                    @empty
-                        <li class="py-3 text-center text-taupe text-xs">Semua tugas beres.</li>
-                    @endforelse
-                </ul>
-            </div>
-
-            <div class="mt-4 pt-2 border-t-2 border-ink">
-                <a href="{{ route('checklist.index') }}" class="btn-neo-secondary w-full !py-1.5 !text-xs text-center font-bold">
-                    Kelola Semua Checklist &rarr;
-                </a>
-            </div>
-        </div>
-
-        {{-- BENTO 5: Status Vendor & Tagihan Kritis (Span 4 Kolom — Terakota Muda `#F7C5B8`) --}}
-        <div class="bento-card bento-terracotta md:col-span-4 p-5 flex flex-col justify-between">
-            <div>
-                <div class="flex items-center justify-between border-b-2 border-ink pb-2">
-                    <span class="font-display text-lg font-extrabold text-ink">Mitra Vendor</span>
-                    <span class="stamp !bg-paper">{{ $summary['booked_vendors'] }}/{{ $summary['total_vendors'] }} Terkontrak</span>
-                </div>
-
-                <div class="mt-3 space-y-2 text-xs">
-                    <div class="flex items-baseline justify-between">
-                        <span class="font-bold text-taupe">Nilai Kontrak Total:</span>
-                        <span class="rupiah font-extrabold text-ink">{{ format_idr($summary['total_actual']) }}</span>
-                    </div>
-                    <div class="flex items-baseline justify-between">
-                        <span class="font-bold text-taupe">Sisa Tagihan Belum Lunas:</span>
-                        <span class="rupiah font-black text-wine">{{ format_idr($summary['unpaid_balance']) }}</span>
-                    </div>
-
-                    {{-- 1 Vendor Paling Mendekati Jatuh Tempo --}}
-                    @if($summary['upcoming_vendor_payments']->isNotEmpty())
-                        @php $urgentVendor = $summary['upcoming_vendor_payments']->first(); @endphp
-                        <div class="mt-2 bento-card bento-paper p-2.5 border-2 border-ink">
-                            <span class="text-[0.65rem] font-bold uppercase text-wine block">Tenggat Terdekat:</span>
-                            <p class="font-bold text-ink truncate text-xs">{{ $urgentVendor->name }}</p>
-                            <div class="flex items-center justify-between text-[0.7rem] mt-0.5">
-                                <span class="rupiah text-wine font-extrabold">Sisa {{ format_idr($urgentVendor->remaining_balance) }}</span>
-                                @if($urgentVendor->phone)
-                                    <a href="{{ $urgentVendor->whatsapp_url }}" target="_blank" rel="noopener" class="text-forest font-bold hover:underline">
-                                        Chat WA &rarr;
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
+                    <span>Penanggung Jawab: <strong class="text-[#2B2520] font-semibold">{{ $nextTask->assigned_to }}</strong></span>
+                    @if($nextTask->vendor)
+                        <span>· Vendor: <strong class="text-[#8C5835] font-semibold">{{ $nextTask->vendor->name }}</strong></span>
                     @endif
                 </div>
             </div>
 
-            <div class="mt-4 pt-2 border-t-2 border-ink">
-                <a href="{{ route('vendors.index') }}" class="btn-neo-secondary w-full !py-1.5 !text-xs text-center font-bold">
-                    Buka Direktori Vendor &rarr;
+            <div class="pt-3 border-t border-[#F0ECE4] flex flex-wrap items-center gap-3 no-print">
+                <form method="POST" action="{{ route('checklist.toggle', $nextTask) }}">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg bg-[#2E5E3E] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#254F34] cursor-pointer shadow-xs">
+                        <x-ui.icon name="check" class="h-4 w-4" />
+                        <span>Tandai Selesai 1-Klik</span>
+                    </button>
+                </form>
+
+                <button
+                    type="button"
+                    @click="openModal({{ Js::from($guide) }})"
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-[#E7E4DF] bg-white px-4 py-2 text-xs font-semibold text-[#8C5835] hover:bg-[#F5F2EB] transition cursor-pointer"
+                >
+                    <x-ui.icon name="lightbulb" class="h-4 w-4 text-[#8C5835]" />
+                    <span>Petunjuk &amp; Draf Chat WA</span>
+                </button>
+
+                <a href="{{ route('checklist.index') }}" class="ml-auto text-xs font-semibold text-[#6E665E] hover:text-[#2B2520] transition">
+                    Lihat Semua Jadwal &rarr;
                 </a>
             </div>
-        </div>
-
-    </div>
-
-    {{-- BAGIAN BAWAH: Buku Kas Kategori & Tahapan Persiapan --}}
-    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {{-- Kiri: Tabel Ledger Kas Kategori --}}
-        <section class="lg:col-span-7 bento-card p-5">
-            <div class="flex items-baseline justify-between border-b-2 border-ink pb-2">
-                <div>
-                    <h2 class="font-display text-xl font-bold text-espresso">Anggaran per kategori</h2>
-                    <p class="text-xs text-taupe">Rincian estimasi acuan pasar vs nilai kontrak nyata.</p>
-                </div>
-                <a href="{{ route('budget.index') }}" class="text-xs font-bold text-soga hover:underline">
-                    Buku Besar Lengkap &rarr;
-                </a>
-            </div>
-
-            <div class="mt-3 overflow-x-auto">
-                <table class="ledger">
-                    <thead>
-                        <tr>
-                            <th scope="col">Kategori</th>
-                            <th scope="col" class="text-right">Estimasi</th>
-                            <th scope="col" class="text-right">Deal Vendor</th>
-                            <th scope="col" class="text-right">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($summary['category_breakdown'] as $cat)
-                            @continue($cat['estimated'] === 0 && $cat['actual'] === 0)
-                            <tr>
-                                <td class="font-bold text-ink">{{ $cat['label'] }}</td>
-                                <td class="rupiah text-right text-taupe">{{ format_idr($cat['estimated']) }}</td>
-                                <td class="rupiah text-right font-black text-ink">{{ format_idr($cat['actual']) }}</td>
-                                <td class="text-right">
-                                    @if($cat['is_overbudget'])
-                                        <span class="stamp !bg-terracotta-light !border-wine !text-wine !py-0 !text-[0.6rem]">Lewat</span>
-                                    @else
-                                        <span class="stamp !bg-mint-light !border-forest !text-forest !py-0 !text-[0.6rem]">Aman</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        {{-- Kanan: 5 Tahapan Persiapan --}}
-        <section class="lg:col-span-5 bento-card p-5">
-            <div class="flex items-baseline justify-between border-b-2 border-ink pb-2">
-                <div>
-                    <h2 class="font-display text-xl font-bold text-espresso">Tahapan Menuju Hari H</h2>
-                    <p class="text-xs text-taupe">Alur persiapan kronologis.</p>
-                </div>
-                <a href="{{ route('rundown.index') }}" class="text-xs font-bold text-soga hover:underline">
-                    Rundown &rarr;
-                </a>
-            </div>
-
-            <div class="mt-3 space-y-2.5">
-                @foreach($summary['phase_progress'] as $idx => $phase)
-                    <a
-                        href="{{ route('rundown.index', ['phase' => $phase['phase']]) }}"
-                        class="bento-card block p-2.5 hover:bg-paper-2 transition text-xs"
-                    >
-                        <div class="flex items-center justify-between">
-                            <span class="font-extrabold text-ink">Fase {{ $idx + 1 }}: {{ $phase['phase'] }}</span>
-                            <span class="font-bold {{ $phase['done'] === $phase['total'] && $phase['total'] > 0 ? 'text-forest' : 'text-taupe' }}">
-                                {{ $phase['done'] }}/{{ $phase['total'] }} Selesai
-                            </span>
-                        </div>
-                        <div class="mt-1.5 h-2 w-full bg-paper-2 border border-ink">
-                            <div class="h-full bg-soga" style="width: {{ $phase['percent'] }}%"></div>
-                        </div>
+        @else
+            <div class="py-4 text-center space-y-1">
+                <span class="text-2xl">🎉</span>
+                <h3 class="text-lg font-bold text-[#2B2520]">Semua Tugas Terdekat Sudah Beres</h3>
+                <p class="text-xs text-[#6E665E]">Tidak ada kebutuhan mendesak saat ini. Persiapan berjalan sesuai rencana.</p>
+                <div class="pt-2">
+                    <a href="{{ route('checklist.index') }}" class="inline-flex items-center gap-1 rounded-lg bg-[#2B2520] px-3.5 py-1.5 text-xs font-semibold text-white">
+                        Buka Seluruh Checklist
                     </a>
-                @endforeach
+                </div>
+            </div>
+        @endif
+    </section>
+
+    {{-- 3. VISUAL UTAMA: 2 METRIK KUNCI (ANGGARAN VS KESIAPAN) TANPA DOBEL DATA --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        {{-- VISUAL 1: ANGGARAN TERPAKAI VS SISA AMAN (DONUT / STACKED BAR VISUAL) --}}
+        <section class="rounded-2xl border border-[#E7E4DF] bg-white p-6 shadow-xs flex flex-col justify-between space-y-4">
+            <div class="flex items-center justify-between border-b border-[#F0ECE4] pb-3">
+                <div class="flex items-center gap-2">
+                    <x-ui.icon name="wallet" class="h-4 w-4 text-[#8C5835]" />
+                    <h2 class="text-base font-bold text-[#2B2520]">Kondisi Anggaran</h2>
+                </div>
+                <span class="rounded-md px-2 py-0.5 text-xs font-semibold {{ $summary['remaining_budget'] >= 0 ? 'bg-[#EAF4EE] text-[#2E5E3E]' : 'bg-[#FDF2F0] text-[#9E352B]' }}">
+                    {{ $summary['remaining_budget'] >= 0 ? 'Terkendali' : 'Defisit / Lewat Pagu' }}
+                </span>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <span class="text-xs text-[#6E665E] block">Batas Total Anggaran:</span>
+                    <span class="text-2xl font-bold text-[#2B2520] tabular-nums">{{ format_idr($summary['total_budget_cap']) }}</span>
+                </div>
+
+                {{-- Visual Progress Bar Anggaran --}}
+                <div class="space-y-1.5">
+                    <div class="h-4 w-full rounded-full bg-[#FAF8F5] overflow-hidden flex border border-[#E7E4DF]">
+                        <div class="bg-[#8C5835] transition-all duration-500" style="width: {{ min(100, $summary['budget_utilization_percent']) }}%"></div>
+                        <div class="bg-[#2E5E3E] transition-all duration-500" style="width: {{ max(0, 100 - min(100, $summary['budget_utilization_percent'])) }}%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs pt-1">
+                        <div>
+                            <span class="flex items-center gap-1.5 text-[#6E665E]">
+                                <span class="h-2.5 w-2.5 rounded-full bg-[#8C5835]"></span>
+                                Terpakai / Deal:
+                            </span>
+                            <span class="font-bold text-[#2B2520] tabular-nums block pl-4">{{ format_idr($summary['total_actual']) }}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="flex items-center justify-end gap-1.5 text-[#2E5E3E]">
+                                <span class="h-2.5 w-2.5 rounded-full bg-[#2E5E3E]"></span>
+                                Sisa Anggaran Aman:
+                            </span>
+                            <span class="font-bold text-[#2E5E3E] tabular-nums block pr-1">{{ format_idr($summary['remaining_budget']) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border border-[#E7E4DF] bg-[#FAF8F5] p-3 text-xs flex justify-between items-center text-[#6E665E]">
+                    <span>Total dibayarkan ke vendor saat ini:</span>
+                    <strong class="text-[#2B2520] tabular-nums font-semibold">{{ format_idr($summary['total_paid']) }}</strong>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#F0ECE4]">
+                <a href="{{ route('budget.index') }}" class="inline-flex w-full items-center justify-center rounded-lg border border-[#E7E4DF] bg-white py-2 text-xs font-semibold text-[#2B2520] hover:bg-[#F5F2EB] transition">
+                    Kelola Rincian Anggaran &rarr;
+                </a>
             </div>
         </section>
+
+        {{-- VISUAL 2: KESIAPAN PERSIAPAN (PROGRESS GAUGE CHECKLIST) --}}
+        <section class="rounded-2xl border border-[#E7E4DF] bg-white p-6 shadow-xs flex flex-col justify-between space-y-4">
+            <div class="flex items-center justify-between border-b border-[#F0ECE4] pb-3">
+                <div class="flex items-center gap-2">
+                    <x-ui.icon name="check-circle" class="h-4 w-4 text-[#2E5E3E]" />
+                    <h2 class="text-base font-bold text-[#2B2520]">Progres Kesiapan</h2>
+                </div>
+                <span class="text-xs font-semibold text-[#6E665E] tabular-nums">
+                    {{ $summary['completed_tasks'] }} / {{ $summary['total_tasks'] }} Selesai
+                </span>
+            </div>
+
+            <div class="space-y-4">
+                {{-- Circular Gauge & Status Text --}}
+                <div class="flex items-center gap-4">
+                    <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                            <path stroke="#FAF8F5" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path stroke="#2E5E3E" stroke-width="3.5" stroke-dasharray="{{ $summary['completion_percent'] }}, 100" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                        <span class="absolute text-sm font-bold text-[#2E5E3E] tabular-nums">{{ $summary['completion_percent'] }}%</span>
+                    </div>
+                    <div>
+                        <span class="text-base font-bold text-[#2B2520] block">Kebutuhan Terpenuhi</span>
+                        <p class="text-xs text-[#6E665E] mt-0.5 leading-relaxed">
+                            {{ $summary['completed_tasks'] }} tugas rampung, {{ $summary['total_tasks'] - $summary['completed_tasks'] }} dalam proses persiapan.
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Preview 3 Tugas Terdekat --}}
+                <div class="space-y-1.5 pt-1">
+                    <span class="text-xs font-semibold text-[#6E665E] block">Tugas terdekat:</span>
+                    <div class="space-y-1.5 text-xs">
+                        @forelse($summary['urgent_tasks']->take(3) as $task)
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-[#FAF8F5] border border-[#E7E4DF]">
+                                <span class="truncate font-medium text-[#2B2520]">{{ $task->title }}</span>
+                                <span class="text-[11px] font-semibold tabular-nums shrink-0 ml-2 {{ $task->is_overdue ? 'text-[#9E352B]' : 'text-[#8C5835]' }}">
+                                    {{ $task->due_date->format('d M') }}
+                                </span>
+                            </div>
+                        @empty
+                            <p class="text-xs text-[#6E665E] py-2 text-center">Seluruh kebutuhan telah terpenuhi.</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#F0ECE4]">
+                <a href="{{ route('checklist.index') }}" class="inline-flex w-full items-center justify-center rounded-lg border border-[#E7E4DF] bg-white py-2 text-xs font-semibold text-[#2B2520] hover:bg-[#F5F2EB] transition">
+                    Buka Checklist &amp; Timeline &rarr;
+                </a>
+            </div>
+        </section>
+
     </div>
 
-    {{-- Modal Dialog Kertas: Cara Urus & Salin WhatsApp --}}
+    {{-- MODAL ACTION GUIDE (PETUNJUK KOORDINASI) --}}
     <div
         x-show="modalOpen"
         x-cloak
@@ -408,48 +237,45 @@
         aria-modal="true"
         x-on:keydown.escape.window="closeModal()"
     >
-        <div class="fixed inset-0 bg-ink/50" @click="closeModal()"></div>
+        <div class="fixed inset-0 bg-[#2B2520]/40 backdrop-blur-sm" @click="closeModal()"></div>
 
-        <div class="modal-paper relative z-10 w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-start justify-between gap-3 border-b-2 border-ink pb-3">
-                <div>
-                    <span class="stamp !bg-kunyit">Panduan Asisten</span>
-                    <h2 class="font-display text-xl font-extrabold text-ink mt-1" x-text="'Cara Urus: ' + (guideData ? guideData.target_name : '')"></h2>
-                </div>
-                <button type="button" @click="closeModal()" class="btn-neo-secondary !min-h-0 !p-1 text-sm font-bold cursor-pointer">✕</button>
+        <div class="relative z-10 w-full max-w-lg rounded-2xl border border-[#E7E4DF] bg-white p-6 shadow-md max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between gap-3 border-b border-[#F0ECE4] pb-3">
+                <h3 class="text-base font-bold text-[#2B2520]" x-text="'Cara Koordinasi: ' + (guideData ? guideData.target_name : '')"></h3>
+                <button type="button" @click="closeModal()" class="rounded border border-[#E7E4DF] bg-white p-1 text-sm font-semibold text-[#6E665E] hover:text-[#2B2520] cursor-pointer">✕</button>
             </div>
 
             <div class="mt-4" x-show="guideData">
-                <p class="text-xs font-black uppercase tracking-wider text-soga">3 Langkah Eksekusi yang Disarankan:</p>
-                <ol class="mt-2 space-y-2 text-xs sm:text-sm text-ink">
+                <p class="text-xs font-semibold text-[#8C5835]">Langkah Praktis:</p>
+                <ol class="mt-2 space-y-2 text-xs text-[#2B2520]">
                     <template x-for="(step, idx) in (guideData ? guideData.steps : [])" :key="idx">
                         <li class="flex items-start gap-2">
-                            <span class="hand font-bold text-soga" x-text="(idx + 1) + '.'"></span>
+                            <span class="font-bold text-[#8C5835]" x-text="(idx + 1) + '.'"></span>
                             <span x-text="step"></span>
                         </li>
                     </template>
                 </ol>
 
-                <div class="mt-5 border-t-2 border-ink pt-3">
-                    <p class="text-xs font-black uppercase tracking-wider text-soga">Draf Pesan WhatsApp Siap Kirim:</p>
-                    <div class="bento-card bento-paper2 mt-2 p-3 font-mono text-[0.72rem] text-ink whitespace-pre-wrap leading-relaxed border-2 border-ink" x-text="guideData ? guideData.wa_text : ''"></div>
+                <div class="mt-5 border-t border-[#F0ECE4] pt-4">
+                    <p class="text-xs font-semibold text-[#8C5835]">Draf Pesan WhatsApp:</p>
+                    <div class="mt-2 rounded-lg border border-[#E7E4DF] bg-[#FAF8F5] p-3 text-xs text-[#2B2520] whitespace-pre-wrap leading-relaxed font-mono" x-text="guideData ? guideData.wa_text : ''"></div>
 
-                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+                    <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
                         <button
                             type="button"
-                            @click="window.copyToClipboard(guideData ? guideData.wa_text : ''); copiedWa = true; setTimeout(() => copiedWa = false, 2200)"
-                            class="btn-neo !py-1.5 !px-3 !text-xs cursor-pointer"
+                            @click="window.copyToClipboard(guideData ? guideData.wa_text : ''); copiedWa = true; setTimeout(() => copiedWa = false, 2000)"
+                            class="inline-flex items-center justify-center rounded-lg bg-[#2B2520] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#1C1815] cursor-pointer"
                         >
-                            <span x-text="copiedWa ? 'Teks WA Berhasil Disalin!' : 'Salin Draf WhatsApp'">Salin Draf WhatsApp</span>
+                            <span x-text="copiedWa ? 'Tersalin ke Clipboard!' : 'Salin Teks WhatsApp'">Salin Teks WhatsApp</span>
                         </button>
 
                         <template x-if="guideData && guideData.wa_url">
-                            <a :href="guideData.wa_url" target="_blank" rel="noopener" class="btn-neo-wa !py-1.5 !px-3 !text-xs">
-                                Buka Aplikasi WhatsApp &rarr;
+                            <a :href="guideData.wa_url" target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-lg bg-[#2E5E3E] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#254F34]">
+                                Buka WhatsApp &rarr;
                             </a>
                         </template>
 
-                        <button type="button" @click="closeModal()" class="text-xs text-taupe hover:text-ink font-bold underline">
+                        <button type="button" @click="closeModal()" class="text-xs text-[#6E665E] hover:text-[#2B2520] transition">
                             Tutup
                         </button>
                     </div>

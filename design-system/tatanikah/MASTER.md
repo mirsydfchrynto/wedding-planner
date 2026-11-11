@@ -1,50 +1,57 @@
 # Design System Master File — Tatanikah
 
 **Project:** Tatanikah  
-**Category:** Wedding & Event Planning SaaS (B2C Couples & B2B Wedding Organizers)  
-**Direction:** Warm Heritage Neo-Brutalism & Nusantara Sogan Ledger
+**Category:** Wedding & Event Planning Web Application (Indonesian Couples & Families)  
+**Direction:** Warm Minimalism × Modern Editorial × Clean SaaS  
 
 ---
 
 ## Global Rules
 
-### 1. Color Palette (Warm Heritage Neo-Brutalism & Nusantara Sogan)
+### 1. Color Palette (Warm Minimalism & Sogan Editorial)
 
-| Role | Hex | CSS Variable | Tailwind Utility |
-|------|-----|--------------|------------------|
-| Primary Desk Ground | `#E7DBC7` | `--color-desk` | `bg-desk` |
-| Primary Paper Surface | `#FAF5EC` | `--color-paper` | `bg-paper` |
-| Secondary Paper / Memo | `#F3E8D3` | `--color-paper-2` | `bg-paper-2` |
-| Primary Ink / Outline | `#2B2118` | `--color-ink` | `text-ink`, `border-ink` |
-| Secondary Ink / Taupe | `#5D4936` | `--color-taupe` / `--color-ink-2` | `text-taupe` |
-| Sogan Nusantara Accent | `#7A4425` | `--color-soga` | `text-soga`, `bg-soga` |
-| Sogan Dark | `#532C15` | `--color-soga-dark` | `text-soga-dark` |
-| Kunyit Warm Accent | `#F6D365` | `--color-kunyit` | `bg-kunyit` |
-| Prada Gold | `#B58A2B` | `--color-prada` | `text-prada` |
-| Mint Ground | `#CDE7D8` | `--color-mint` | `bg-mint` |
-| Forest Positive / Paid | `#3F5F46` | `--color-forest` | `text-forest`, `bg-forest` |
-| Terracotta Accent | `#A64B2A` | `--color-terracotta` | `bg-terracotta` |
-| Terracotta Light | `#F7C5B8` | `--color-terracotta-light` | `bg-terracotta-light` |
-| Wine Warning / Overdue | `#9C2F24` | `--color-wine` | `text-wine`, `border-wine` |
+| Role | Hex | CSS Variable | Description |
+|------|-----|--------------|-------------|
+| Canvas Ground | `#FAF8F5` | `--color-canvas` | Warm Alabaster page ground |
+| Primary Surface | `#FFFFFF` | `--color-surface` | Pure White card and modal backgrounds |
+| Surface Subtle | `#F5F2EB` | `--color-surface-subtle` | Muted Oat sub-panel ground |
+| Hairline Border | `#E7E4DF` | `--color-border` | 1px clean border |
+| Hairline Divider | `#F0ECE4` | `--color-border-subtle` | Light table and card divider |
+| Primary Ink | `#2B2520` | `--color-ink` | Deep charcoal primary body and header text |
+| Secondary Ink | `#6E665E` | `--color-ink-muted` | Muted taupe for captions and labels |
+| Tertiary Ink | `#9E968D` | `--color-ink-subtle` | Form placeholders and disabled items |
+| Brand Accent | `#8C5835` | `--color-brand` | Warm Sogan Terracotta brand accent |
+| Brand Dark | `#6E3F20` | `--color-brand-dark` | Hover state for brand buttons |
+| Brand Soft | `#F4ECE4` | `--color-brand-soft` | Subtle tint for active pills and tags |
+| Sage / Forest | `#2E5E3E` | `--color-sage` | Success, paid status, WhatsApp green |
+| Sage Soft | `#EAF4EE` | `--color-sage-soft` | Background for success pills |
+| Amber | `#A06414` | `--color-amber` | Pending, warning, in-progress items |
+| Amber Soft | `#FEF7EC` | `--color-amber-soft` | Background for pending pills |
+| Wine | `#9E352B` | `--color-wine` | Overdue, deficit, alert badges |
+| Wine Soft | `#FDF2F0` | `--color-wine-soft` | Background for overdue alert cards |
 
 ### 2. Typography
 
 - **Display Serif:** `Cormorant Garamond` (`500`, `600`, `700`) — used for hero headlines, screen titles, and section headers (`font-display`).
-- **Body Sans:** `Plus Jakarta Sans` (`400`, `500`, `600`, `700`, `800`) — used for UI copy, forms, table headers, and navigation.
-- **Handwriting Accent:** `Kalam` (`400`, `700`) — used for countdown callouts and informal notes (`hand`).
+- **Body Sans:** `Plus Jakarta Sans` (`400`, `500`, `600`, `700`) — used for UI copy, forms, table headers, and navigation.
 - **Monospace & Numeric Discipline:** `JetBrains Mono` / `.tabular-nums` on all currency amounts (`Rp`), countdowns, and percentages (`rupiah`, `tabular-nums`).
 
-### 3. Neo-Brutalist Ledger Motifs
+### 3. Components & Elevation
 
-- **Borders & Shadows:** Crisp `2px solid #2B2118` on all cards, buttons, tabs, and form controls. Hard-offset drop shadows (`3px 3px 0px #2B2118` on buttons, `4px 4px 0px #2B2118` on bento cards).
-- **Physical Ledger Cues:** Tape decals (`.tape`, `.tape-right`), postal stamp badges (`.stamp`), index tabs (`.index-tab`).
-- **Mobile Bottom Navigation:** Fixed 5-column single-row bar (`.bottom-nav`, `.bottom-nav-item`) with 44px+ hit targets and zero hamburger menus.
+- **Cards:** `rounded-2xl border border-[#E7E4DF] bg-white shadow-sm`.
+- **Buttons (Primary):** `rounded-full bg-[#2B2520] text-white px-5 py-2.5 text-xs font-semibold hover:bg-[#1C1815] active:scale-[0.98] transition`.
+- **Buttons (Secondary):** `rounded-full border border-[#E7E4DF] bg-white text-[#2B2520] px-4 py-2 text-xs font-semibold hover:bg-[#F5F2EB] active:scale-[0.98] transition`.
+- **Badges & Pills:** `rounded-full border border-[#E7E4DF] bg-[#FAF8F5] px-2.5 py-0.5 text-xs font-semibold`.
+- **Inputs:** `rounded-xl border border-[#E7E4DF] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#2B2520] placeholder-[#9E968D] focus:border-[#8C5835] focus:outline-none focus:ring-1 focus:ring-[#8C5835] transition`.
+- **Desktop Navigation:** Frosted sticky header (`backdrop-blur-md bg-[#FAF8F5]/90 border-b border-[#E7E4DF]`) with pill tabs.
+- **Mobile Bottom Navigation:** Frosted bottom bar (`backdrop-blur-lg bg-[#FAF8F5]/92 border-t border-[#E7E4DF]`) with 5 single-tap items.
 
 ---
 
 ## Anti-Patterns (Forbidden)
 
+- No brutalist 2px/3px black outlines, cartoon drop shadows, or harsh angle transforms.
+- No tape decals (`.tape`) or jagged stamp edges.
 - Do not use emojis as icons in UI controls; use Lucide SVG vector paths (`<x-ui.icon>`). Emoji are permitted only inside WhatsApp message export strings.
-- Do not mix accounting bases without clear labels (always distinguish total budget cap, committed vendor contracts, and paid disbursements).
-- Do not allow horizontal overflow on mobile viewports (verified across all screens down to `390px`).
-- Do not invent speculative features or add dependencies when native platform/standard library suffices.
+- Do not allow horizontal overflow on mobile viewports (minimum width `390px`).
+- Do not invent speculative features or add unnecessary third-party CSS frameworks.

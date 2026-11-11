@@ -102,14 +102,24 @@ final class TimelineGeneratorService
         TimelinePhase $phase,
         CarbonInterface $weddingDate,
     ): WeddingTask {
+        $today = now()->startOfDay();
+        $target = $weddingDate->copy()->startOfDay();
+        $remainingDays = (int) $today->diffInDays($target);
+
+        $priority = $taskData['priority'];
+        // Mode Kilat (<= 45 hari): KUA, Dokumen, Venue, & Catering diprioritaskan tinggi
+        if ($remainingDays <= 45 && in_array($taskData['category'], ['documents', 'venue', 'catering'], true)) {
+            $priority = 'high';
+        }
+
         return WeddingTask::query()->create([
             'title' => $taskData['title'],
             'description' => $taskData['description'],
             'category' => $taskData['category'],
             'phase' => $phase->value,
-            'due_date' => $this->calculateDueDate($phase, $weddingDate),
+            'due_date' => $this->calculateDueDate($phase, $weddingDate, $taskData['category']),
             'status' => 'todo',
-            'priority' => $taskData['priority'],
+            'priority' => $priority,
             'assigned_to' => $taskData['assigned_to'] ?? 'Pengantin',
             'is_milestone' => $taskData['is_milestone'],
         ]);
@@ -121,7 +131,7 @@ final class TimelineGeneratorService
      * shortcut: stages are evenly spaced, no per-task lead time; add offsets
      * to WeddingMasterData if tasks inside a stage need finer order.
      */
-    private function calculateDueDate(TimelinePhase $phase, CarbonInterface $weddingDate): CarbonInterface
+    private function calculateDueDate(TimelinePhase $phase, CarbonInterface $weddingDate, string $category = 'general'): CarbonInterface
     {
         $today = now()->startOfDay();
         $target = $weddingDate->copy()->startOfDay();
@@ -131,6 +141,12 @@ final class TimelineGeneratorService
         }
 
         $remainingDays = (int) $today->diffInDays($target);
+
+        // Mode Kilat (<= 45 hari): KUA, berkas dokumen, dan venue dipercepat di minggu-minggu awal
+        if ($remainingDays <= 45 && in_array($category, ['documents', 'venue', 'catering'], true)) {
+            $offset = min(7, max(1, (int) round($remainingDays * 0.15)));
+            return $today->copy()->addDays($offset);
+        }
 
         return $today->copy()->addDays((int) round($remainingDays * ($phase->order() - 1) / 9));
     }

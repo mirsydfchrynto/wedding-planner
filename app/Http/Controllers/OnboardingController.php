@@ -19,7 +19,7 @@ final class OnboardingController extends Controller
 {
     public const GUEST_PRESETS = ['100', '200', '300', '500', '800', '1000', 'custom'];
 
-    public const BUDGET_PRESETS = ['150000000', '250000000', '350000000', '500000000', '750000000', '1000000000', 'custom'];
+    public const BUDGET_PRESETS = ['35000000', '50000000', '70000000', '100000000', '150000000', '250000000', '350000000', '500000000', '750000000', '1000000000', 'custom'];
 
     public const EVENT_TYPES = ['akad_only', 'akad_resepsi', 'jawa_inti', 'jawa_lengkap'];
 

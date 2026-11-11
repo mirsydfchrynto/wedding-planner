@@ -26,30 +26,47 @@ final class BudgetAllocationService
     public function allocate(WeddingProfile $profile, string $eventType = 'akad_resepsi'): array
     {
         $items = [];
-        $subtotal = 0;
+        $totalCap = (int) $profile->total_budget;
+        $eligibleRows = [];
+        $rawSubtotal = 0;
         $contingencyRow = null;
 
         foreach (WeddingMasterData::BUDGET_ITEMS as $row) {
             if ($row['category'] === WeddingCategory::Contingency->value) {
                 $contingencyRow = $row;
-
                 continue;
             }
 
-            // Jika hanya Akad Nikah saja, lewati pos hiburan panggung & suvenir massal
             if ($eventType === 'akad_only' && in_array($row['category'], ['entertainment', 'souvenir'], true)) {
                 continue;
             }
 
-            $estimated = $row['per_guest']
+            $rawEstimate = $row['per_guest']
                 ? $row['min'] * (int) $profile->guest_target
                 : $row['min'];
-            $subtotal += $estimated;
+            $rawSubtotal += $rawEstimate;
+
+            $eligibleRows[] = [
+                'row' => $row,
+                'raw' => $rawEstimate,
+            ];
+        }
+
+        // Skalakan estimasi agar proporsional dengan batas total budget pengguna
+        $scaleFactor = ($totalCap > 0 && $rawSubtotal > 0)
+            ? ($totalCap * 0.95) / $rawSubtotal
+            : 1.0;
+
+        $allocatedSubtotal = 0;
+        foreach ($eligibleRows as $entry) {
+            $row = $entry['row'];
+            $estimated = (int) round(($entry['raw'] * $scaleFactor) / 50000) * 50000;
+            $allocatedSubtotal += $estimated;
 
             $items[] = BudgetItem::query()->create([
                 'category' => $row['category'],
                 'title' => $row['title'],
-                'estimated_cost' => $estimated,
+                'estimated_cost' => max(100000, $estimated),
                 'actual_cost' => 0,
                 'paid_amount' => 0,
                 'notes' => $this->researchNote($row),
@@ -57,10 +74,14 @@ final class BudgetAllocationService
         }
 
         if ($contingencyRow !== null) {
+            $contingencyAmount = $totalCap > 0
+                ? max(1000000, (int) round($totalCap * 0.05))
+                : (int) round($allocatedSubtotal * self::CONTINGENCY_PERCENT / 100);
+
             $items[] = BudgetItem::query()->create([
                 'category' => $contingencyRow['category'],
                 'title' => $contingencyRow['title'],
-                'estimated_cost' => (int) round($subtotal * self::CONTINGENCY_PERCENT / 100),
+                'estimated_cost' => $contingencyAmount,
                 'actual_cost' => 0,
                 'paid_amount' => 0,
                 'notes' => $this->researchNote($contingencyRow),

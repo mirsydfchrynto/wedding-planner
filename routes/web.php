@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OnboardingController;
-use App\Http\Controllers\PrintController;
-use App\Http\Controllers\RundownController;
 use App\Http\Controllers\VendorController;
 use App\Http\Middleware\EnsureWeddingProfile;
 use Illuminate\Http\Request;
@@ -25,9 +24,17 @@ Route::get('/', function (Request $request) {
 })->name('home');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 Route::post('/auth/google', [AuthController::class, 'loginWithGoogle'])->name('auth.google');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::prefix('admin')->name('admin.')->group(function (): void {
+    Route::get('/login', [AdminController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AdminController::class, 'login'])->name('login.submit');
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+});
 Route::middleware('auth')->group(function (): void {
     Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding.index');
     Route::post('/onboarding', [OnboardingController::class, 'store'])->name('onboarding.store');
@@ -37,7 +44,6 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/profile/edit', [DashboardController::class, 'editProfile'])->name('dashboard.editProfile');
     Route::patch('/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.updateProfile');
-    Route::get('/print/master-guide', [PrintController::class, 'masterGuide'])->name('print.masterGuide');
 
     Route::prefix('budget')->name('budget.')->group(function (): void {
         Route::get('/', [BudgetController::class, 'index'])->name('index');
@@ -59,14 +65,7 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
         Route::delete('/{weddingTask}', [ChecklistController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('rundown')->name('rundown.')->group(function (): void {
-        Route::get('/', [RundownController::class, 'index'])->name('index');
-        Route::get('/create', [RundownController::class, 'create'])->name('create');
-        Route::get('/sessions/create', [RundownController::class, 'createRundown'])->name('sessions.create');
-        Route::post('/', [RundownController::class, 'store'])->name('store');
-        Route::patch('/{weddingTask}/status', [RundownController::class, 'updateStatus'])->name('updateStatus');
-        Route::post('/sessions', [RundownController::class, 'storeRundown'])->name('sessions.store');
-    });
+    Route::get('/timeline', fn () => redirect()->route('checklist.index'))->name('timeline.index');
 
     Route::prefix('vendors')->name('vendors.')->group(function (): void {
         Route::get('/', [VendorController::class, 'index'])->name('index');
@@ -75,7 +74,6 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
         Route::get('/{vendor}/edit', [VendorController::class, 'edit'])->name('edit');
         Route::get('/{vendor}/payments/create', [VendorController::class, 'createPayment'])->name('payments.create');
         Route::put('/{vendor}', [VendorController::class, 'update'])->name('update');
-        Route::patch('/{vendor}/payment', [VendorController::class, 'updatePayment'])->name('updatePayment');
         Route::delete('/{vendor}', [VendorController::class, 'destroy'])->name('destroy');
         Route::post('/{vendor}/payments', [VendorController::class, 'storePayment'])->name('storePayment');
     });

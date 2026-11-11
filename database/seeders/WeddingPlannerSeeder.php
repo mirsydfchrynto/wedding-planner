@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Models\Vendor;
 use App\Models\VendorPayment;
 use App\Models\WeddingProfile;
-use App\Models\WeddingRundown;
 use App\Models\WeddingTask;
 use App\Services\BudgetAllocationService;
 use App\Services\TimelineGeneratorService;
@@ -23,7 +22,6 @@ final class WeddingPlannerSeeder extends Seeder
     public function run(): void
     {
         VendorPayment::query()->delete();
-        WeddingRundown::query()->delete();
         WeddingTask::query()->delete();
         BudgetItem::query()->delete();
         Vendor::query()->delete();
@@ -59,6 +57,14 @@ final class WeddingPlannerSeeder extends Seeder
         User::query()->create([
             'name' => 'Administrator Tatanikah',
             'email' => 'admin@tatanikah.id',
+            'password' => Hash::make('admin'),
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]);
+
+        User::query()->create([
+            'name' => 'Platform Administrator',
+            'email' => 'admin@tatanikah.com',
             'password' => Hash::make('admin'),
             'role' => 'admin',
             'email_verified_at' => now(),
@@ -212,90 +218,6 @@ final class WeddingPlannerSeeder extends Seeder
 
         foreach ($vendorByCategory as $category => $vendor) {
             BudgetItem::query()->where('category', $category)->orderBy('id')->first()?->update(['vendor_id' => $vendor->id]);
-        }
-        // 3. Seed Susunan Acara Hari Pernikahan (Minute-by-Minute Event Schedule)
-        $rundownRows = [
-            [
-                'start_time' => '05:00',
-                'end_time' => '07:30',
-                'session_name' => 'Persiapan & Tata Rias',
-                'activity' => 'Tata Rias & Hairdo Mempelai Wanita, Pria, dan Orang Tua',
-                'location' => 'Ruang Rias VIP Glasshouse Plataran',
-                'pic_name' => 'Anpa Suha & Tim MUA',
-                'pic_phone' => '081234567891',
-                'notes' => 'Sarapan pagi keluarga disiapkan WO di pantry VIP pk 06:00 WIB.',
-                'sort_order' => 1,
-            ],
-            [
-                'start_time' => '07:30',
-                'end_time' => '08:00',
-                'session_name' => 'Penyambutan',
-                'activity' => 'Kedatangan Keluarga Besar, Saksi Nikah, dan Tamu Terbatas Akad',
-                'location' => 'Foyer & Veranda Plataran Menteng',
-                'pic_name' => 'Tim Penerima Tamu Keluarga CPW',
-                'pic_phone' => '081298765432',
-                'notes' => 'Pengecekan mas kawin dan kelengkapan buku nikah bersama petugas KUA.',
-                'sort_order' => 2,
-            ],
-            [
-                'start_time' => '08:00',
-                'end_time' => '09:15',
-                'session_name' => 'Ijab Qabul / Akad Nikah',
-                'activity' => 'Prosesi Ijab Qabul, Khutbah Nikah, Penyerahan Mahar & Buku Nikah',
-                'location' => 'Pendopo Utama Glasshouse Plataran',
-                'pic_name' => 'Penghulu KUA Menteng & MC Bpk. Hartono',
-                'pic_phone' => '081188229911',
-                'notes' => 'Kamera Axioo standby multi-angle (livestream keluarga luar kota aktif).',
-                'sort_order' => 3,
-            ],
-            [
-                'start_time' => '09:15',
-                'end_time' => '10:15',
-                'session_name' => 'Upacara Adat Jawa Panggih',
-                'activity' => 'Prosesi Balangan Gantal, Ngidak Endhog, Sinduran, Bobot Timbang, & Kacar Kucur',
-                'location' => 'Pelaminan Utama Adat Jogja Paes Ageng',
-                'pic_name' => 'Ibu Pemaes & Sanggar Suryo',
-                'pic_phone' => '081377881122',
-                'notes' => 'Gamelan live mengiringi gendhing Kodhok Ngorek & Ketawang Boyong.',
-                'sort_order' => 4,
-            ],
-            [
-                'start_time' => '10:15',
-                'end_time' => '11:30',
-                'session_name' => 'Sungkeman & Jamuan Siang',
-                'activity' => 'Sungkeman Orang Tua, Foto Keluarga Inti, & Brunch Syukuran',
-                'location' => 'Courtyard Dining Room Plataran',
-                'pic_name' => 'Lead WO Irsyad Fachryanto',
-                'pic_phone' => '081298811002',
-                'notes' => 'Menu Akasya Fine Indonesian Catering disajikan prasmanan premium.',
-                'sort_order' => 5,
-            ],
-            [
-                'start_time' => '16:00',
-                'end_time' => '18:00',
-                'session_name' => 'Persiapan Resepsi Malam',
-                'activity' => 'Touch-up Rias Pengantin, Ganti Busana Editorial Biyan, & Briefing Panitia Malam',
-                'location' => 'Ruang Rias VIP',
-                'pic_name' => 'Tim Stylist Biyan & WO',
-                'pic_phone' => '081234567891',
-                'notes' => 'Valet parking & sound check string quartet selesai sebelum pk 17:30 WIB.',
-                'sort_order' => 6,
-            ],
-            [
-                'start_time' => '18:30',
-                'end_time' => '21:30',
-                'session_name' => 'Gala Resepsi Pernikahan',
-                'activity' => 'Kirab Pengantin Editorial, Toast, Jamuan 450 Tamu Undangan, & Live Entertainment',
-                'location' => 'Grand Glasshouse Ballroom Plataran',
-                'pic_name' => 'MC Dwi Andhika & Jakarta Chamber Orchestra',
-                'pic_phone' => '081822334455',
-                'notes' => 'Sesi foto VIP diawali pk 19:00 WIB, dilanjutkan ucapan selamat ramah tamah.',
-                'sort_order' => 7,
-            ],
-        ];
-
-        foreach ($rundownRows as $rundown) {
-            WeddingRundown::query()->create($rundown);
         }
 
         // 6. Seed Riwayat Multi-Termin Pembayaran Vendor

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,48 @@ final class AuthController extends Controller
         }
 
         return view('auth.login');
+    }
+
+    public function redirectToGoogle(): RedirectResponse
+    {
+        if (! config('services.google.client_id')) {
+            return redirect()->route('login')->with('info', 'Google OAuth credentials belum terpasang. Gunakan Akses Instan.');
+        }
+
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback(): RedirectResponse
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (\Throwable $e) {
+            return redirect()->route('login')->withErrors(['Gagal terhubung dengan server Google: ' . $e->getMessage()]);
+        }
+
+        $email = $googleUser->getEmail();
+        $name = $googleUser->getName() ?? 'Calon Pengantin';
+
+        $existingUser = User::query()->where('email', $email)->first();
+        if ($existingUser !== null && $existingUser->role !== 'customer') {
+            abort(403, 'Gunakan email akun pengantin untuk masuk ke workspace.');
+        }
+
+        $user = $existingUser ?? User::query()->create([
+            'email' => $email,
+            'name' => $name,
+            'password' => Hash::make(Str::random(24)),
+            'role' => 'customer',
+            'google_id' => $googleUser->getId() ?: 'google-oauth-'.substr(sha1($email), 0, 10),
+            'email_verified_at' => now(),
+        ]);
+
+        Auth::login($user, true);
+        request()->session()->regenerate();
+
+        return redirect()
+            ->intended($user->weddingProfile()->exists() ? route('dashboard.index') : route('onboarding.index'))
+            ->with('success', 'Berhasil masuk dengan akun Google (' . $user->email . ').');
     }
 
     /**

@@ -12,12 +12,11 @@ Platform Software-as-a-Service (SaaS) manajemen perencanaan pernikahan Indonesia
    - Isolasi data per akun: setiap pengantin hanya melihat anggaran, checklist, timeline, dan vendor miliknya sendiri (`WeddingProfile` global scope).
 2. **Gerbang Login Google OAuth & Workspace Calon Pengantin (`GET /login` → `GET /dashboard`)**
    - Pelanggan masuk menggunakan **Akun Google** (`POST /auth/google`, default terisi `aurelia.reza@gmail.com`) untuk membuka 5 modul utama yang saling terhubung:
-    - **Executive Dashboard (`GET /dashboard`)** — Hitung mundur waktu nyata (Hari, Jam, Menit), Indeks Kesiapan Hari Pernikahan, grafik Estimasi vs Aktual, **Tata Upacara Adat Jawa (Siraman, Midodareni, Akad, Panggih)**, dan **Kalkulator Neptu Weton Mempelai**.
-    - **Budget Planner (`GET /budget`)** — Batas anggaran induk, 29 pos biaya hasil riset pada 12 kategori (dokumen, venue, catering, dekorasi, busana, makeup, dokumentasi, hiburan, souvenir, transport, perhiasan, dana tak terduga), estimasi vs aktual, pelacakan pembayaran, dan indikator hemat/overbudget.
-    - **Wedding Checklist (`GET /checklist`)** — 124 tugas yang dibagi ke 10 tahap persiapan, dengan filter kategori, status, penanggung jawab, dan centang selesai instan.
-    - **Susunan Acara (`GET /rundown`)** — Jadwal 10 tahap (Perencanaan sampai hari pernikahan) yang jatuh temponya disebar mengikuti sisa waktu menuju hari pernikahan, plus susunan acara menit-demi-menit hari pernikahan.
-    - **Vendor Management (`GET /vendors`)** — Direktori mitra vendor pernikahan lengkap dengan kontak WhatsApp penanggung jawab, nilai kontrak, dan pelacakan DP/pelunasan per termin.
-    - **Master Wedding Guide Print A4 / PDF (`GET /print/master-guide`)** — Lembar panduan siap cetak 4 halaman: Cover & Ringkasan Eksekutif, Susunan Acara Menit-demi-Menit Hari Pernikahan, Direktori Kontak Vendor & Rekap Pembayaran, serta Lembar Persetujuan Panduan Kerja.
+    - **Executive Dashboard (`GET /dashboard`)** — Hitung mundur waktu nyata (Hari, Jam), Indeks Kesiapan Pernikahan, ringkasan anggaran, tugas mendesak, dan progres tahapan.
+    - **Budget Planner (`GET /budget`)** — Batas anggaran induk, 29 pos biaya hasil riset pada 12 kategori, estimasi vs aktual, pelacakan pembayaran, dan status hemat/overbudget.
+    - **Wedding Checklist (`GET /checklist`)** — 124 tugas yang dibagi ke 10 tahap persiapan, dengan filter kategori, status, penanggung jawab, dan centang toggle status.
+    - **Wedding Timeline (`GET /timeline`)** — Jadwal persiapan per tahapan kronologis menuju hari pernikahan dengan pemantauan progres dan penanda tonggak (milestone).
+    - **Vendor Management (`GET /vendors`)** — Direktori mitra vendor lengkap dengan kontak WhatsApp penanggung jawab, nilai kontrak, serta pencatatan bukti pembayaran per termin.
 3. **Onboarding (`GET /onboarding`)**
    - Akun baru tanpa profil membuat profil pernikahan dulu; selesai itu 29 pos anggaran dan 124 tugas persiapan dibuat otomatis lewat `BudgetAllocationService` dan `TimelineGeneratorService`, lalu workspace terbuka. Satu akun = satu profil pernikahan.
 
@@ -31,7 +30,7 @@ Setiap anggota tim bekerja pada *branch* dan berkas masing-masing sehingga bebas
 | :--- | :--- | :--- | :--- | :--- |
 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` | **Lead Architecture, Google Auth, serta Modul #5: Executive Dashboard (`/dashboard`)** | `app/Http/Controllers/{Auth,Dashboard}Controller.php`<br>`resources/views/{auth,dashboard}/*`<br>`resources/views/layouts/app.blade.php` & `components/ui/*` |
 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Modul #1: Budget Planner (`/budget`)** | `app/Http/Controllers/BudgetController.php`<br>`app/Http/Requests/*BudgetItemRequest.php`<br>`resources/views/budget/index.blade.php` |
-| **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Modul #3: Susunan Acara (`/rundown`) & Modul #4: Vendor Management (`/vendors`)** | `app/Http/Controllers/RundownController.php`<br>`app/Http/Controllers/VendorController.php`<br>`resources/views/rundown/index.blade.php`<br>`resources/views/vendors/index.blade.php` |
+| **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Modul #4: Vendor Management (`/vendors`) & Integrasi UI** | `app/Http/Controllers/VendorController.php`<br>`resources/views/vendors/index.blade.php`<br>`resources/views/vendors/form.blade.php` |
 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Modul #2: Wedding Checklist (`/checklist`)** | `app/Http/Controllers/ChecklistController.php`<br>`resources/views/checklist/index.blade.php` |
 ---
 
@@ -59,9 +58,34 @@ php artisan migrate:fresh --seed
 php artisan serve
 ```
 
-### Akun Demo Bawaan (Otomatis dari Seeder)
-- **Login Customer (Google Sign-In di `/login`):** `aurelia.reza@gmail.com` (langsung klik tombol **"Lanjutkan dengan Akun Google"**)
+### Kredensial Akses Aplikasi (Siap Pakai)
 
-### Isolasi Data & Kunci Google Sign-In
-- Semua tabel modul (`vendors`, `budget_items`, `wedding_tasks`) memiliki `wedding_profile_id`; record baru otomatis ditandai sesuai profil pengguna yang sedang masuk.
-- `POST /auth/google` memakai **demo sign-in tanpa kata sandi** (membuat/masuk akun dari email). Kunci ini aktif hanya saat `GOOGLE_DEMO_LOGIN=true` (default non-production) dan mengembalikan `403` di produksi sampai Google OAuth asli dikonfigurasi.
+1. **Pengguna / Calon Pengantin (Akses Utama)**
+   - URL: `http://localhost:8000/login` (atau port `8080` pada Docker).
+   - Metode: **Google Sign-In** (Otomatis live via Socialite jika kredensial aktif, atau klik tombol *Akses Demo Instan* untuk `aurelia.reza@gmail.com`).
+   - Setiap akun Google baru otomatis diarahkan ke Wizard Onboarding Adaptif 3-Langkah (Mode Kilat $\le$ 45 hari atau Mode Terencana).
+
+2. **Administrator Platform (Akses Rahasia / Tersembunyi)**
+   - URL Langsung: `http://localhost:8000/admin/login` (Akses tidak dimunculkan di menu navigasi publik).
+   - Email: `admin@tatanikah.id`
+   - Password: `admin`
+   - Dashboard Monitoring: `http://localhost:8000/admin` (Monitoring seluruh pasangan, total anggaran, vendor terdaftar, dan metrik sistem).
+
+---
+
+## Panduan Live Google OAuth & Redirect URI (Google Cloud Console)
+
+Kredensial Google Client Secret dikonfigurasi melalui berkas `.env` lokal:
+- **Client ID**: Diisi pada `GOOGLE_CLIENT_ID`
+- **Client Secret**: Diisi pada `GOOGLE_CLIENT_SECRET`
+
+### Pengaturan di Google Cloud Console:
+1. Buka [Google Cloud Console Credentials](https://console.cloud.google.com/apis/credentials).
+2. Pilih Project `gen-lang-client-0567503746` (atau OAuth 2.0 Client ID Anda).
+3. Pada bagian **Authorized redirect URIs**, daftarkan URL berikut:
+   - `http://localhost:8000/auth/google/callback`
+   - `http://localhost:8080/auth/google/callback`
+   - `http://127.0.0.1:8000/auth/google/callback`
+   - `http://127.0.0.1:8080/auth/google/callback`
+   - `https://[domain-publik-anda.com]/auth/google/callback` (saat live server)
+4. Simpan perubahan. Pengguna kini dapat login langsung menggunakan akun Google riil mereka.

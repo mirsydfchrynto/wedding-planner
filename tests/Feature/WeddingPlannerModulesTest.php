@@ -57,8 +57,6 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->get("/budget/{$item->id}/edit")->assertOk();
         $this->get('/checklist/create')->assertOk();
         $this->get("/checklist/{$task->id}/edit")->assertOk();
-        $this->get('/rundown/create')->assertOk();
-        $this->get('/rundown/sessions/create')->assertOk();
         $this->get('/vendors/create')->assertOk();
         $this->get("/vendors/{$vendor->id}/edit")->assertOk();
         $this->get("/vendors/{$vendor->id}/payments/create")->assertOk();
@@ -70,7 +68,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->get('/dashboard')->assertRedirect('/login');
         $this->get('/budget')->assertRedirect('/login');
         $this->get('/checklist')->assertRedirect('/login');
-        $this->get('/rundown')->assertRedirect('/login');
+        $this->get('/timeline')->assertRedirect('/login');
         $this->get('/vendors')->assertRedirect('/login');
     }
 
@@ -172,7 +170,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->actingAs($this->customerUser)
             ->get('/checklist?category=venue')
             ->assertOk()
-            ->assertSee('Daftar Tugas Persiapan');
+            ->assertSee('Checklist &amp; Timeline Persiapan', false);
         $this->actingAs($this->customerUser)->post('/checklist', [
             'title' => 'Verifikasi Berkas Wali Nikah KUA',
             'description' => 'Fotokopi KTP dan KK wali nikah',
@@ -193,33 +191,16 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->assertNotNull($task->fresh()->completed_at);
     }
 
-    public function test_timeline_renders_phases_and_updates_milestone_status(): void
+    public function test_timeline_redirects_to_integrated_checklist_and_timeline(): void
     {
         $this->actingAs($this->customerUser)
-            ->get('/rundown')
+            ->get('/timeline')
+            ->assertRedirect(route('checklist.index'));
+
+        $this->actingAs($this->customerUser)
+            ->get('/checklist')
             ->assertOk()
-            ->assertSee('Susunan Acara')
-            ->assertSee('Persiapan')
-            ->assertSee('Hari pernikahan');
-
-        $this->actingAs($this->customerUser)->post('/rundown', [
-            'title' => 'Simulasi Prosesi Kirab Resepsi',
-            'description' => 'Gladi resik bersama keluarga dan musik',
-            'category' => WeddingCategory::Entertainment->value,
-            'phase' => TimelinePhase::Ceremony->value,
-            'due_date' => now()->addDays(130)->toDateString(),
-            'priority' => 'high',
-            'assigned_to' => 'WO & Pasangan',
-            'is_milestone' => true,
-        ])->assertRedirect(route('rundown.index'));
-
-        $task = WeddingTask::query()->where('title', 'Simulasi Prosesi Kirab Resepsi')->firstOrFail();
-
-        $this->actingAs($this->customerUser)->patch("/rundown/{$task->id}/status", [
-            'status' => TaskStatus::InProgress->value,
-        ])->assertRedirect(route('rundown.index'));
-
-        $this->assertSame(TaskStatus::InProgress, $task->fresh()->status);
+            ->assertSee('Checklist &amp; Timeline Persiapan', false);
     }
 
     public function test_vendor_management_creates_updates_and_tracks_payments(): void
@@ -247,58 +228,17 @@ final class WeddingPlannerModulesTest extends TestCase
         $vendor = Vendor::query()->where('name', 'Nusantara Heritage Photo Booth')->firstOrFail();
         $this->assertSame(5000000, $vendor->remaining_balance);
 
-        $this->actingAs($this->customerUser)->patch("/vendors/{$vendor->id}/payment", [
-            'paid_amount' => 8500000,
-            'booking_status' => VendorBookingStatus::Paid->value,
+        $this->actingAs($this->customerUser)->post("/vendors/{$vendor->id}/payments", [
+            'payment_stage' => 'Pelunasan',
+            'amount' => 5000000,
+            'paid_date' => now()->toDateString(),
+            'receipt_ref' => 'KW-FINAL-01',
+            'notes' => 'Pelunasan lunas',
         ])->assertRedirect(route('vendors.index'));
 
         $this->assertSame(0, $vendor->fresh()->remaining_balance);
         $this->assertSame(VendorBookingStatus::Paid, $vendor->fresh()->booking_status);
     }
 
-
-    public function test_master_guide_print_view_renders_rundown_and_vendor_directory(): void
-    {
-        $response = $this->actingAs($this->customerUser)->get('/print/master-guide');
-
-        $response->assertOk();
-        $response->assertSee('Buku Kerja &amp; Panduan Operasional Resmi Hari Pernikahan', false);
-        $response->assertSee('Susunan Acara Menit-demi-Menit');
-        $response->assertSee('Plataran Menteng Heritage Venue');
-        $response->assertSee('Lembar Persetujuan Panduan Kerja', false);
-    }
-
-    public function test_timeline_rundown_and_vendor_payments_can_be_recorded(): void
-    {
-        $this->actingAs($this->customerUser)->post('/rundown/sessions', [
-            'start_time' => '13:00',
-            'duration_minutes' => 90,
-            'session_name' => 'Briefing Panitia & Vendor Malam',
-            'activity' => 'Koordinasi teknis tim dokumentasi dan catering',
-            'location' => 'Lobby VIP',
-            'pic_name' => 'Adam Maulana',
-            'pic_phone' => '081234567890',
-            'notes' => 'Standby di lokasi',
-        ])->assertRedirect(route('rundown.index', ['tab' => 'hari']));
-
-        $this->assertDatabaseHas('wedding_rundowns', [
-            'session_name' => 'Briefing Panitia & Vendor Malam',
-            'pic_name' => 'Adam Maulana',
-        ]);
-
-        $vendor = Vendor::query()->firstOrFail();
-        $this->actingAs($this->customerUser)->post("/vendors/{$vendor->id}/payments", [
-            'payment_stage' => 'Termin Tambahan',
-            'amount' => 5000000,
-            'paid_date' => now()->toDateString(),
-            'receipt_ref' => 'REF-ADD-001',
-            'notes' => 'Pembayaran via transfer bank',
-        ])->assertRedirect(route('vendors.index'));
-
-        $this->assertDatabaseHas('vendor_payments', [
-            'vendor_id' => $vendor->id,
-            'receipt_ref' => 'REF-ADD-001',
-        ]);
-    }
 
 }

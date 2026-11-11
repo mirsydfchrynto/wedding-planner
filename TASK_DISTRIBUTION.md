@@ -9,7 +9,7 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
 
 | No | Nama Anggota | Akun GitHub | Branch Git | Peran Utama (*Core Role*) | Cakupan Kerja & Modul | Status |
 |:---|:---|:---|:---|:---|:---|:---|
-| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` / `main` | **Project Lead, Project Manager & System Integrator** | Memimpin proyek, integrasi seluruh modul, melengkapi kekurangan sistem, Cetak Master Guide (`/print/master-guide`), Keamanan Multi-Tenancy, dan Rilis Docker | **100% Selesai & Teruji** |
+| 1 | **M. Irsyad Fachryanto** | `@mirsydfchrynto` | `irsyad` / `main` | **Project Lead, Project Manager & System Integrator** | Memimpin proyek, integrasi 5 modul inti (Dashboard, Budget, Checklist, Timeline, Vendors), Google Auth, Keamanan Multi-Tenancy, dan Rilis Docker | **100% Selesai & Teruji** |
 | 2 | **Septiyan Adam Maulana** | `@adambyt3` | `adam` | **Lead Frontend Engineer (Web Utuh UI/UX)** | Seluruh Antarmuka Pengguna Web Utuh (Design System Vogue, Blade Views, Alpine.js, Responsivitas Mobile, Apple HIG & Refactoring UI Polish untuk 6 Modul Utama) | **100% Selesai & Teruji** |
 | 3 | **Marsha Dwi Lucyana** | `@marshadwi` | `marsha` | **Senior Backend Engineer (Financial & Vendors)** | Data Layer & Logika Bisnis Modul Budget Planner (`/budget`), Kalkulasi Deviasi, Smart Adat Allocator Logic, dan Arsitektur Multi-Termin Vendor (`VendorPayment`) | **100% Selesai & Teruji** |
 | 4 | **Adinda Aulia Sabrina Arumsari** | `@adinda0112` | `dinda` | **Senior Backend Engineer (Workflows & QA)** | Workflow Checklist Tugas (`WeddingTask`), agregasi progres 10 tahap, dan Otomasi Pengujian PHPUnit | **100% Selesai & Teruji** |
@@ -27,8 +27,8 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
      - Menyisir dan melengkapi fitur yang belum tuntas (*finishing & gap-filling*) pada seluruh modul agar aplikasi 100% siap pakai.
   2. **Konsol Administrator (`/admin`) — dihapus**:
      - Konsol admin beserta middleware `EnsureAdminAccess` dihapus pada commit `3f3a236` (simplifikasi fokus pelanggan).
-  3. **Mesin Cetak Dokumen Resmi Master Guide A4/PDF (`/print/master-guide`)**:
-     - Generator cetak presisi 4 halaman A4 (*Vogue Bridal Editorial*) untuk buku panduan lapangan panitia dan pengantin tanpa internet.
+  3. **Mesin Cetak Dokumen (/print/master-guide) & Rundown Hari-H — dihapus**:
+     - Dieliminasi dari MVP (Out-of-Scope / YAGNI) agar fokus penuh pada 5 modul inti perencanaan.
   4. **Arsitektur Multi-Tenancy & Keamanan**:
      - Trait `BelongsToWeddingProfile` dengan Global Scope Eloquent agar seluruh data pasangan terisolasi aman.
      - Gerbang onboarding otomatis (`/onboarding`) dan penanganan akun admin tanpa profil pernikahan pada alur Google OAuth.
@@ -37,7 +37,7 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
      - `docker-compose.yml` (App, PostgreSQL 16, Redis 7, Nginx Reverse Proxy).
      - Skrip deployment otomatis satu baris `./deploy.sh`.
 - **Berkas yang Dikelola**:
-  - `app/Http/Controllers/{AuthController,OnboardingController,PrintController,DashboardController}.php`
+  - `app/Http/Controllers/{AuthController,OnboardingController,DashboardController}.php`
   - `app/Models/Concerns/BelongsToWeddingProfile.php`
   - `Dockerfile`, `docker-compose.yml`, `docker/nginx.conf`, `deploy.sh`, `TASK_DISTRIBUTION.md`
 
@@ -52,10 +52,9 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
      - Menghapus paragraf penjelasan berlebih (*decluttering*) pada seluruh header dan kartu KPI.
   2. **Pengembangan Seluruh Tampilan Modul (Blade Views)**:
      - **Landing Page SaaS (`resources/views/landing.blade.php`)**: Hero, demo modul interaktif, kartu harga, dan FAQ accordion untuk tamu yang belum masuk.
-    - **Dashboard Pengantin (`resources/views/dashboard/index.blade.php`)**: Kartu hitung mundur hari pernikahan, 4 kartu ringkasan KPI, grafik distribusi anggaran, dan kalkulator weton neptu.
+     - **Dashboard Pengantin (`resources/views/dashboard/index.blade.php`)**: Kartu hitung mundur hari pernikahan, 4 kartu ringkasan KPI, grafik distribusi anggaran, dan rekap tugas mendesak.
      - **Budget Planner UI (`resources/views/budget/index.blade.php`)**: Widget *Smart Budget Allocator* untuk adat Jawa/Sunda/Modern, kartu alokasi, dan tabel rincian pos biaya.
-    - **Checklist UI (`resources/views/checklist/index.blade.php`)**: Daftar tugas interaktif dengan checkbox instan, filter kategori pil, dan filter penanggung jawab.
-    - **Susunan Acara UI (`resources/views/rundown/index.blade.php`)**: Segmented control untuk jadwal persiapan dan tabel susunan acara menit-demi-menit hari pernikahan.
+     - **Checklist & Timeline UI (`resources/views/checklist/index.blade.php`)**: Daftar tugas dan linimasa persiapan terpadu berurut otomatis deadline terdekat dengan filter kategori dan status.
     - **Vendor Directory UI (`resources/views/vendors/index.blade.php`)**: Kartu vendor bersih, progress bar pelunasan, dan tombol WhatsApp penanggung jawab.
   3. **Komponen Bersama (*Shared UI Kit*)**:
      - `resources/views/components/ui/{stat-card,section-header,modal,status-badge,progress-bar,icon}.blade.php`.
@@ -95,7 +94,7 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
      - Menyediakan data progres per fase (selesai/total) untuk kartu linimasa dan dashboard.
   2. **Otomasi Pengujian Backend (PHPUnit Test Suite)**:
      - Mengelola seluruh pengujian otomatis di `tests/Feature/WeddingPlannerModulesTest.php` dan `tests/Feature/TenancyTest.php`.
-     - Memastikan 19 skenario pengujian fungsional dan isolasi tenant selalu lulus 100%.
+     - Memastikan 24 skenario pengujian fungsional dan isolasi tenant selalu lulus 100%.
 - **Berkas yang Dikelola**:
   - `app/Http/Controllers/ChecklistController.php`
   - `app/Models/WeddingTask.php`
