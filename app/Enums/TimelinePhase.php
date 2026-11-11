@@ -20,7 +20,7 @@ enum TimelinePhase: string
     case Invitations = 'Undangan';
     case Ceremony = 'Rangkaian';
     case Finalization = 'Finalisasi';
-    case WeddingDay = 'Hari-H';
+    case WeddingDay = 'Hari Pernikahan';
 
     public function order(): int
     {
@@ -48,7 +48,7 @@ enum TimelinePhase: string
             self::Attire => 'Busana pengantin, fitting, dan penampilan keluarga.',
             self::Gifts => 'Mahar, cincin, seserahan, dan perlengkapan adat.',
             self::Invitations => 'Daftar tamu, undangan, souvenir, dan distribusi.',
-            self::Ceremony => 'Urutan prosesi, rundown, gladi, dan kebutuhan pendukung.',
+            self::Ceremony => 'Urutan prosesi, susunan acara, gladi, dan kebutuhan pendukung.',
             self::Finalization => 'Pelunasan, technical meeting, dan pemeriksaan akhir.',
             self::WeddingDay => 'Akad, prosesi adat, dan resepsi.',
         };

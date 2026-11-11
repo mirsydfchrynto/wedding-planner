@@ -1,96 +1,141 @@
-@extends('layouts.app', ['title' => 'Anggaran'])
+@extends('layouts.app', ['title' => 'Buku Kas Anggaran'])
 
 @section('content')
-    <x-ui.section-header
-        title="Anggaran Pernikahan"
-        subtitle="Satu buku besar untuk plafon, estimasi riset, kontrak vendor, dan pelunasan."
-    >
-        <x-slot:actions>
+<div x-data="{ capModalOpen: false }" class="space-y-6">
+
+    {{-- Header --}}
+    <div class="flex flex-col gap-3 border-b-2 border-ink pb-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-soga">
+                <span class="stamp !bg-kunyit font-black">Pengendali Hemat</span>
+                <span>Pencatatan Keuangan &amp; Auto-Split</span>
+            </div>
+            <h1 class="mt-1 font-display text-2xl font-black tracking-tight text-espresso sm:text-4xl">
+                Anggaran Pernikahan
+            </h1>
+            <p class="text-xs text-taupe font-semibold sm:text-sm">
+                Satu buku kas terkendali untuk pagu anggaran induk, rekomendasi alokasi otomatis, dan deteksi boros per pos.
+            </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 no-print">
             <button
                 type="button"
-                @click="$dispatch('open-modal', 'update-budget-cap-modal')"
-                class="editorial-btn-secondary"
+                @click="capModalOpen = true"
+                class="btn-neo-secondary !py-1.5 !px-3 !text-xs font-black cursor-pointer"
             >
-                Ubah plafon
+                Ubah Pagu Anggaran
             </button>
-            <a href="{{ route('budget.create') }}" class="editorial-btn-primary">
-                + Pos anggaran
+            <a href="{{ route('budget.create') }}" class="btn-neo !py-1.5 !px-3.5 !text-xs font-black">
+                + Tambah Pos Anggaran
             </a>
-        </x-slot:actions>
-    </x-ui.section-header>
-
-    {{-- Angka pokok --}}
-    <section aria-label="Ringkasan anggaran" class="grid grid-cols-2 gap-x-8 gap-y-7 border-b border-stone-line py-7 lg:grid-cols-4">
-        <x-ui.stat-card
-            label="Plafon"
-            :value="format_idr($summary['total_budget_cap'])"
-            :subtitle="'Target ' . number_format($profile->guest_target, 0, ',', '.') . ' tamu'"
-        />
-        <x-ui.stat-card
-            label="Estimasi"
-            :value="format_idr($summary['total_estimated'])"
-            :subtitle="'Acuan riset biaya'"
-        />
-        <x-ui.stat-card
-            label="Deal vendor"
-            :value="format_idr($summary['total_actual'])"
-            :subtitle="'Terbayar ' . format_idr($summary['total_paid'])"
-        />
-        <x-ui.stat-card
-            label="Sisa anggaran"
-            :value="format_idr($summary['remaining_budget'])"
-            :badge="$summary['variance_amount'] >= 0 ? 'Hemat ' . format_idr($summary['variance_amount']) : 'Lewat ' . format_idr(abs($summary['variance_amount']))"
-            :badgeTone="$summary['variance_amount'] >= 0 ? 'sage' : 'wine'"
-        />
-    </section>
-
-    {{-- Alokasi kategori --}}
-    <section class="pt-8">
-        <div class="flex flex-col justify-between gap-2 border-b border-stone-line pb-3 sm:flex-row sm:items-baseline">
-            <div>
-                <h2 class="text-lg font-bold text-espresso">Alokasi kategori</h2>
-                <p class="mt-0.5 text-xs text-taupe">Klik kategori untuk menyaring buku besar di bawah.</p>
-            </div>
-            @if($selectedCategory || $selectedStatus)
-                <a href="{{ route('budget.index') }}" class="text-sm font-semibold text-champagne hover:underline">
-                    Reset filter
-                </a>
-            @endif
         </div>
+    </div>
 
-        <div class="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
-            @foreach($summary['category_breakdown'] as $cat)
-                @php $isSelected = $selectedCategory === $cat['key']; @endphp
-                <a
-                    href="{{ route('budget.index', ['category' => $isSelected ? null : $cat['key']]) }}"
-                    class="flex items-baseline justify-between gap-4 border-b border-stone-line/70 py-3 transition hover:text-champagne {{ $isSelected ? 'text-champagne' : 'text-espresso' }}"
-                >
-                    <span class="text-sm font-semibold">{{ $cat['label'] }}</span>
-                    <span class="shrink-0 text-right">
-                        <span class="block text-sm font-semibold tabular-nums">{{ format_idr($cat['actual']) }}</span>
-                        <span class="block text-xs text-taupe tabular-nums">
-                            estimasi {{ format_idr($cat['estimated']) }}
-                            @if($cat['is_overbudget'])
-                                <span class="font-semibold text-wine">· lewat</span>
-                            @endif
-                        </span>
-                    </span>
-                </a>
-            @endforeach
+    {{-- 4 Kotak Ringkasan Finansial Bento --}}
+    <section aria-label="Ringkasan kas" class="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <div class="bento-card bento-paper p-3 text-center">
+            <p class="text-[0.68rem] font-black uppercase tracking-wider text-taupe">Pagu Induk</p>
+            <p class="rupiah font-display text-lg font-black text-ink sm:text-2xl">{{ format_idr($summary['total_budget_cap']) }}</p>
+            <p class="text-[0.68rem] font-bold text-taupe">Target {{ number_format($profile->guest_target, 0, ',', '.') }} tamu</p>
+        </div>
+        <div class="bento-card bento-paper2 p-3 text-center">
+            <p class="text-[0.68rem] font-black uppercase tracking-wider text-taupe">Estimasi Riset</p>
+            <p class="rupiah font-display text-lg font-black text-taupe sm:text-2xl">{{ format_idr($summary['total_estimated']) }}</p>
+            <p class="text-[0.68rem] font-bold text-taupe">Acuan batas pasar</p>
+        </div>
+        <div class="bento-card bento-mint p-3 text-center">
+            <p class="text-[0.68rem] font-black uppercase tracking-wider text-taupe">Deal Vendor</p>
+            <p class="rupiah font-display text-lg font-black text-ink sm:text-2xl">{{ format_idr($summary['total_actual']) }}</p>
+            <p class="text-[0.68rem] font-bold text-forest">Terbayar {{ format_idr($summary['total_paid']) }}</p>
+        </div>
+        <div class="bento-card {{ $summary['remaining_budget'] >= 0 ? 'bento-mint' : 'bento-terracotta' }} p-3 text-center">
+            <p class="text-[0.68rem] font-black uppercase tracking-wider text-taupe">Sisa Dana Aman</p>
+            <p class="rupiah font-display text-lg font-black {{ $summary['remaining_budget'] >= 0 ? 'text-forest' : 'text-wine' }} sm:text-2xl">
+                {{ format_idr($summary['remaining_budget']) }}
+            </p>
+            <p class="text-[0.68rem] font-bold text-taupe">
+                {{ $summary['variance_amount'] >= 0 ? 'Hemat ' . format_idr($summary['variance_amount']) : 'Lewat ' . format_idr(abs($summary['variance_amount'])) }}
+            </p>
         </div>
     </section>
 
-    {{-- Buku besar --}}
-    <section class="pt-9">
-        <div class="flex flex-col justify-between gap-4 border-b border-stone-line pb-4 sm:flex-row sm:items-baseline">
+    {{-- Kotak Rekomendasi Auto-Split Proporsional --}}
+    <section class="bento-card bento-kunyit p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between border-b-2 border-ink pb-2">
+            <div class="flex items-center gap-2">
+                <span class="stamp !bg-paper font-black">Auto-Split</span>
+                <span class="font-display text-lg font-extrabold text-ink">Rekomendasi Alokasi Otomatis (Anti-Pusing)</span>
+            </div>
+            <span class="text-xs font-bold text-ink hidden sm:inline">Berdasarkan riset pernikahan Indonesia</span>
+        </div>
+        <p class="text-xs text-ink/90 font-semibold leading-relaxed">
+            Dari pagu anggaran <strong>{{ format_idr($summary['total_budget_cap']) }}</strong>, sistem secara otomatis merekomendasikan batas aman tiap pos tanpa perlu menghitung rumus:
+        </p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div class="bento-card bento-paper p-2.5">
+                <span class="text-[0.65rem] font-bold text-taupe block">Katering (30%)</span>
+                <span class="rupiah font-black text-ink block">{{ format_idr($summary['total_budget_cap'] * 0.30) }}</span>
+            </div>
+            <div class="bento-card bento-paper p-2.5">
+                <span class="text-[0.65rem] font-bold text-taupe block">Venue &amp; Gedung (15%)</span>
+                <span class="rupiah font-black text-ink block">{{ format_idr($summary['total_budget_cap'] * 0.15) }}</span>
+            </div>
+            <div class="bento-card bento-paper p-2.5">
+                <span class="text-[0.65rem] font-bold text-taupe block">Dekorasi (10%)</span>
+                <span class="rupiah font-black text-ink block">{{ format_idr($summary['total_budget_cap'] * 0.10) }}</span>
+            </div>
+            <div class="bento-card bento-paper p-2.5">
+                <span class="text-[0.65rem] font-bold text-taupe block">Busana &amp; Rias (13%)</span>
+                <span class="rupiah font-black text-ink block">{{ format_idr($summary['total_budget_cap'] * 0.13) }}</span>
+            </div>
+            <div class="bento-card bento-paper p-2.5">
+                <span class="text-[0.65rem] font-bold text-taupe block">Dokumentasi (8%)</span>
+                <span class="rupiah font-black text-ink block">{{ format_idr($summary['total_budget_cap'] * 0.08) }}</span>
+            </div>
+            <div class="bento-card bento-paper p-2.5">
+                <span class="text-[0.65rem] font-bold text-taupe block">Undangan &amp; Souvenir (5%)</span>
+                <span class="rupiah font-black text-ink block">{{ format_idr($summary['total_budget_cap'] * 0.05) }}</span>
+            </div>
+            <div class="bento-card bento-paper p-2.5">
+                <span class="text-[0.65rem] font-bold text-taupe block">Administrasi &amp; KUA (2%)</span>
+                <span class="rupiah font-black text-ink block">{{ format_idr($summary['total_budget_cap'] * 0.02) }}</span>
+            </div>
+            <div class="bento-card bento-mint p-2.5">
+                <span class="text-[0.65rem] font-bold text-forest block">Dana Darurat (5%)</span>
+                <span class="rupiah font-black text-forest block">{{ format_idr($summary['total_budget_cap'] * 0.05) }}</span>
+            </div>
+        </div>
+    </section>
+
+    {{-- Kotak Saran Pengendali Hemat (Jika ada pos yang lewat estimasi) --}}
+    @php
+        $overbudgetPos = collect($summary['category_breakdown'])->filter(fn($c) => $c['is_overbudget']);
+    @endphp
+    @if($overbudgetPos->isNotEmpty())
+        <section class="bento-card bento-terracotta p-4 border-2 border-ink space-y-1 text-xs">
+            <div class="flex items-center gap-2">
+                <span class="stamp !bg-paper !border-wine !text-wine font-black">Peringatan Hemat</span>
+                <span class="font-bold text-ink">Ada {{ $overbudgetPos->count() }} kategori yang melebihi estimasi awal:</span>
+            </div>
+            <p class="text-ink font-semibold mt-1">
+                Kategori <strong class="text-wine">{{ $overbudgetPos->pluck('label')->join(', ') }}</strong> tercatat melebihi estimasi awal.
+                <x-ui.icon name="lightbulb" class="h-3.5 w-3.5 text-soga inline-block mr-1 align-text-bottom" /><strong>Saran Pengendali Hemat:</strong> Anda dapat mengimbangi selisih ini dengan memilih paket standar pada pos <em>Dekorasi Tambahan</em> atau beralih ke <em>Undangan Digital</em> untuk menjaga saldo akhir tetap aman.
+            </p>
+        </section>
+    @endif
+
+    {{-- Buku Besar --}}
+    <section class="bento-card bento-paper p-5 space-y-4">
+        <div class="flex flex-col justify-between gap-3 border-b-2 border-ink pb-3 sm:flex-row sm:items-baseline">
             <div>
-                <h2 class="text-lg font-bold text-espresso">Buku besar · {{ $items->count() }} pos</h2>
-                <p class="mt-0.5 text-xs text-taupe">Estimasi, kontrak aktual, terbayar, dan sisa tiap pos.</p>
+                <h2 class="font-display text-xl font-bold text-espresso">Buku Besar Pos Pengeluaran</h2>
+                <p class="text-xs text-taupe font-semibold">{{ $items->count() }} pos rincian terdaftar.</p>
             </div>
 
-            <form method="GET" action="{{ route('budget.index') }}" class="flex flex-wrap items-center gap-2 no-print">
-                <select name="category" aria-label="Filter kategori anggaran" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
-                    <option value="">Semua kategori</option>
+            <form method="GET" action="{{ route('budget.index') }}" class="flex flex-wrap items-center gap-2 text-xs no-print">
+                <select name="category" aria-label="Filter kategori" onchange="this.form.submit()" class="editorial-input !w-auto !py-1 !text-xs font-bold">
+                    <option value="">Semua Kategori</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->value }}" @selected($selectedCategory === $category->value)>
                             {{ $category->label() }}
@@ -98,111 +143,197 @@
                     @endforeach
                 </select>
 
-                <select name="status" aria-label="Filter status pembayaran" onchange="this.form.submit()" class="editorial-input !w-auto !py-1.5 !text-xs">
-                    <option value="">Semua status</option>
+                <select name="status" aria-label="Filter status" onchange="this.form.submit()" class="editorial-input !w-auto !py-1 !text-xs font-bold">
+                    <option value="">Semua Status</option>
                     <option value="paid" @selected($selectedStatus === 'paid')>Lunas</option>
-                    <option value="unpaid" @selected($selectedStatus === 'unpaid')>Belum lunas / DP</option>
-                    <option value="overbudget" @selected($selectedStatus === 'overbudget')>Lewat estimasi</option>
+                    <option value="unpaid" @selected($selectedStatus === 'unpaid')>Belum Lunas / DP</option>
+                    <option value="overbudget" @selected($selectedStatus === 'overbudget')>Lewat Estimasi</option>
                 </select>
             </form>
         </div>
 
-        <div class="mt-2 overflow-x-auto">
-            <table class="w-full border-collapse text-left text-sm">
+        {{-- Desktop: Tabel Ledger Neo-Brutalist --}}
+        <div class="hidden sm:block overflow-x-auto">
+            <table class="ledger">
                 <thead>
-                    <tr class="border-b border-stone-line text-xs font-semibold uppercase tracking-wider text-taupe">
-                        <th scope="col" class="py-3 pr-4">Pos &amp; kategori</th>
-                        <th scope="col" class="px-3 py-3">Vendor</th>
-                        <th scope="col" class="px-3 py-3 text-right">Estimasi</th>
-                        <th scope="col" class="px-3 py-3 text-right">Aktual</th>
-                        <th scope="col" class="px-3 py-3 text-right">Terbayar</th>
-                        <th scope="col" class="px-3 py-3 text-right">Sisa</th>
-                        <th scope="col" class="px-3 py-3">Status</th>
-                        <th scope="col" class="py-3 pl-3 text-right no-print">Aksi</th>
+                    <tr>
+                        <th scope="col">Pos &amp; Kategori</th>
+                        <th scope="col">Mitra Vendor</th>
+                        <th scope="col" class="text-right">Estimasi</th>
+                        <th scope="col" class="text-right">Deal Aktual</th>
+                        <th scope="col" class="text-right">Terbayar</th>
+                        <th scope="col" class="text-right">Sisa Tagihan</th>
+                        <th scope="col">Indikator Hemat</th>
+                        <th scope="col" class="text-right no-print">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-stone-line/70">
+                <tbody>
                     @forelse($items as $item)
                         <tr>
-                            <td class="py-3.5 pr-4">
-                                <p class="font-semibold text-espresso">{{ $item->title }}</p>
-                                <p class="mt-0.5 text-xs text-taupe">
+                            <td>
+                                <p class="font-bold text-ink">{{ $item->title }}</p>
+                                <p class="text-[0.7rem] text-taupe font-medium">
                                     {{ $item->category->label() }}
                                     @if($item->due_date)
-                                        · jatuh tempo {{ $item->due_date->format('d M Y') }}
+                                        · Jatuh tempo {{ $item->due_date->translatedFormat('d M Y') }}
                                     @endif
                                 </p>
                                 @if($item->notes)
-                                    <p class="mt-1 text-xs text-taupe">{{ $item->notes }}</p>
+                                    <p class="text-[0.68rem] text-taupe mt-0.5">{{ $item->notes }}</p>
                                 @endif
                             </td>
-                            <td class="px-3 py-3.5 text-xs text-charcoal">
+                            <td class="text-xs">
                                 @if($item->vendor)
-                                    <a href="{{ route('vendors.index', ['category' => $item->category->value]) }}" class="font-medium text-espresso hover:text-champagne hover:underline">
+                                    <a href="{{ route('vendors.index', ['category' => $item->category->value]) }}" class="font-bold text-soga hover:underline">
                                         {{ $item->vendor->name }}
                                     </a>
-                                    @if($item->vendor->payments->isNotEmpty())
-                                        <p class="mt-0.5 text-xs text-taupe">
-                                            {{ $item->vendor->payments->take(2)->pluck('payment_stage')->join(' · ') }}
-                                        </p>
-                                    @endif
                                 @else
-                                    <span class="text-taupe">Mandiri</span>
+                                    <span class="text-taupe font-medium">Mandiri</span>
                                 @endif
                             </td>
-                            <td class="px-3 py-3.5 text-right text-xs text-charcoal tabular-nums">{{ format_idr($item->estimated_cost) }}</td>
-                            <td class="px-3 py-3.5 text-right text-xs font-semibold text-espresso tabular-nums">
+                            <td class="rupiah text-right text-taupe font-semibold">{{ format_idr($item->estimated_cost) }}</td>
+                            <td class="rupiah text-right font-black text-ink">
                                 {{ format_idr($item->actual_cost) }}
                                 @if($item->is_overbudget)
-                                    <span class="block text-xs font-normal text-wine">+{{ format_idr(abs($item->variance_amount)) }}</span>
-                                @elseif($item->variance_amount > 0 && $item->actual_cost > 0)
-                                    <span class="block text-xs font-normal text-sage">hemat {{ format_idr($item->variance_amount) }}</span>
+                                    <span class="block text-[0.68rem] text-wine font-bold">+{{ format_idr(abs($item->variance_amount)) }}</span>
                                 @endif
                             </td>
-                            <td class="px-3 py-3.5 text-right text-xs text-sage tabular-nums">{{ format_idr($item->paid_amount) }}</td>
-                            <td class="px-3 py-3.5 text-right text-xs font-semibold {{ $item->remaining_balance > 0 ? 'text-ochre' : 'text-taupe' }} tabular-nums">
+                            <td class="rupiah text-right text-forest font-bold">{{ format_idr($item->paid_amount) }}</td>
+                            <td class="rupiah text-right font-extrabold {{ $item->remaining_balance > 0 ? 'text-wine' : 'text-taupe' }}">
                                 {{ format_idr($item->remaining_balance) }}
                             </td>
-                            <td class="px-3 py-3.5">
-                                <x-ui.status-badge :tone="$item->payment_status_tone" :label="$item->payment_status_label" />
+                            <td>
+                                @if($item->is_overbudget)
+                                    <span class="stamp !bg-terracotta-light !border-wine !text-wine font-black">
+                                        [Lewat Estimasi]
+                                    </span>
+                                @else
+                                    <span class="stamp !bg-mint-light !border-forest !text-forest font-black">
+                                        [Aman / Hemat]
+                                    </span>
+                                @endif
                             </td>
-                            <td class="py-3.5 pl-3 text-right no-print">
-                                <div class="inline-flex items-center gap-3">
-                                    <a href="{{ route('budget.edit', $item) }}" class="text-xs font-semibold text-champagne hover:underline">Ubah</a>
+                            <td class="text-right no-print">
+                                <div class="inline-flex items-center gap-2">
+                                    <a href="{{ route('budget.edit', $item) }}" class="text-xs font-bold text-soga hover:underline">Ubah</a>
                                     <form method="POST" action="{{ route('budget.destroy', $item) }}" onsubmit="return confirm('Hapus pos anggaran ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-xs font-medium text-wine hover:underline">Hapus</button>
+                                        <button type="submit" class="text-xs font-bold text-wine hover:underline cursor-pointer">Hapus</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="py-8 text-sm text-taupe">Tidak ada pos anggaran pada filter ini.</td>
+                            <td colspan="8" class="py-6 text-center text-xs text-taupe font-bold">Tidak ada pos anggaran pada filter ini.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
+
+        {{-- Mobile: Kartu Ledger Bertumpuk --}}
+        <div class="sm:hidden space-y-3">
+            @forelse($items as $item)
+                <div class="bento-card bento-paper p-3 text-xs space-y-2">
+                    <div class="flex items-baseline justify-between border-b-2 border-ink pb-1.5">
+                        <span class="font-extrabold text-ink text-sm font-display">{{ $item->title }}</span>
+                        @if($item->is_overbudget)
+                            <span class="stamp !bg-terracotta-light !border-wine !text-wine font-black text-[0.6rem]">
+                                [Lewat Estimasi]
+                            </span>
+                        @else
+                            <span class="stamp !bg-mint-light !border-forest !text-forest font-black text-[0.6rem]">
+                                [Aman / Hemat]
+                            </span>
+                        @endif
+                    </div>
+                    <p class="text-[0.7rem] text-taupe font-semibold">
+                        {{ $item->category->label() }}
+                        @if($item->vendor) · Vendor: <strong class="text-soga">{{ $item->vendor->name }}</strong> @endif
+                    </p>
+                    <div class="grid grid-cols-3 gap-2 border-y-2 border-ink py-2 text-center text-[0.72rem]">
+                        <div>
+                            <span class="text-taupe block text-[0.65rem] font-bold">Estimasi</span>
+                            <span class="rupiah font-semibold">{{ format_idr($item->estimated_cost) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-taupe block text-[0.65rem] font-bold">Deal</span>
+                            <span class="rupiah font-black text-soga">{{ format_idr($item->actual_cost) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-taupe block text-[0.65rem] font-bold">Sisa</span>
+                            <span class="rupiah font-extrabold {{ $item->remaining_balance > 0 ? 'text-wine' : 'text-taupe' }}">{{ format_idr($item->remaining_balance) }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-3 pt-1 text-xs">
+                        <a href="{{ route('budget.edit', $item) }}" class="text-soga font-bold hover:underline">Ubah</a>
+                        <form method="POST" action="{{ route('budget.destroy', $item) }}" onsubmit="return confirm('Hapus pos anggaran ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-wine font-bold hover:underline cursor-pointer">Hapus</button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <p class="py-6 text-center text-xs text-taupe font-bold">Belum ada pos anggaran tercatat.</p>
+            @endforelse
+        </div>
     </section>
 
-    {{-- Modal: ubah plafon --}}
-    <x-ui.modal name="update-budget-cap-modal" title="Ubah plafon total" subtitle="Batas anggaran induk pernikahan" maxWidth="max-w-md">
-        <form method="POST" action="{{ route('budget.updateCap') }}" class="space-y-4">
-            @csrf
-            @method('PATCH')
+    {{-- Modal Ubah Pagu Anggaran --}}
+    <div
+        x-show="capModalOpen"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 no-print"
+        role="dialog"
+        aria-modal="true"
+        x-on:keydown.escape.window="capModalOpen = false"
+    >
+        <div class="fixed inset-0 bg-ink/50" @click="capModalOpen = false"></div>
 
-            <div>
-                <label for="total_budget" class="mb-1 block text-xs font-semibold text-charcoal">Plafon baru (Rp)</label>
-                <input id="total_budget" type="number" name="total_budget" value="{{ $profile->total_budget }}" min="1000000" step="1000000" data-rupiah required class="editorial-input tabular-nums">
-                <p class="mt-1 text-xs text-taupe">Saat ini: {{ format_idr($profile->total_budget) }}</p>
+        <div class="modal-paper relative z-10 w-full max-w-md p-6">
+            <div class="flex items-start justify-between border-b-2 border-ink pb-3">
+                <div>
+                    <span class="stamp !bg-kunyit font-black">Pagu Induk</span>
+                    <h2 class="font-display text-xl font-extrabold text-ink mt-1">Ubah Batas Anggaran</h2>
+                </div>
+                <button type="button" @click="capModalOpen = false" class="btn-neo-secondary !min-h-0 !p-1 text-sm font-bold cursor-pointer">✕</button>
             </div>
 
-            <div class="flex items-center justify-end gap-4 border-t border-stone-line pt-4">
-                <button type="button" @click="$dispatch('close-modal', 'update-budget-cap-modal')" class="editorial-btn-secondary">Batal</button>
-                <button type="submit" class="editorial-btn-primary">Simpan plafon</button>
-            </div>
-        </form>
-    </x-ui.modal>
+            <form method="POST" action="{{ route('budget.updateCap') }}" class="mt-4 space-y-4">
+                @csrf
+                @method('PATCH')
+
+                <div>
+                    <label for="total_budget" class="mb-1 block text-xs font-black text-ink uppercase tracking-wider">
+                        Batas Anggaran Baru (Rp)
+                    </label>
+                    <input
+                        id="total_budget"
+                        type="number"
+                        name="total_budget"
+                        value="{{ $profile->total_budget }}"
+                        min="1000000"
+                        step="1000000"
+                        data-rupiah
+                        required
+                        class="editorial-input tabular-nums"
+                    >
+                    <p class="mt-1 text-xs text-taupe font-semibold">Pagu saat ini: <span class="rupiah font-bold text-ink">{{ format_idr($profile->total_budget) }}</span></p>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t-2 border-ink">
+                    <button type="button" @click="capModalOpen = false" class="btn-neo-secondary !py-1.5 !px-3 !text-xs">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn-neo !py-1.5 !px-4 !text-xs font-black">
+                        Simpan Batas Pagu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

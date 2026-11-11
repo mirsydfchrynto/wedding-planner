@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateBudgetItemRequest;
 use App\Models\BudgetItem;
 use App\Models\Vendor;
 use App\Services\WeddingMetricsService;
+use App\Support\WeddingMasterData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -78,6 +79,8 @@ final class BudgetController extends Controller
             'item' => null,
             'categories' => WeddingCategory::budgetCases(),
             'vendors' => Vendor::query()->orderBy('name')->get(),
+            'templates' => WeddingMasterData::budgetTemplates(),
+            'guestTarget' => $this->metricsService->getProfile()->guest_target,
         ]);
     }
 
@@ -87,6 +90,8 @@ final class BudgetController extends Controller
             'item' => $budgetItem,
             'categories' => WeddingCategory::budgetCases(),
             'vendors' => Vendor::query()->orderBy('name')->get(),
+            'templates' => WeddingMasterData::budgetTemplates(),
+            'guestTarget' => $this->metricsService->getProfile()->guest_target,
         ]);
     }
 
@@ -125,7 +130,7 @@ final class BudgetController extends Controller
 
         return redirect()
             ->route('budget.index')
-            ->with('success', 'Plafon total anggaran pernikahan berhasil diperbarui.');
+            ->with('success', 'Batas anggaran pernikahan berhasil diperbarui.');
     }
 
     public function destroy(BudgetItem $budgetItem): RedirectResponse

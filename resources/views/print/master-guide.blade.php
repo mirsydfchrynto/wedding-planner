@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Buku Panduan Pernikahan — {{ $profile->couple_names }} | Atelier Vow</title>
+    <title>Buku Panduan Pernikahan — {{ $profile->couple_names }} | Tatanikah</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -22,6 +22,24 @@
         }
         .font-serif-editorial { font-family: 'Playfair Display', Georgia, serif; }
     </style>
+    <script>
+        window.shareToFamilyWhatsApp = function(data) {
+            const couple = data.couple || 'Pengantin';
+            const date = data.date || 'Hari Bahagia';
+            const days = data.days || 0;
+            const venue = data.venue || 'Venue Acara';
+            const budgetCap = data.budgetCap || '-';
+            const vendorsBooked = data.vendorsBooked || 0;
+            const text = `*💍 BUKU PANDUAN RESMI PERNIKAHAN: ${couple.toUpperCase()}*\n` +
+                `_Rangkuman Panduan A4 untuk Panitia & Keluarga_\n\n` +
+                `🗓️ *Hari H:* ${date} (*H-${days} Hari Lagi*)\n` +
+                `📍 *Lokasi:* ${venue}\n` +
+                `💰 *Pagu Induk:* ${budgetCap}\n` +
+                `🤝 *Vendor Terkunci:* ${vendorsBooked} Mitra\n\n` +
+                `Dokumen panduan lengkap: ${window.location.href}`;
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank', 'noopener,noreferrer');
+        };
+    </script>
 </head>
 <body class="bg-pearl font-sans text-charcoal antialiased print:bg-white">
 
@@ -38,6 +56,20 @@
                 </span>
             </div>
             <div class="flex items-center gap-3">
+                <button
+                    type="button"
+                    onclick="window.shareToFamilyWhatsApp({
+                        couple: '{{ addslashes($profile->couple_names) }}',
+                        date: '{{ addslashes($profile->wedding_date->translatedFormat('d F Y')) }}',
+                        days: {{ $profile->days_remaining }},
+                        venue: '{{ addslashes($profile->venue_name) }}, {{ addslashes($profile->city) }}',
+                        budgetCap: '{{ format_idr($profile->total_budget) }}',
+                        vendorsBooked: {{ $vendors->count() }}
+                    })"
+                    class="inline-flex items-center gap-2 rounded-md bg-[#25D366] px-3.5 py-2 text-xs font-bold text-[#1a1a1a] shadow hover:bg-[#1EBE5B] transition cursor-pointer"
+                >
+                    <span>📲 Bagikan Ringkasan ke WA Keluarga</span>
+                </button>
                 <button
                     type="button"
                     onclick="window.print()"
@@ -59,13 +91,13 @@
             {{-- Header Badge --}}
             <div class="flex items-center justify-between border-b border-stone-line pb-6">
                 <div>
-                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-champagne">Atelier Vow Nusantara &bull; Buku Panduan Pernikahan</span>
+                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-champagne">Tatanikah &bull; Buku Panduan Pernikahan</span>
                     <h1 class="mt-1 font-serif-editorial text-3xl sm:text-4xl font-bold text-espresso">{{ $profile->couple_names }}</h1>
                     <p class="mt-1 text-sm text-taupe font-medium">Buku Kerja &amp; Panduan Operasional Resmi Hari Pernikahan</p>
                 </div>
                 <div class="text-right">
                     <div class="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-espresso text-base font-black text-alabaster">
-                        AV
+                        T
                     </div>
                     <p class="mt-1 text-[10px] text-taupe">ID Profil: #WP-{{ str_pad((string)$profile->id, 4, '0', STR_PAD_LEFT) }}</p>
                 </div>
@@ -100,7 +132,7 @@
                 <h2 class="text-xs font-bold uppercase tracking-wider text-espresso">Ringkasan Anggaran &amp; Kesiapan Tim</h2>
                 <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div class="rounded-lg border border-stone-line bg-pearl/60 p-4">
-                        <p class="text-[10px] font-bold uppercase text-taupe">Plafon Anggaran</p>
+                        <p class="text-[10px] font-bold uppercase text-taupe">Batas Anggaran</p>
                         <p class="mt-1 text-lg font-bold text-espresso whitespace-nowrap">Rp {{ number_format($summary['total_budget_cap'], 0, ',', '.') }}</p>
                     </div>
                     <div class="rounded-lg border border-stone-line bg-pearl/60 p-4">
@@ -118,25 +150,25 @@
                 </div>
             </div>
 
-            {{-- Instruksi Penting Hari-H --}}
+            {{-- Instruksi Penting Hari Pernikahan --}}
             <div class="mt-8 rounded-lg border border-champagne/40 bg-champagne/10 p-5">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-espresso">Protokol Komunikasi Panitia &amp; Keluarga</h3>
                 <ul class="mt-2.5 list-disc space-y-1.5 pl-5 text-xs text-charcoal">
-                    <li>Seluruh koordinasi teknis vendor Hari-H dipimpin oleh Lead WO (tidak membebani pengantin &amp; orang tua).</li>
+                    <li>Seluruh koordinasi teknis vendor hari pernikahan dipimpin oleh Lead WO (tidak membebani pengantin &amp; orang tua).</li>
                     <li>Saksi nikah dan keluarga inti wajib tiba di lokasi minimal 45 menit sebelum prosesi Ijab Qabul dimulai.</li>
-                    <li>Pelunasan vendor yang jatuh tempo pada Hari-H divalidasi oleh bendahara keluarga bersama kwitansi resmi.</li>
+                    <li>Pelunasan vendor yang jatuh tempo pada hari pernikahan divalidasi oleh bendahara keluarga bersama kwitansi resmi.</li>
                 </ul>
             </div>
         </article>
 
         {{-- ======================================================== --}}
-        {{-- BAGIAN 2: RUNDOWN ACARA RESMI HARI-H (MINUTE-BY-MINUTE) --}}
+        {{-- BAGIAN 2: SUSUNAN ACARA RESMI HARI PERNIKAHAN (MINUTE-BY-MINUTE) --}}
         {{-- ======================================================== --}}
         <article class="page-break mb-10 rounded-xl border border-stone-line bg-white p-8 sm:p-12 shadow-sm print:border-none print:p-0 print:shadow-none">
             <div class="flex items-center justify-between border-b border-stone-line pb-4">
                 <div>
-                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-champagne">Operasional Hari-H</span>
-                    <h2 class="font-serif-editorial text-2xl font-bold text-espresso">Rundown Acara Menit-demi-Menit</h2>
+                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-champagne">Operasional Hari Pernikahan</span>
+                    <h2 class="font-serif-editorial text-2xl font-bold text-espresso">Susunan Acara Menit-demi-Menit</h2>
                 </div>
                 <div class="text-right text-xs text-taupe">
                     Total Sesi: {{ $rundowns->count() }} Kegiatan
@@ -151,7 +183,7 @@
                             <th scope="col" class="px-3 py-2.5 w-40">Sesi &amp; Acara</th>
                             <th scope="col" class="px-3 py-2.5">Aktivitas &amp; Deskripsi Detail</th>
                             <th scope="col" class="px-3 py-2.5 w-36">Lokasi</th>
-                            <th scope="col" class="pl-3 py-2.5 w-44">Penanggung Jawab (PIC)</th>
+                            <th scope="col" class="pl-3 py-2.5 w-44">Penanggung Jawab</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-line">
@@ -181,7 +213,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-6 text-center text-taupe">Belum ada item rundown tersimpan.</td>
+                                <td colspan="5" class="py-6 text-center text-taupe">Belum ada item susunan acara tersimpan.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -208,7 +240,7 @@
                     <thead>
                         <tr class="border-b-2 border-espresso text-[10px] font-bold uppercase tracking-wider text-espresso">
                             <th scope="col" class="py-2.5 pr-3">Mitra Vendor &amp; Kategori</th>
-                            <th scope="col" class="px-3 py-2.5">Kontak PIC / WhatsApp</th>
+                            <th scope="col" class="px-3 py-2.5">Kontak Penanggung Jawab / WhatsApp</th>
                             <th scope="col" class="px-3 py-2.5 text-right">Nilai Kontrak</th>
                             <th scope="col" class="px-3 py-2.5 text-right">Terbayar</th>
                             <th scope="col" class="px-3 py-2.5 text-right">Sisa Tagihan</th>
@@ -299,12 +331,12 @@
                     <div>
                         <p class="text-taupe">Lead Wedding Organizer</p>
                         <div class="mt-16 border-b border-stone-line pb-1">
-                            <p class="font-bold text-espresso">Atelier Vow Management</p>
+                            <p class="font-bold text-espresso">Tatanikah Management</p>
                         </div>
                     </div>
                 </div>
                 <div class="mt-6 text-center text-[10px] text-taupe">
-                    Dicetak otomatis dari Sistem Atelier Vow Nusantara pada {{ now()->translatedFormat('l, d F Y H:i:s') }} WIB. Dokumen ini sah sebagai panduan kerja lapangan.
+                    Dicetak otomatis dari Sistem Tatanikah pada {{ now()->translatedFormat('l, d F Y H:i:s') }} WIB. Dokumen ini sah sebagai panduan kerja lapangan.
                 </div>
             </div>
         </article>

@@ -8,7 +8,7 @@ use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PrintController;
-use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\RundownController;
 use App\Http\Controllers\VendorController;
 use App\Http\Middleware\EnsureWeddingProfile;
 use Illuminate\Http\Request;
@@ -59,13 +59,13 @@ Route::middleware(['auth', EnsureWeddingProfile::class])->group(function (): voi
         Route::delete('/{weddingTask}', [ChecklistController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('timeline')->name('timeline.')->group(function (): void {
-        Route::get('/', [TimelineController::class, 'index'])->name('index');
-        Route::get('/create', [TimelineController::class, 'create'])->name('create');
-        Route::get('/rundowns/create', [TimelineController::class, 'createRundown'])->name('rundowns.create');
-        Route::post('/', [TimelineController::class, 'store'])->name('store');
-        Route::patch('/{weddingTask}/status', [TimelineController::class, 'updateStatus'])->name('updateStatus');
-        Route::post('/rundowns', [TimelineController::class, 'storeRundown'])->name('storeRundown');
+    Route::prefix('rundown')->name('rundown.')->group(function (): void {
+        Route::get('/', [RundownController::class, 'index'])->name('index');
+        Route::get('/create', [RundownController::class, 'create'])->name('create');
+        Route::get('/sessions/create', [RundownController::class, 'createRundown'])->name('sessions.create');
+        Route::post('/', [RundownController::class, 'store'])->name('store');
+        Route::patch('/{weddingTask}/status', [RundownController::class, 'updateStatus'])->name('updateStatus');
+        Route::post('/sessions', [RundownController::class, 'storeRundown'])->name('sessions.store');
     });
 
     Route::prefix('vendors')->name('vendors.')->group(function (): void {

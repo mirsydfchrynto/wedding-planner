@@ -122,7 +122,7 @@ final class WeddingMasterData
                 ['id' => 'WP-048', 'title' => 'Pilih vendor kue atau dessert', 'description' => 'Menentukan kue pernikahan atau dessert tambahan jika direncanakan.', 'type' => 'Opsional'],
                 ['id' => 'WP-049', 'title' => 'Periksa portofolio dan kesepakatan layanan', 'description' => 'Memastikan hasil kerja, jumlah personel, waktu kerja, biaya, dan batas layanan tertulis.', 'type' => 'Disarankan'],
                 ['id' => 'WP-050', 'title' => 'Tandatangani kontrak dan simpan bukti pembayaran', 'description' => 'Mendokumentasikan kesepakatan, termin pembayaran, pembatalan, dan kontak vendor.', 'type' => 'Umum'],
-                ['id' => 'WP-051', 'title' => 'Simpan daftar kontak vendor', 'description' => 'Mencatat nama PIC, nomor kontak, layanan, dan status pemesanan.', 'type' => 'Umum'],
+                ['id' => 'WP-051', 'title' => 'Simpan daftar kontak vendor', 'description' => 'Mencatat nama penanggung jawab, nomor kontak, layanan, dan status pemesanan.', 'type' => 'Umum'],
             ],
         ],
         '5. Busana dan Penampilan Pengantin' => [
@@ -153,7 +153,7 @@ final class WeddingMasterData
                 ['id' => 'WP-067', 'title' => 'Tentukan apakah menggunakan seserahan', 'description' => 'Menyepakati kebutuhan seserahan berdasarkan tradisi dan kesepakatan keluarga.', 'type' => 'Kondisional'],
                 ['id' => 'WP-068', 'title' => 'Buat daftar isi seserahan', 'description' => 'Mencatat barang yang akan disiapkan dan pihak yang bertanggung jawab.', 'type' => 'Kondisional'],
                 ['id' => 'WP-069', 'title' => 'Beli dan kemas perlengkapan seserahan', 'description' => 'Menyiapkan barang serta wadah atau dekorasi seserahan jika digunakan.', 'type' => 'Kondisional'],
-                ['id' => 'WP-070', 'title' => 'Tentukan PIC pembawa mahar dan cincin', 'description' => 'Menentukan orang yang bertanggung jawab membawa dan menyerahkan perlengkapan saat prosesi.', 'type' => 'Disarankan'],
+                ['id' => 'WP-070', 'title' => 'Tentukan penanggung jawab pembawa mahar dan cincin', 'description' => 'Menentukan orang yang bertanggung jawab membawa dan menyerahkan perlengkapan saat prosesi.', 'type' => 'Disarankan'],
             ],
         ],
         '7. Undangan dan Pengelolaan Tamu' => [
@@ -181,8 +181,8 @@ final class WeddingMasterData
                 ['id' => 'WP-083', 'title' => 'Susun rangkaian akad/pemberkatan', 'description' => 'Menentukan urutan prosesi sesuai agama dan ketentuan yang berlaku.', 'type' => 'Kondisional'],
                 ['id' => 'WP-084', 'title' => 'Susun rangkaian resepsi', 'description' => 'Menentukan urutan pembukaan, prosesi pengantin, sambutan, hiburan, dan penutupan.', 'type' => 'Kondisional'],
                 ['id' => 'WP-085', 'title' => 'Tentukan rangkaian adat', 'description' => 'Menyepakati prosesi adat jika akan dilaksanakan.', 'type' => 'Kondisional'],
-                ['id' => 'WP-086', 'title' => 'Susun rundown acara', 'description' => 'Mencatat urutan kegiatan, waktu, lokasi, dan penanggung jawab.', 'type' => 'Umum'],
-                ['id' => 'WP-087', 'title' => 'Tentukan PIC setiap bagian', 'description' => 'Menetapkan koordinator untuk keluarga, vendor, tamu, dan perlengkapan.', 'type' => 'Disarankan'],
+                ['id' => 'WP-086', 'title' => 'Buat susunan acara', 'description' => 'Mencatat urutan kegiatan, waktu, lokasi, dan penanggung jawab.', 'type' => 'Umum'],
+                ['id' => 'WP-087', 'title' => 'Tentukan penanggung jawab setiap bagian', 'description' => 'Menetapkan koordinator untuk keluarga, vendor, tamu, dan perlengkapan.', 'type' => 'Disarankan'],
                 ['id' => 'WP-088', 'title' => 'Siapkan teks sambutan atau doa', 'description' => 'Menyusun materi sambutan dan doa jika menjadi bagian acara.', 'type' => 'Kondisional'],
                 ['id' => 'WP-089', 'title' => 'Siapkan transportasi pengantin dan keluarga', 'description' => 'Mengatur kendaraan, pengemudi, rute, dan waktu keberangkatan jika dibutuhkan.', 'type' => 'Kondisional'],
                 ['id' => 'WP-090', 'title' => 'Atur penginapan tamu/keluarga luar kota', 'description' => 'Mencari dan mengatur akomodasi jika ada tamu yang membutuhkan.', 'type' => 'Kondisional'],
@@ -198,22 +198,22 @@ final class WeddingMasterData
             'tasks' => [
                 ['id' => 'WP-095', 'title' => 'Periksa kelengkapan dokumen pernikahan', 'description' => 'Memastikan dokumen, jadwal, dan konfirmasi instansi telah lengkap.', 'type' => 'Wajib sesuai ketentuan'],
                 ['id' => 'WP-096', 'title' => 'Konfirmasi ulang venue', 'description' => 'Memastikan tanggal, jam akses, fasilitas, dan aturan lokasi.', 'type' => 'Umum'],
-                ['id' => 'WP-097', 'title' => 'Konfirmasi ulang seluruh vendor', 'description' => 'Memastikan jadwal kedatangan, layanan, PIC, dan kebutuhan teknis.', 'type' => 'Umum'],
+                ['id' => 'WP-097', 'title' => 'Konfirmasi ulang seluruh vendor', 'description' => 'Memastikan jadwal kedatangan, layanan, penanggung jawab, dan kebutuhan teknis.', 'type' => 'Umum'],
                 ['id' => 'WP-098', 'title' => 'Finalisasi jumlah tamu dan katering', 'description' => 'Memperbarui perkiraan tamu dan menyepakati jumlah porsi dengan katering.', 'type' => 'Disarankan'],
                 ['id' => 'WP-099', 'title' => 'Periksa busana dan perlengkapan pengantin', 'description' => 'Memastikan busana, sepatu, aksesori, dan kebutuhan pribadi siap.', 'type' => 'Disarankan'],
                 ['id' => 'WP-100', 'title' => 'Periksa cincin, mahar, dan seserahan', 'description' => 'Memastikan perlengkapan prosesi sudah tersedia dan disimpan dengan aman.', 'type' => 'Kondisional'],
-                ['id' => 'WP-101', 'title' => 'Finalisasi rundown dan bagikan kepada PIC', 'description' => 'Memastikan versi rundown terbaru diterima pihak yang bertugas.', 'type' => 'Umum'],
+                ['id' => 'WP-101', 'title' => 'Finalisasi susunan acara dan bagikan kepada penanggung jawab', 'description' => 'Memastikan versi susunan acara terbaru diterima pihak yang bertugas.', 'type' => 'Umum'],
                 ['id' => 'WP-102', 'title' => 'Lakukan technical meeting', 'description' => 'Membahas alur, layout, waktu, listrik, sound system, dan koordinasi vendor.', 'type' => 'Disarankan'],
                 ['id' => 'WP-103', 'title' => 'Lakukan gladi bersih jika diperlukan', 'description' => 'Berlatih prosesi dan perpindahan posisi untuk acara yang membutuhkan latihan.', 'type' => 'Opsional'],
                 ['id' => 'WP-104', 'title' => 'Periksa pelunasan dan bukti transaksi', 'description' => 'Memastikan pembayaran sesuai kontrak dan menyimpan bukti.', 'type' => 'Umum'],
                 ['id' => 'WP-105', 'title' => 'Siapkan daftar kontak penting', 'description' => 'Menyediakan kontak pasangan, keluarga, venue, WO, dan vendor.', 'type' => 'Disarankan'],
-                ['id' => 'WP-106', 'title' => 'Pastikan seluruh PIC memahami tugas', 'description' => 'Mengonfirmasi tanggung jawab dan jalur komunikasi pada hari acara.', 'type' => 'Umum'],
-                ['id' => 'WP-107', 'title' => 'Siapkan barang yang akan dibawa pada hari H', 'description' => 'Mengemas dokumen, cincin, mahar, pakaian ganti, dan barang pribadi.', 'type' => 'Disarankan'],
+                ['id' => 'WP-106', 'title' => 'Pastikan seluruh penanggung jawab memahami tugas', 'description' => 'Mengonfirmasi tanggung jawab dan jalur komunikasi pada hari acara.', 'type' => 'Umum'],
+                ['id' => 'WP-107', 'title' => 'Siapkan barang yang akan dibawa pada hari pernikahan', 'description' => 'Mengemas dokumen, cincin, mahar, pakaian ganti, dan barang pribadi.', 'type' => 'Disarankan'],
                 ['id' => 'WP-108', 'title' => 'Atur waktu istirahat pengantin', 'description' => 'Menghindari aktivitas berlebihan dan memastikan pengantin cukup istirahat.', 'type' => 'Disarankan'],
             ],
         ],
-        '10. Pelaksanaan Hari H' => [
-            'phase' => 'Hari-H',
+        '10. Pelaksanaan Hari Pernikahan' => [
+            'phase' => 'Hari Pernikahan',
             'category' => 'ceremony',
             'tasks' => [
                 ['id' => 'WP-109', 'title' => 'Lakukan persiapan pribadi dan makeup pengantin', 'description' => 'Pengantin menjalani rias, tata rambut/hijab, dan mengenakan busana.', 'type' => 'Umum'],
@@ -221,14 +221,14 @@ final class WeddingMasterData
                 ['id' => 'WP-111', 'title' => 'Periksa kesiapan venue dan dekorasi', 'description' => 'Memastikan area acara, meja, kursi, dekorasi, dan perlengkapan tersedia.', 'type' => 'Umum'],
                 ['id' => 'WP-112', 'title' => 'Periksa kesiapan vendor dan peralatan teknis', 'description' => 'Memastikan vendor hadir dan sound system, listrik, serta alat pendukung berfungsi.', 'type' => 'Umum'],
                 ['id' => 'WP-113', 'title' => 'Pastikan meja penerima tamu siap', 'description' => 'Memastikan buku tamu, daftar tamu, souvenir, dan petugas tersedia jika digunakan.', 'type' => 'Kondisional'],
-                ['id' => 'WP-114', 'title' => 'Pastikan cincin, mahar, dan dokumen tersedia', 'description' => 'Memastikan perlengkapan prosesi berada pada PIC yang ditunjuk.', 'type' => 'Kondisional'],
+                ['id' => 'WP-114', 'title' => 'Pastikan cincin, mahar, dan dokumen tersedia', 'description' => 'Memastikan perlengkapan prosesi berada pada penanggung jawab yang ditunjuk.', 'type' => 'Kondisional'],
                 ['id' => 'WP-115', 'title' => 'Laksanakan akad nikah atau pemberkatan', 'description' => 'Melaksanakan prosesi sesuai agama dan ketentuan yang berlaku.', 'type' => 'Kondisional'],
                 ['id' => 'WP-116', 'title' => 'Selesaikan penandatanganan dokumen pernikahan', 'description' => 'Menyelesaikan pencatatan atau dokumen sesuai prosedur instansi terkait.', 'type' => 'Wajib sesuai ketentuan'],
                 ['id' => 'WP-117', 'title' => 'Laksanakan prosesi adat jika ada', 'description' => 'Melaksanakan rangkaian adat sesuai susunan acara.', 'type' => 'Kondisional'],
-                ['id' => 'WP-118', 'title' => 'Laksanakan sesi foto pengantin dan keluarga', 'description' => 'Mengikuti sesi dokumentasi sesuai daftar atau arahan PIC.', 'type' => 'Opsional'],
-                ['id' => 'WP-119', 'title' => 'Laksanakan resepsi jika ada', 'description' => 'Menjalankan rangkaian resepsi sesuai rundown.', 'type' => 'Kondisional'],
+                ['id' => 'WP-118', 'title' => 'Laksanakan sesi foto pengantin dan keluarga', 'description' => 'Mengikuti sesi dokumentasi sesuai daftar atau arahan penanggung jawab.', 'type' => 'Opsional'],
+                ['id' => 'WP-119', 'title' => 'Laksanakan resepsi jika ada', 'description' => 'Menjalankan rangkaian resepsi sesuai susunan acara.', 'type' => 'Kondisional'],
                 ['id' => 'WP-120', 'title' => 'Koordinasikan pelayanan makanan dan minuman', 'description' => 'Memantau distribusi konsumsi serta kebutuhan tamu.', 'type' => 'Kondisional'],
-                ['id' => 'WP-121', 'title' => 'Pantau jalannya rundown', 'description' => 'Memastikan kegiatan berjalan dan melakukan penyesuaian bila diperlukan.', 'type' => 'Umum'],
+                ['id' => 'WP-121', 'title' => 'Pantau jalannya susunan acara', 'description' => 'Memastikan kegiatan berjalan dan melakukan penyesuaian bila diperlukan.', 'type' => 'Umum'],
                 ['id' => 'WP-122', 'title' => 'Pastikan tamu mendapatkan bantuan', 'description' => 'Mengarahkan tamu terkait lokasi, tempat duduk, konsumsi, dan kebutuhan lainnya.', 'type' => 'Disarankan'],
                 ['id' => 'WP-123', 'title' => 'Amankan barang pribadi dan hadiah', 'description' => 'Menentukan orang yang bertanggung jawab atas barang penting dan hadiah.', 'type' => 'Disarankan'],
                 ['id' => 'WP-124', 'title' => 'Pastikan penutupan dan serah terima lokasi', 'description' => 'Memastikan acara selesai, barang dikumpulkan, dan lokasi diserahkan sesuai ketentuan.', 'type' => 'Disarankan'],
@@ -241,23 +241,66 @@ final class WeddingMasterData
         'jawa' => [
             ['phase' => 'Rangkaian', 'title' => 'Siraman (pembersihan lahir batin)', 'priority' => 'high'],
             ['phase' => 'Finalisasi', 'title' => 'Midodareni (malam sebelum akad)', 'priority' => 'high'],
-            ['phase' => 'Hari-H', 'title' => 'Panggih (temu pengantin adat Jawa)', 'priority' => 'high'],
-            ['phase' => 'Hari-H', 'title' => 'Sungkeman (mohon restu orang tua)', 'priority' => 'high'],
+            ['phase' => 'Hari Pernikahan', 'title' => 'Panggih (temu pengantin adat Jawa)', 'priority' => 'high'],
+            ['phase' => 'Hari Pernikahan', 'title' => 'Sungkeman (mohon restu orang tua)', 'priority' => 'high'],
         ],
         'sunda' => [
             ['phase' => 'Rangkaian', 'title' => 'Ngeuyeuk Seureuh (wejangan hidup berumah tangga)', 'priority' => 'high'],
-            ['phase' => 'Hari-H', 'title' => 'Saweran (tabur koin & beras kuning)', 'priority' => 'medium'],
-            ['phase' => 'Hari-H', 'title' => 'Huap Lingkup & Pameuleum Harupat', 'priority' => 'high'],
+            ['phase' => 'Hari Pernikahan', 'title' => 'Saweran (tabur koin & beras kuning)', 'priority' => 'medium'],
+            ['phase' => 'Hari Pernikahan', 'title' => 'Huap Lingkup & Pameuleum Harupat', 'priority' => 'high'],
         ],
         'minang' => [
             ['phase' => 'Rangkaian', 'title' => 'Batimbang Tando (tukar tanda pertunangan)', 'priority' => 'high'],
             ['phase' => 'Finalisasi', 'title' => 'Malam Bainai (menghias kuku dengan inai)', 'priority' => 'medium'],
-            ['phase' => 'Hari-H', 'title' => 'Manjapuik Marapulai (penjemputan mempelai pria)', 'priority' => 'high'],
+            ['phase' => 'Hari Pernikahan', 'title' => 'Manjapuik Marapulai (penjemputan mempelai pria)', 'priority' => 'high'],
         ],
         'batak' => [
             ['phase' => 'Rangkaian', 'title' => 'Marhusip & Marhata Sinamot (rapat keluarga)', 'priority' => 'high'],
             ['phase' => 'Rangkaian', 'title' => 'Martumpol (ikrar pertunangan di gereja)', 'priority' => 'high'],
-            ['phase' => 'Hari-H', 'title' => 'Ulaon Unjuk (pesta adat dengan pembagian Jambar)', 'priority' => 'high'],
+            ['phase' => 'Hari Pernikahan', 'title' => 'Ulaon Unjuk (pesta adat dengan pembagian Jambar)', 'priority' => 'high'],
         ],
     ];
+
+    /**
+     * Flat checklist templates for form auto-fill: title, description, phase, category.
+     *
+     * @return array<int, array{title:string,description:string,phase:string,category:string}>
+     */
+    public static function checklistTemplates(): array
+    {
+        $templates = [];
+
+        foreach (self::CHECKLIST_STAGES as $stage) {
+            foreach ($stage['tasks'] as $task) {
+                $templates[] = [
+                    'title' => $task['title'],
+                    'description' => $task['description'],
+                    'phase' => $stage['phase'],
+                    'category' => $stage['category'],
+                ];
+            }
+        }
+
+        return $templates;
+    }
+
+    /**
+     * Budget items grouped by category with the fields a form needs to prefill.
+     *
+     * @return array<string, array<int, array{title:string,min:int,per_guest:bool}>>
+     */
+    public static function budgetTemplates(): array
+    {
+        $grouped = [];
+
+        foreach (self::BUDGET_ITEMS as $row) {
+            $grouped[$row['category']][] = [
+                'title' => $row['title'],
+                'min' => $row['min'],
+                'per_guest' => $row['per_guest'],
+            ];
+        }
+
+        return $grouped;
+    }
 }

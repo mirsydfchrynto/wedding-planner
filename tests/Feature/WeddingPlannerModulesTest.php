@@ -57,8 +57,8 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->get("/budget/{$item->id}/edit")->assertOk();
         $this->get('/checklist/create')->assertOk();
         $this->get("/checklist/{$task->id}/edit")->assertOk();
-        $this->get('/timeline/create')->assertOk();
-        $this->get('/timeline/rundowns/create')->assertOk();
+        $this->get('/rundown/create')->assertOk();
+        $this->get('/rundown/sessions/create')->assertOk();
         $this->get('/vendors/create')->assertOk();
         $this->get("/vendors/{$vendor->id}/edit")->assertOk();
         $this->get("/vendors/{$vendor->id}/payments/create")->assertOk();
@@ -70,7 +70,7 @@ final class WeddingPlannerModulesTest extends TestCase
         $this->get('/dashboard')->assertRedirect('/login');
         $this->get('/budget')->assertRedirect('/login');
         $this->get('/checklist')->assertRedirect('/login');
-        $this->get('/timeline')->assertRedirect('/login');
+        $this->get('/rundown')->assertRedirect('/login');
         $this->get('/vendors')->assertRedirect('/login');
     }
 
@@ -196,13 +196,13 @@ final class WeddingPlannerModulesTest extends TestCase
     public function test_timeline_renders_phases_and_updates_milestone_status(): void
     {
         $this->actingAs($this->customerUser)
-            ->get('/timeline')
+            ->get('/rundown')
             ->assertOk()
-            ->assertSee('Linimasa & Rundown')
-            ->assertSee('Perencanaan')
-            ->assertSee('Hari-H');
+            ->assertSee('Susunan Acara')
+            ->assertSee('Persiapan')
+            ->assertSee('Hari pernikahan');
 
-        $this->actingAs($this->customerUser)->post('/timeline', [
+        $this->actingAs($this->customerUser)->post('/rundown', [
             'title' => 'Simulasi Prosesi Kirab Resepsi',
             'description' => 'Gladi resik bersama keluarga dan musik',
             'category' => WeddingCategory::Entertainment->value,
@@ -211,13 +211,13 @@ final class WeddingPlannerModulesTest extends TestCase
             'priority' => 'high',
             'assigned_to' => 'WO & Pasangan',
             'is_milestone' => true,
-        ])->assertRedirect(route('timeline.index'));
+        ])->assertRedirect(route('rundown.index'));
 
         $task = WeddingTask::query()->where('title', 'Simulasi Prosesi Kirab Resepsi')->firstOrFail();
 
-        $this->actingAs($this->customerUser)->patch("/timeline/{$task->id}/status", [
+        $this->actingAs($this->customerUser)->patch("/rundown/{$task->id}/status", [
             'status' => TaskStatus::InProgress->value,
-        ])->assertRedirect(route('timeline.index'));
+        ])->assertRedirect(route('rundown.index'));
 
         $this->assertSame(TaskStatus::InProgress, $task->fresh()->status);
     }
@@ -263,23 +263,23 @@ final class WeddingPlannerModulesTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Buku Kerja &amp; Panduan Operasional Resmi Hari Pernikahan', false);
-        $response->assertSee('Rundown Acara Menit-demi-Menit');
+        $response->assertSee('Susunan Acara Menit-demi-Menit');
         $response->assertSee('Plataran Menteng Heritage Venue');
         $response->assertSee('Lembar Persetujuan Panduan Kerja', false);
     }
 
     public function test_timeline_rundown_and_vendor_payments_can_be_recorded(): void
     {
-        $this->actingAs($this->customerUser)->post('/timeline/rundowns', [
+        $this->actingAs($this->customerUser)->post('/rundown/sessions', [
             'start_time' => '13:00',
-            'end_time' => '14:30',
+            'duration_minutes' => 90,
             'session_name' => 'Briefing Panitia & Vendor Malam',
             'activity' => 'Koordinasi teknis tim dokumentasi dan catering',
             'location' => 'Lobby VIP',
             'pic_name' => 'Adam Maulana',
             'pic_phone' => '081234567890',
             'notes' => 'Standby di lokasi',
-        ])->assertRedirect(route('timeline.index', ['tab' => 'rundown']));
+        ])->assertRedirect(route('rundown.index', ['tab' => 'hari']));
 
         $this->assertDatabaseHas('wedding_rundowns', [
             'session_name' => 'Briefing Panitia & Vendor Malam',

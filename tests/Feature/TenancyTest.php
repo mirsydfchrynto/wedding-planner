@@ -53,8 +53,10 @@ final class TenancyTest extends TestCase
             'bride_name' => 'Sekar',
             'groom_name' => 'Bagas',
             'wedding_date' => now()->addMonths(6)->toDateString(),
-            'venue_name' => 'Pendopo Agung',
+            'venue_type' => 'Pendopo Agung',
             'city' => 'Yogyakarta',
+            'akad_time' => '08:00',
+            'resepsi_time' => '11:00',
             'total_budget' => 150000000,
             'guest_target' => 200,
         ])->assertRedirect('/dashboard');
@@ -75,8 +77,10 @@ final class TenancyTest extends TestCase
             'bride_name' => 'Sekar',
             'groom_name' => 'Bagas',
             'wedding_date' => now()->addMonths(6)->toDateString(),
-            'venue_name' => 'Pendopo Agung',
+            'venue_type' => 'Pendopo Agung',
             'city' => 'Yogyakarta',
+            'akad_time' => '08:00',
+            'resepsi_time' => '11:00',
             'total_budget' => 150000000,
             'guest_target' => 200,
             'adat_tradition' => 'jawa',
@@ -91,8 +95,10 @@ final class TenancyTest extends TestCase
             'bride_name' => 'Ayu',
             'groom_name' => 'Dimas',
             'wedding_date' => now()->addMonths(6)->toDateString(),
-            'venue_name' => 'Balai Kartini',
+            'venue_type' => 'Balai Kartini',
             'city' => 'Jakarta',
+            'akad_time' => '08:00',
+            'resepsi_time' => '11:00',
             'total_budget' => 150000000,
             'guest_target' => 200,
             'adat_tradition' => 'bali',
@@ -108,8 +114,10 @@ final class TenancyTest extends TestCase
             'bride_name' => 'Sekar',
             'groom_name' => 'Bagas',
             'wedding_date' => $weddingDate->toDateString(),
-            'venue_name' => 'Pendopo Agung',
+            'venue_type' => 'Pendopo Agung',
             'city' => 'Yogyakarta',
+            'akad_time' => '08:00',
+            'resepsi_time' => '11:00',
             'total_budget' => 150000000,
             'guest_target' => 200,
         ])->assertRedirect('/dashboard');
@@ -170,6 +178,45 @@ final class TenancyTest extends TestCase
             ->assertSee('Vendor Rahasia Kedua')
             ->assertDontSee('Vendor Rahasia Pertama');
     }
+    public function test_dashboard_profile_and_summary_are_isolated_per_wedding_profile(): void
+    {
+        $first = $this->customerWithProfile();
+        $second = $this->customerWithProfile();
+
+        $firstName = $first->weddingProfile->couple_names;
+        $secondName = $second->weddingProfile->couple_names;
+
+        $this->actingAs($first)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertSee($firstName)
+            ->assertDontSee($secondName);
+
+        $this->actingAs($second)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertSee($secondName)
+            ->assertDontSee($firstName);
+
+        // Verify updateProfile targets acting user's profile
+        $this->actingAs($second)
+            ->patch('/profile', [
+                'bride_name' => 'Pengantin Baru Wanita',
+                'groom_name' => 'Pengantin Baru Pria',
+                'wedding_date' => now()->addMonths(5)->toDateString(),
+                'wedding_time' => '09:00 WIB',
+                'venue_name' => 'Venue Baru',
+                'city' => 'Bandung',
+                'total_budget' => 180000000,
+                'guest_target' => 300,
+                'theme_concept' => 'Modern Minimalis',
+            ])
+            ->assertRedirect('/dashboard');
+
+        $this->assertSame('Pengantin Baru Wanita & Pengantin Baru Pria', $second->fresh()->weddingProfile->couple_names);
+        $this->assertSame($firstName, $first->fresh()->weddingProfile->couple_names);
+    }
+
 
     private function customerWithProfile(): User
     {

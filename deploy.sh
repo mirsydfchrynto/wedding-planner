@@ -2,7 +2,7 @@
 set -euo pipefail
 
 echo "=========================================================="
-echo "  Atelier Vow Nusantara — Automated Production Deploy"
+echo "  Tatanikah — Automated Production Deploy"
 echo "=========================================================="
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,7 +20,7 @@ docker compose build --pull
 docker compose up -d
 
 echo "[+] Menunggu database PostgreSQL siap menerima koneksi..."
-docker compose exec -T postgres sh -c 'until pg_isready -U ateliervow -d wedding_planner; do sleep 1; done'
+docker compose exec -T postgres sh -c 'until pg_isready -U tatanikah -d wedding_planner; do sleep 1; done'
 
 # 3. Application Key Generation (if empty)
 if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then

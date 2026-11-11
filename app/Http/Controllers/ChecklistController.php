@@ -10,6 +10,7 @@ use App\Enums\WeddingCategory;
 use App\Models\Vendor;
 use App\Models\WeddingTask;
 use App\Services\WeddingMetricsService;
+use App\Support\WeddingMasterData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -89,6 +90,7 @@ final class ChecklistController extends Controller
             'statuses' => TaskStatus::cases(),
             'phases' => TimelinePhase::cases(),
             'vendors' => Vendor::query()->orderBy('name')->get(),
+            'templates' => WeddingMasterData::checklistTemplates(),
         ]);
     }
 
@@ -100,6 +102,7 @@ final class ChecklistController extends Controller
             'statuses' => TaskStatus::cases(),
             'phases' => TimelinePhase::cases(),
             'vendors' => Vendor::query()->orderBy('name')->get(),
+            'templates' => WeddingMasterData::checklistTemplates(),
         ]);
     }
 

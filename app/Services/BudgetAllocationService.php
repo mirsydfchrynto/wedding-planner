@@ -23,7 +23,7 @@ final class BudgetAllocationService
     /**
      * @return array<BudgetItem>
      */
-    public function allocate(WeddingProfile $profile): array
+    public function allocate(WeddingProfile $profile, string $eventType = 'akad_resepsi'): array
     {
         $items = [];
         $subtotal = 0;
@@ -33,6 +33,11 @@ final class BudgetAllocationService
             if ($row['category'] === WeddingCategory::Contingency->value) {
                 $contingencyRow = $row;
 
+                continue;
+            }
+
+            // Jika hanya Akad Nikah saja, lewati pos hiburan panggung & suvenir massal
+            if ($eventType === 'akad_only' && in_array($row['category'], ['entertainment', 'souvenir'], true)) {
                 continue;
             }
 

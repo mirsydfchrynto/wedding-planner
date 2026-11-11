@@ -4,11 +4,11 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: ateliervow_app
+    container_name: tatanikah_app
     restart: unless-stopped
     working_dir: /var/www
     environment:
-      APP_NAME: "Atelier Vow Nusantara"
+      APP_NAME: "Tatanikah"
       APP_ENV: production
       APP_DEBUG: "false"
       APP_URL: "http://localhost:8080"
@@ -16,8 +16,8 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: wedding_planner
-      DB_USERNAME: ateliervow
-      DB_PASSWORD: ateliervow_secret_2026
+      DB_USERNAME: tatanikah
+      DB_PASSWORD: tatanikah_secret_2026
       CACHE_STORE: redis
       SESSION_DRIVER: redis
       QUEUE_CONNECTION: sync
@@ -32,11 +32,11 @@ services:
       redis:
         condition: service_started
     networks:
-      - ateliervow_network
+      - tatanikah_network
 
   web:
     image: nginx:alpine
-    container_name: ateliervow_web
+    container_name: tatanikah_web
     restart: unless-stopped
     ports:
       - "8080:80"
@@ -47,38 +47,38 @@ services:
     depends_on:
       - app
     networks:
-      - ateliervow_network
+      - tatanikah_network
 
   postgres:
     image: postgres:16-alpine
-    container_name: ateliervow_db
+    container_name: tatanikah_db
     restart: unless-stopped
     environment:
       POSTGRES_DB: wedding_planner
-      POSTGRES_USER: ateliervow
-      POSTGRES_PASSWORD: ateliervow_secret_2026
+      POSTGRES_USER: tatanikah
+      POSTGRES_PASSWORD: tatanikah_secret_2026
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ateliervow -d wedding_planner"]
+      test: ["CMD-SHELL", "pg_isready -U tatanikah -d wedding_planner"]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
-      - ateliervow_network
+      - tatanikah_network
 
   redis:
     image: redis:7-alpine
-    container_name: ateliervow_cache
+    container_name: tatanikah_cache
     restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - ateliervow_network
+      - tatanikah_network
 
 volumes:
   postgres_data:
@@ -86,5 +86,5 @@ volumes:
   app_storage:
 
 networks:
-  ateliervow_network:
+  tatanikah_network:
     driver: bridge

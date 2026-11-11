@@ -50,7 +50,7 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                    <label for="total_budget" class="mb-1 block text-xs font-semibold text-charcoal">Plafon Anggaran (Rp)</label>
+                    <label for="total_budget" class="mb-1 block text-xs font-semibold text-charcoal">Batas Anggaran (Rp)</label>
                     <input id="total_budget" type="number" name="total_budget" value="{{ old('total_budget', $profile->total_budget) }}" min="1000000" step="1000000" data-rupiah required class="editorial-input tabular-nums">
                 </div>
                 <div>

@@ -6,12 +6,12 @@ namespace App\Services;
 
 use App\Enums\TaskStatus;
 use App\Enums\TimelinePhase;
-use App\Enums\VendorBookingStatus;
 use App\Enums\WeddingCategory;
 use App\Models\BudgetItem;
 use App\Models\Vendor;
 use App\Models\WeddingProfile;
 use App\Models\WeddingTask;
+use App\Support\ActionGuide;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,7 +40,7 @@ final class WeddingMetricsService
                 'city' => 'Jakarta Pusat',
                 'total_budget' => 350000000,
                 'guest_target' => 450,
-                'theme_concept' => 'Vogue Bridal Editorial — Warm Alabaster & Champagne Bronze',
+                'theme_concept' => 'Buku Catatan Adat & Resepsi Elegan',
             ]);
     }
 
@@ -63,11 +63,23 @@ final class WeddingMetricsService
         $daysRemaining = (int) floor($totalHours / 24);
         $hoursRemaining = $totalHours % 24;
 
-        // 2. Financial Metrics
+        // 2. Financial Metrics: Sinkronisasi data vendor bila budget actual belum diisi manual
         $totalBudgetCap = (int) $profile->total_budget;
         $totalEstimated = (int) $budgetItems->sum('estimated_cost');
-        $totalActual = (int) $budgetItems->sum('actual_cost');
-        $totalPaid = (int) $budgetItems->sum('paid_amount');
+        $budgetActualSum = (int) $budgetItems->sum('actual_cost');
+        $budgetPaidSum = (int) $budgetItems->sum('paid_amount');
+
+        $confirmedVendors = $vendors->filter(
+            fn (Vendor $v): bool => $v->booking_status->isConfirmed()
+        );
+        $vendorContractSum = (int) $confirmedVendors->sum('contract_amount');
+        $vendorPaidSum = (int) $confirmedVendors->sum('paid_amount');
+
+        // Gunakan nilai kontrak vendor jika budget actual masih 0 (data sinkron)
+        $useVendorFallback = ($budgetActualSum === 0 && $vendorContractSum > 0);
+        $totalActual = $useVendorFallback ? $vendorContractSum : $budgetActualSum;
+        $totalPaid = $useVendorFallback ? $vendorPaidSum : $budgetPaidSum;
+
         $effectiveCommitted = $totalActual > 0 ? $totalActual : $totalEstimated;
         $remainingBudget = $totalBudgetCap - $effectiveCommitted;
         $budgetUtilizationPercent = $totalBudgetCap > 0
@@ -81,6 +93,14 @@ final class WeddingMetricsService
             $catEstimated = (int) $catItems->sum('estimated_cost');
             $catActual = (int) $catItems->sum('actual_cost');
             $catPaid = (int) $catItems->sum('paid_amount');
+
+            // Jika budget actual 0, tarik dari vendor terkonfirmasi di kategori yang sama
+            if ($catActual === 0 && $useVendorFallback) {
+                $catVendors = $confirmedVendors->where('category', $category);
+                $catActual = (int) $catVendors->sum('contract_amount');
+                $catPaid = (int) $catVendors->sum('paid_amount');
+            }
+
             $catSharePercent = $totalActual > 0
                 ? (int) round(($catActual / $totalActual) * 100)
                 : 0;
@@ -116,8 +136,11 @@ final class WeddingMetricsService
         $urgentTasks = $tasks
             ->reject(fn (WeddingTask $task): bool => $task->status === TaskStatus::Done)
             ->sortBy('due_date')
-            ->take(6)
             ->values();
+
+        // Aksi Berikutnya: tugas terdekat pertama yang belum selesai
+        $nextTask = $urgentTasks->first();
+        $nextTaskGuide = $nextTask ? ActionGuide::forTask($nextTask, $profile) : null;
 
         $phaseProgress = [];
         foreach (TimelinePhase::cases() as $phase) {
@@ -135,9 +158,7 @@ final class WeddingMetricsService
 
         // 4. Vendor Metrics
         $totalVendors = $vendors->count();
-        $bookedVendors = $vendors->filter(
-            fn (Vendor $vendor): bool => $vendor->booking_status->isConfirmed()
-        )->count();
+        $bookedVendors = $confirmedVendors->count();
         $unpaidVendorBalance = (int) $vendors->sum(fn (Vendor $vendor): int => $vendor->remaining_balance);
         $upcomingVendorPayments = $vendors
             ->filter(fn (Vendor $vendor): bool => $vendor->remaining_balance > 0)
@@ -179,7 +200,9 @@ final class WeddingMetricsService
             'todo_tasks' => $todoTasks,
             'overdue_tasks_count' => $overdueTasksCount,
             'completion_percent' => $completionPercent,
-            'urgent_tasks' => $urgentTasks,
+            'urgent_tasks' => $urgentTasks->take(6)->values(),
+            'next_task' => $nextTask,
+            'next_task_guide' => $nextTaskGuide,
             'phase_progress' => $phaseProgress,
             'total_vendors' => $totalVendors,
             'booked_vendors' => $bookedVendors,

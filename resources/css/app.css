@@ -6,39 +6,64 @@
 @source '../**/*.js';
 
 @theme {
-    /* Low-Chroma Architectural Stone & Nusantara Sogan Palette (No Yellow-Cream) */
-    --color-alabaster: #F4F4F2;
-    --color-ivory: #E8E8E5;
-    --color-pearl: #FFFFFF;
-    --color-stone-line: #DCDCD7;
-    --color-stone-strong: #C6C6BF;
-    --color-espresso: #171614;
-    --color-charcoal: #2B2926;
-    --color-taupe: #524D47;
-    --color-champagne: #6E5434;
-    --color-champagne-dark: #574126;
-    --color-champagne-light: #EFECE6;
-    --color-sage: #264E3A;
-    --color-sage-bg: #E6F0EB;
-    --color-ochre: #9A4406;
-    --color-ochre-bg: #FDEFD8;
-    --color-wine: #8E1919;
-    --color-wine-bg: #FCE4E4;
+    /* Warm Heritage Neo-Brutalism & Nusantara Sogan Palette */
+    --color-desk: #E7DBC7;
+    --color-paper: #FAF5EC;
+    --color-paper-2: #F3E8D3;
+    --color-ink: #2B2118;
+    --color-ink-2: #5D4936;
+    --color-soga: #7A4425;
+    --color-soga-dark: #532C15;
+    --color-prada: #B58A2B;
+    --color-terracotta: #A64B2A;
+    --color-terracotta-light: #F7C5B8;
+    --color-jasmine: #F6EEDC;
+    --color-sketch: #2B2118;
+    --color-forest: #3F5F46;
+    --color-kunyit: #F6D365;
+    --color-mint: #CDE7D8;
+    --color-mint-light: #E6F2EA;
+    --color-charcoal-ink: #2B2118;
 
-    /* Unified Startup Sans Typography */
+    /* Alias kompatibilitas */
+    --color-alabaster: #E7DBC7;
+    --color-ivory: #F3E8D3;
+    --color-pearl: #FAF5EC;
+    --color-stone-line: #2B2118;
+    --color-stone-strong: #2B2118;
+    --color-espresso: #2B2118;
+    --color-charcoal: #483725;
+    --color-taupe: #5D4936;
+    --color-champagne: #7A4425;
+    --color-champagne-dark: #532C15;
+    --color-champagne-light: #F3E8D3;
+    --color-sage: #2E5A36;
+    --color-sage-bg: #CDE7D8;
+    --color-ochre: #B58A2B;
+    --color-ochre-bg: #F6D365;
+    --color-wine: #9C2F24;
+    --color-wine-bg: #F7C5B8;
+
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+    --font-hand: 'Kalam', 'Segoe Print', cursive;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 :root {
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --border-neo: 2px solid #2B2118;
+    --shadow-bento: 5px 5px 0px #2B2118;
+    --shadow-btn: 3px 3px 0px #2B2118;
 }
 
 @layer base {
     html {
-        background-color: var(--color-alabaster);
-        color: var(--color-espresso);
+        background-color: var(--color-desk);
+        color: var(--color-ink);
         font-family: var(--font-sans);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -46,17 +71,23 @@
 
     body {
         min-height: 100dvh;
-        background-color: var(--color-alabaster);
-        color: var(--color-espresso);
+        background-color: var(--color-desk);
+        color: var(--color-ink);
     }
 
     h1, h2, h3, .font-editorial {
-        font-family: var(--font-sans);
-        letter-spacing: -0.025em;
+        font-family: var(--font-display);
+        letter-spacing: -0.015em;
+        font-weight: 700;
+    }
+
+    ::selection {
+        background: var(--color-kunyit);
+        color: var(--color-ink);
     }
 
     a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-        outline: 2px solid var(--color-champagne);
+        outline: 3px solid var(--color-soga);
         outline-offset: 2px;
     }
 }
@@ -66,155 +97,402 @@
     white-space: nowrap;
 }
 
-.editorial-card {
-    background-color: transparent;
-    border-top: 1px solid var(--color-stone-line);
+/* =========================================================================
+   WARM JAVANESE NEO-BRUTALISM & BENTO GRID COMPONENTS
+   ========================================================================= */
+
+.bento-card {
+    position: relative;
+    background-color: var(--color-paper);
+    border: var(--border-neo);
+    box-shadow: var(--shadow-bento);
     border-radius: 0;
-    box-shadow: none;
+    transition: transform 140ms ease, box-shadow 140ms ease;
 }
 
-/* Motion Layer: Masked Line Rise, Shutter Stage, & Scroll Reveal (Transform + Opacity Only) */
-.lines .line {
-    display: block;
-    overflow: clip;
-    padding-bottom: 0.08em;
-    margin-bottom: -0.08em;
+.bento-kunyit {
+    background-color: #F6D365 !important;
 }
 
-.lines [data-line] {
-    display: block;
+.bento-mint {
+    background-color: #CDE7D8 !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    html.js [data-line] {
-        transform: translateY(105%);
-        animation: taste-line-up 750ms var(--ease-expo) forwards;
-        animation-delay: calc(80ms + var(--i, 0) * 95ms);
-    }
+.bento-terracotta {
+    background-color: #F7C5B8 !important;
+}
 
-    html.js [data-load] {
-        opacity: 0;
-        transform: translateY(16px);
-        animation: taste-load-rise 550ms var(--ease-out) forwards;
-        animation-delay: var(--d, 220ms);
-    }
+.bento-paper2 {
+    background-color: #F3E8D3 !important;
+}
 
-    html.js [data-open] {
-        clip-path: inset(0 0 100% 0);
-        animation: taste-shutter-open 950ms var(--ease-in-out) 140ms forwards;
-    }
+/* Kertas utama lembaran kerja */
+.paper-sheet {
+    position: relative;
+    background-color: var(--color-paper);
+    border: var(--border-neo);
+    box-shadow: 6px 6px 0px #2B2118;
+}
 
-    html.js [data-reveal] {
-        opacity: 0;
-        transform: translateY(24px);
-        transition: opacity 650ms var(--ease-out), transform 800ms var(--ease-expo);
-        transition-delay: var(--delay, 0ms);
-    }
-
-    html.js [data-reveal].is-in {
-        opacity: 1;
-        transform: translateY(0);
+@media (min-width: 1024px) {
+    .paper-sheet {
+        padding: 2.25rem 2.5rem 3rem;
     }
 }
 
-@keyframes taste-line-up {
-    to { transform: translateY(0); }
+.paper-card {
+    position: relative;
+    background-color: var(--color-paper);
+    border: var(--border-neo);
+    box-shadow: var(--shadow-bento);
+    border-radius: 0;
 }
 
-@keyframes taste-load-rise {
-    to { opacity: 1; transform: translateY(0); }
+.paper-card-soft {
+    background-color: var(--color-paper-2);
+    border: var(--border-neo);
+    box-shadow: 3px 3px 0px #2B2118;
+    border-radius: 0;
 }
 
-@keyframes taste-shutter-open {
-    to { clip-path: inset(0 0 0 0); }
+/* Tombol Neo-Brutalist dengan Fisika Mechanical Press */
+.btn-neo, .editorial-btn-primary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: var(--border-neo);
+    background-color: var(--color-soga);
+    color: #FAF5EC;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    box-shadow: var(--shadow-btn);
+    transition: transform 120ms var(--ease-bounce), box-shadow 120ms var(--ease-bounce), background-color 120ms ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-neo:hover, .editorial-btn-primary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #2B2118;
+    background-color: var(--color-soga-dark);
+}
+
+.btn-neo:active, .editorial-btn-primary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #2B2118;
+}
+
+.btn-neo-secondary, .editorial-btn-secondary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: var(--border-neo);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    padding: 0.55rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-btn);
+    transition: transform 120ms var(--ease-bounce), box-shadow 120ms var(--ease-bounce), background-color 120ms ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-neo-secondary:hover, .editorial-btn-secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #2B2118;
+    background-color: var(--color-paper-2);
+}
+
+.btn-neo-secondary:active, .editorial-btn-secondary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #2B2118;
+}
+
+.btn-neo-wa {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: var(--border-neo);
+    background-color: #25D366;
+    color: #2B2118;
+    padding: 0.5rem 1.15rem;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    box-shadow: var(--shadow-btn);
+    transition: transform 120ms var(--ease-bounce), box-shadow 120ms var(--ease-bounce);
+    cursor: pointer;
+}
+
+.btn-neo-wa:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #2B2118;
+    background-color: #1EBE5B;
+}
+
+.btn-neo-wa:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #2B2118;
+}
+
+.chip-neo, .chip {
+    display: inline-flex;
+    min-height: 2.35rem;
+    align-items: center;
+    justify-content: center;
+    border: var(--border-neo);
+    background: var(--color-paper);
+    padding: 0.35rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    box-shadow: 3px 3px 0px #2B2118;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 120ms var(--ease-bounce), box-shadow 120ms var(--ease-bounce), background-color 120ms ease;
+}
+
+.chip-neo:hover, .chip:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #2B2118;
+    background-color: var(--color-paper-2);
+}
+
+.chip-neo:active, .chip:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px #2B2118;
+}
+
+.chip-active {
+    background: var(--color-ink) !important;
+    color: #FAF5EC !important;
+}
+
+/* Washi Tape & Stamp Asimetris Terukur */
+.tape {
+    position: absolute;
+    top: -0.75rem;
+    left: 1.4rem;
+    width: 6.5rem;
+    height: 1.5rem;
+    transform: rotate(-2deg);
+    opacity: 0.85;
+    pointer-events: none;
+    background-color: rgba(246, 211, 101, 0.7);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='26' viewBox='0 0 42 26'%3E%3Cg fill='none' stroke='%232B2118' stroke-width='1.2' opacity='.6'%3E%3Ccircle cx='9' cy='8' r='4'/%3E%3Ccircle cx='21' cy='18' r='4'/%3E%3Ccircle cx='33' cy='8' r='4'/%3E%3Ccircle cx='21' cy='6' r='2'/%3E%3Ccircle cx='33' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
+    border-left: 1.5px dashed #2B2118;
+    border-right: 1.5px dashed #2B2118;
+    z-index: 10;
+}
+
+.tape-right {
+    left: auto;
+    right: 1.2rem;
+    transform: rotate(2deg);
+}
+
+.stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: var(--border-neo);
+    background-color: #FAF5EC;
+    color: #2B2118;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transform: rotate(-2.5deg);
+    box-shadow: 2px 2px 0px #2B2118;
+}
+
+.stamp-slam {
+    animation: stamp-slam-anim 280ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes stamp-slam-anim {
+    0% { transform: scale(2.0) rotate(-15deg); opacity: 0; }
+    100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+}
+
+/* Speech Bubble Asisten Maskot */
+.speech-bubble {
+    position: relative;
+    background: #FAF5EC;
+    border: var(--border-neo);
+    box-shadow: 3px 3px 0px #2B2118;
+    padding: 0.5rem 0.85rem;
+    border-radius: 3px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #2B2118;
+}
+
+.speech-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid #2B2118;
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 21px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #FAF5EC;
+}
+
+/* Baris Tugas Centang Lembut */
+.checked-row {
+    background-color: #E6F2EA !important;
+    transition: background-color 220ms ease;
+}
+
+/* Tabel Ledger Neo-Brutalist */
+.ledger {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.8125rem;
+}
+
+.ledger thead th {
+    border-bottom: 2px solid #2B2118;
+    border-top: 2px solid #2B2118;
+    padding: 0.6rem 0.65rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #2B2118;
+    background-color: #F3E8D3;
+}
+
+.ledger tbody td {
+    border-bottom: 1.5px solid #2B2118;
+    border-right: 1.5px solid #2B2118;
+    padding: 0.65rem;
+    vertical-align: top;
+}
+
+.ledger tbody td:first-child {
+    border-left: 1.5px solid #2B2118;
+}
+
+.ledger tbody tr:nth-child(even) {
+    background-color: rgba(243, 232, 211, 0.45);
+}
+
+.ledger tbody tr:hover {
+    background-color: rgba(246, 211, 101, 0.25);
+}
+
+.index-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: var(--border-neo);
+    border-bottom: 0;
+    padding: 0.55rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #5D4936;
+    background: #F3E8D3;
+    transform: translateY(2px);
+    transition: all 120ms ease;
+}
+
+.index-tab:hover {
+    background: #FAF5EC;
+    color: #2B2118;
+}
+
+.index-tab-active {
+    background-color: #FAF5EC !important;
+    color: #2B2118 !important;
+    border-bottom: 3px solid #FAF5EC !important;
+}
+
+.bottom-nav {
+    background-color: #FAF5EC;
+    border-top: var(--border-neo);
+    box-shadow: 0 -3px 0px #2B2118;
+}
+
+.bottom-nav-item {
+    display: flex;
+    min-height: 56px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    border-top: 3px solid transparent;
+    padding: 0.3rem 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #5D4936;
+}
+
+.bottom-nav-item[aria-current='page'] {
+    border-top-color: #7A4425;
+    background-color: #F3E8D3;
+    color: #2B2118;
+}
+
+.modal-paper {
+    background: #FAF5EC;
+    border: 3px solid #2B2118;
+    box-shadow: 8px 8px 0px #2B2118;
 }
 
 .editorial-input {
     width: 100%;
     min-height: 2.75rem;
-    border-radius: 0.125rem;
-    border: 1px solid rgba(0, 0, 0, 0.12); /* taste-skill-ignore */
-    background-color: var(--color-pearl);
+    border-radius: 0;
+    border: var(--border-neo);
+    background-color: #FAF5EC;
     padding: 0.625rem 0.875rem;
-    font-size: 1rem;
-    color: var(--color-espresso);
-    transition: border-color 150ms ease, box-shadow 150ms ease;
-}
-
-@media (min-width: 640px) {
-    .editorial-input {
-        min-height: 2.5rem;
-        font-size: 0.875rem;
-    }
-}
-
-@media (max-width: 639px) {
-    input, select, textarea {
-        font-size: 1rem !important;
-    }
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #2B2118;
+    box-shadow: 2px 2px 0px #2B2118;
+    transition: border-color 120ms ease, background-color 120ms ease;
 }
 
 .editorial-input:focus {
     outline: none;
-    border-color: var(--color-champagne);
-    background-color: var(--color-pearl);
+    border-color: #7A4425;
+    box-shadow: 4px 4px 0px #2B2118;
 }
 
-.editorial-btn-primary {
-    display: inline-flex;
-    min-height: 2.65rem;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    border-radius: 0.125rem;
-    background-color: var(--color-espresso);
-    color: var(--color-alabaster);
-    padding: 0.55rem 1.15rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    transition: background-color 150ms ease, transform 120ms var(--ease-out);
-    cursor: pointer;
+.hand {
+    font-family: var(--font-hand);
 }
 
-@media (min-width: 640px) {
-    .editorial-btn-primary {
-        min-height: 2.65rem;
-    }
-}
-
-.editorial-btn-primary:hover {
-    background-color: var(--color-champagne);
-}
-
-.editorial-btn-primary:active {
-    transform: scale(0.97);
-}
-
-.editorial-btn-secondary {
-    display: inline-flex;
-    min-height: 2.65rem;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    border-radius: 0.125rem;
-    border: 1px solid var(--color-stone-strong);
-    background-color: transparent;
-    color: var(--color-espresso);
-    padding: 0.55rem 1.15rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    transition: background-color 150ms ease, border-color 150ms ease, transform 120ms var(--ease-out);
-    cursor: pointer;
-}
-
-@media (min-width: 640px) {
-    .editorial-btn-secondary {
-        min-height: 2.65rem;
-    }
-}
-
-.editorial-btn-secondary:hover {
-    background-color: var(--color-stone-line);
+.rupiah {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
 }
 
 [x-cloak] {
@@ -227,5 +505,13 @@
     }
     body {
         background: #ffffff !important;
+    }
+    .paper-sheet, .bento-card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    .tape, .stamp {
+        display: none !important;
     }
 }

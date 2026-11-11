@@ -78,7 +78,7 @@ Toolbar filter dropdowns relied on their first `<option>` text instead of an exp
 Screen readers may not announce the purpose of the filter once a non-default option is selected.
 
 **Remediation:**
-Added explicit Indonesian `aria-label` attributes (`Filter Kategori Anggaran`, `Filter Status Pembayaran Anggaran`, `Filter Status Tugas`, `Filter Penanggung Jawab PIC`, `Filter Kategori Vendor`, `Filter Status Booking Vendor`, `Filter Status SLA Vendor`) to all 7 toolbar `<select>` controls.
+Added explicit Indonesian `aria-label` attributes (`Filter Kategori Anggaran`, `Filter Status Pembayaran Anggaran`, `Filter Status Tugas`, `Filter Penanggung Jawab`, `Filter Kategori Vendor`, `Filter Status Booking Vendor`, `Filter Status SLA Vendor`) to all 7 toolbar `<select>` controls.
 
 ---
 

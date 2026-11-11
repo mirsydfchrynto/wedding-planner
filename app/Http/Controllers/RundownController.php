@@ -14,10 +14,11 @@ use App\Services\WeddingMetricsService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
-final class TimelineController extends Controller
+final class RundownController extends Controller
 {
     public function __construct(
         private readonly WeddingMetricsService $metricsService,
@@ -83,7 +84,7 @@ final class TimelineController extends Controller
             ];
         });
 
-        return view('timeline.index', [
+        return view('rundown.index', [
             'summary' => $summary,
             'phases' => $phases,
             'allPhases' => TimelinePhase::cases(),
@@ -95,13 +96,13 @@ final class TimelineController extends Controller
             'searchQuery' => $searchQuery,
             'selectedSort' => $selectedSort,
             'rundowns' => $rundowns,
-            'activeTab' => $request->query('tab', 'timeline'),
+            'activeTab' => $request->query('tab', 'pra'),
         ]);
     }
 
     public function create(): View
     {
-        return view('timeline.form', [
+        return view('rundown.form', [
             'task' => null,
             'categories' => WeddingCategory::cases(),
             'phases' => TimelinePhase::cases(),
@@ -111,7 +112,7 @@ final class TimelineController extends Controller
 
     public function createRundown(): View
     {
-        return view('timeline.rundown');
+        return view('rundown.session');
     }
 
     public function store(Request $request): RedirectResponse
@@ -134,8 +135,8 @@ final class TimelineController extends Controller
         WeddingTask::query()->create($validated);
 
         return redirect()
-            ->route('timeline.index')
-            ->with('success', 'Milestone linimasa persiapan berhasil dijadwalkan.');
+            ->route('rundown.index')
+            ->with('success', 'Agenda pra acara berhasil dijadwalkan.');
     }
 
     public function updateStatus(Request $request, WeddingTask $weddingTask): RedirectResponse
@@ -150,26 +151,30 @@ final class TimelineController extends Controller
         ]);
 
         return redirect()
-            ->route('timeline.index')
-            ->with('success', 'Progres linimasa "' . $weddingTask->title . '" berhasil diperbarui.');
+            ->route('rundown.index')
+            ->with('success', 'Progres "' . $weddingTask->title . '" berhasil diperbarui.');
     }
 
     public function storeRundown(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'start_time' => ['required', 'string', 'max:10'],
-            'end_time' => ['required', 'string', 'max:10'],
             'session_name' => ['required', 'string', 'max:80'],
             'activity' => ['required', 'string', 'max:200'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'duration_minutes' => ['required', 'integer', 'min:15', 'max:480'],
             'location' => ['nullable', 'string', 'max:160'],
             'pic_name' => ['nullable', 'string', 'max:120'],
             'pic_phone' => ['nullable', 'string', 'max:40'],
-            'notes' => ['nullable', 'string'],
+            'notes' => ['nullable', 'string', 'max:2000'],
         ]);
+
+        $start = Carbon::createFromFormat('H:i', $validated['start_time']);
+        $validated['end_time'] = $start->copy()->addMinutes((int) $validated['duration_minutes'])->format('H:i');
+        unset($validated['duration_minutes']);
 
         WeddingRundown::query()->create($validated);
 
-        return redirect()->route('timeline.index', ['tab' => 'rundown'])
-            ->with('success', 'Agenda rundown Hari-H berhasil ditambahkan.');
+        return redirect()->route('rundown.index', ['tab' => 'hari'])
+            ->with('success', 'Sesi acara hari pernikahan berhasil ditambahkan.');
     }
 }

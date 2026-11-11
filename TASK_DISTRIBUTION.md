@@ -1,7 +1,7 @@
 # Pembagian Tugas Tim & Spesifikasi Peran (Enterprise Full-Stack Model)
-## Atelier Vow Nusantara — Luxury Wedding Planner & Backoffice SaaS
+## Tatanikah — Luxury Wedding Planner & Backoffice SaaS
 
-Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pembagian kerja tim rekayasa perangkat lunak untuk aplikasi **Atelier Vow Nusantara**. Struktur tim dipimpin oleh **Irsyad sebagai Project Lead & PM Integrator**, didampingi **Adam di Frontend (Web Utuh)**, serta **Marsha & Dinda di Backend Core**.
+Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pembagian kerja tim rekayasa perangkat lunak untuk aplikasi **Tatanikah**. Struktur tim dipimpin oleh **Irsyad sebagai Project Lead & PM Integrator**, didampingi **Adam di Frontend (Web Utuh)**, serta **Marsha & Dinda di Backend Core**.
 
 ---
 
@@ -52,11 +52,11 @@ Dokumen ini adalah **sumber kebenaran tunggal (*Single Source of Truth*)** pemba
      - Menghapus paragraf penjelasan berlebih (*decluttering*) pada seluruh header dan kartu KPI.
   2. **Pengembangan Seluruh Tampilan Modul (Blade Views)**:
      - **Landing Page SaaS (`resources/views/landing.blade.php`)**: Hero, demo modul interaktif, kartu harga, dan FAQ accordion untuk tamu yang belum masuk.
-     - **Dashboard Pengantin (`resources/views/dashboard/index.blade.php`)**: Kartu hitung mundur Hari-H, 4 kartu ringkasan KPI, grafik distribusi anggaran, dan kalkulator weton neptu.
+    - **Dashboard Pengantin (`resources/views/dashboard/index.blade.php`)**: Kartu hitung mundur hari pernikahan, 4 kartu ringkasan KPI, grafik distribusi anggaran, dan kalkulator weton neptu.
      - **Budget Planner UI (`resources/views/budget/index.blade.php`)**: Widget *Smart Budget Allocator* untuk adat Jawa/Sunda/Modern, kartu alokasi, dan tabel rincian pos biaya.
-     - **Checklist UI (`resources/views/checklist/index.blade.php`)**: Daftar tugas interaktif dengan checkbox instan, filter kategori pil, dan filter PIC.
-     - **Timeline & Rundown UI (`resources/views/timeline/index.blade.php`)**: Segmented control switcher untuk linimasa bulanan dan tabel rundown menit-demi-menit Hari-H.
-     - **Vendor Directory UI (`resources/views/vendors/index.blade.php`)**: Kartu vendor bersih, progress bar pelunasan, dan tombol WhatsApp PIC.
+    - **Checklist UI (`resources/views/checklist/index.blade.php`)**: Daftar tugas interaktif dengan checkbox instan, filter kategori pil, dan filter penanggung jawab.
+    - **Susunan Acara UI (`resources/views/rundown/index.blade.php`)**: Segmented control untuk jadwal persiapan dan tabel susunan acara menit-demi-menit hari pernikahan.
+    - **Vendor Directory UI (`resources/views/vendors/index.blade.php`)**: Kartu vendor bersih, progress bar pelunasan, dan tombol WhatsApp penanggung jawab.
   3. **Komponen Bersama (*Shared UI Kit*)**:
      - `resources/views/components/ui/{stat-card,section-header,modal,status-badge,progress-bar,icon}.blade.php`.
      - Segmented control navigasi pada `resources/views/layouts/app.blade.php`.

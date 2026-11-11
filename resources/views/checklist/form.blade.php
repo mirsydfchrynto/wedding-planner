@@ -3,7 +3,7 @@
 @section('content')
     <x-ui.section-header
         :title="$task ? 'Edit Tugas Checklist' : 'Tambah Tugas Checklist'"
-        subtitle="Susun agenda persiapan pernikahan beserta jadwal, fase, dan PIC."
+        subtitle="Susun agenda persiapan pernikahan beserta jadwal, fase, dan penanggung jawab."
     >
         <x-slot:actions>
             <a href="{{ route('checklist.index') }}" class="editorial-btn-secondary">Kembali</a>
@@ -11,7 +11,21 @@
     </x-ui.section-header>
 
     <section class="mt-6 editorial-card rounded-lg p-6">
-        <form method="POST" action="{{ $task ? route('checklist.update', $task) : route('checklist.store') }}" class="space-y-5">
+        <form
+            method="POST"
+            action="{{ $task ? route('checklist.update', $task) : route('checklist.store') }}"
+            class="space-y-5"
+            x-data="{
+                templates: @js($templates),
+                pick() {
+                    const tpl = this.templates.find(t => t.title === this.$refs.title.value);
+                    if (!tpl) return;
+                    if (!this.$refs.description.value) this.$refs.description.value = tpl.description;
+                    this.$refs.category.value = tpl.category;
+                    this.$refs.phase.value = tpl.phase;
+                }
+            }"
+        >
             @csrf
             @if($task)
                 @method('PUT')
@@ -19,26 +33,32 @@
 
             <div>
                 <label for="title" class="mb-1 block text-xs font-semibold text-charcoal">Judul Tugas Persiapan</label>
-                <input id="title" type="text" name="title" value="{{ old('title', $task?->title) }}" placeholder="Contoh: Pengambilan Bukti Pendaftaran KUA & Konfirmasi Saksi" required class="editorial-input">
+                <input id="title" type="text" name="title" value="{{ old('title', $task?->title) }}" list="task-templates" placeholder="Contoh: Konfirmasi tanggal akad dengan KUA" required class="editorial-input" x-ref="title" @change="pick()">
+                <datalist id="task-templates">
+                    @foreach($templates as $template)
+                        <option value="{{ $template['title'] }}"></option>
+                    @endforeach
+                </datalist>
+                <p class="mt-1 text-xs text-taupe">Pilih judul dari daftar untuk mengisi deskripsi, kategori, dan tahap otomatis.</p>
             </div>
 
             <div>
                 <label for="description" class="mb-1 block text-xs font-semibold text-charcoal">Deskripsi / Catatan Detail</label>
-                <textarea id="description" name="description" rows="3" placeholder="Rincian berkas atau hal yang perlu disiapkan..." class="editorial-input">{{ old('description', $task?->description) }}</textarea>
+                <textarea id="description" name="description" rows="3" placeholder="Rincian berkas atau hal yang perlu disiapkan..." class="editorial-input" x-ref="description">{{ old('description', $task?->description) }}</textarea>
             </div>
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                     <label for="category" class="mb-1 block text-xs font-semibold text-charcoal">Kategori</label>
-                    <select id="category" name="category" required class="editorial-input">
+                    <select id="category" name="category" required class="editorial-input" x-ref="category">
                         @foreach($categories as $category)
                             <option value="{{ $category->value }}" @selected(old('category', $task?->category?->value) === $category->value)>{{ $category->label() }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label for="phase" class="mb-1 block text-xs font-semibold text-charcoal">Fase Linimasa</label>
-                    <select id="phase" name="phase" required class="editorial-input">
+                    <label for="phase" class="mb-1 block text-xs font-semibold text-charcoal">Tahap Persiapan</label>
+                    <select id="phase" name="phase" required class="editorial-input" x-ref="phase">
                         @foreach($phases as $phase)
                             <option value="{{ $phase->value }}" @selected(old('phase', $task?->phase) === $phase->value)>{{ $phase->value }}</option>
                         @endforeach
@@ -71,7 +91,7 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                    <label for="assigned_to" class="mb-1 block text-xs font-semibold text-charcoal">Penanggung Jawab (PIC)</label>
+                    <label for="assigned_to" class="mb-1 block text-xs font-semibold text-charcoal">Penanggung Jawab</label>
                     <input id="assigned_to" type="text" name="assigned_to" value="{{ old('assigned_to', $task?->assigned_to ?? 'Aurelia & Reza') }}" required class="editorial-input">
                 </div>
                 <div>

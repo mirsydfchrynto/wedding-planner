@@ -19,22 +19,53 @@ final class TimelineGeneratorService
     /**
      * @return array<WeddingTask>
      */
-    public function generate(WeddingProfile $profile, string $adatTradition = 'none'): array
-    {
+    public function generate(
+        WeddingProfile $profile,
+        string $adatTradition = 'none',
+        string $eventType = 'akad_resepsi',
+        string $helperMode = 'self',
+    ): array {
         $tasks = [];
         $weddingDate = $profile->wedding_date;
+
+        // Tentukan adat tradition dari event type jika belum ditentukan
+        if ($adatTradition === 'none') {
+            if (str_starts_with($eventType, 'jawa')) {
+                $adatTradition = 'jawa';
+            }
+        }
+
+        // Tentukan PIC penanggung jawab bawaan
+        $defaultPic = match ($helperMode) {
+            'family' => 'Keluarga Inti',
+            'wo' => 'Wedding Organizer',
+            default => 'Pengantin',
+        };
 
         foreach (WeddingMasterData::CHECKLIST_STAGES as $stageName => $stage) {
             $phase = TimelinePhase::from($stage['phase']);
             $isMilestone = str_starts_with($stageName, '10.');
 
+            // Jika hanya Akad Nikah saja, lewati komponen pesta resepsi besar
+            if ($eventType === 'akad_only') {
+                if (in_array($stage['category'], ['entertainment', 'souvenir'], true)) {
+                    continue;
+                }
+            }
+
             foreach ($stage['tasks'] as $task) {
+                // Untuk akad_only, lewati tugas yang murni opsional pesta
+                if ($eventType === 'akad_only' && $task['type'] === 'Opsional') {
+                    continue;
+                }
+
                 $tasks[] = $this->createTask($profile, [
                     'title' => $task['title'],
                     'description' => $task['description'],
                     'category' => $stage['category'],
                     'priority' => $this->priorityFor($task['type']),
                     'is_milestone' => $isMilestone,
+                    'assigned_to' => $defaultPic,
                 ], $phase, $weddingDate);
             }
         }
@@ -42,10 +73,11 @@ final class TimelineGeneratorService
         foreach (WeddingMasterData::ADAT_TASKS[$adatTradition] ?? [] as $task) {
             $tasks[] = $this->createTask($profile, [
                 'title' => $task['title'],
-                'description' => 'Aktivitas adat '.$adatTradition.'.',
+                'description' => 'Aktivitas prosesi adat '.$adatTradition.'.',
                 'category' => 'ceremony',
                 'priority' => $task['priority'],
                 'is_milestone' => false,
+                'assigned_to' => ($helperMode === 'wo' ? 'Tim WO & Panitia Adat' : 'Keluarga & Tetua Adat'),
             ], TimelinePhase::from($task['phase']), $weddingDate);
         }
 
@@ -62,7 +94,7 @@ final class TimelineGeneratorService
     }
 
     /**
-     * @param  array{title:string,description:string,category:string,priority:string,is_milestone:bool}  $taskData
+     * @param  array{title:string,description:string,category:string,priority:string,is_milestone:bool,assigned_to?:string}  $taskData
      */
     private function createTask(
         WeddingProfile $profile,
@@ -78,7 +110,7 @@ final class TimelineGeneratorService
             'due_date' => $this->calculateDueDate($phase, $weddingDate),
             'status' => 'todo',
             'priority' => $taskData['priority'],
-            'assigned_to' => 'Pasangan & Keluarga',
+            'assigned_to' => $taskData['assigned_to'] ?? 'Pengantin',
             'is_milestone' => $taskData['is_milestone'],
         ]);
     }
@@ -102,5 +134,4 @@ final class TimelineGeneratorService
 
         return $today->copy()->addDays((int) round($remainingDays * ($phase->order() - 1) / 9));
     }
-
 }

@@ -28,6 +28,10 @@ final class WeddingProfile extends Model
 
     public static function current(): ?self
     {
+        if (self::$tenancyOverride !== null) {
+            return self::query()->find(self::$tenancyOverride);
+        }
+
         return Auth::user()?->weddingProfile;
     }
 
@@ -67,6 +71,9 @@ final class WeddingProfile extends Model
         'total_budget',
         'guest_target',
         'theme_concept',
+        'event_type',
+        'helper_mode',
+        'venue_type',
     ];
 
     protected function casts(): array

@@ -34,8 +34,8 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                    <label for="contact_person" class="mb-1 block text-xs font-semibold text-charcoal">Nama Kontak PIC</label>
-                    <input id="contact_person" type="text" name="contact_person" value="{{ old('contact_person', $vendor?->contact_person) }}" placeholder="Nama Account Manager" required class="editorial-input">
+                    <label for="contact_person" class="mb-1 block text-xs font-semibold text-charcoal">Nama Penanggung Jawab</label>
+                    <input id="contact_person" type="text" name="contact_person" value="{{ old('contact_person', $vendor?->contact_person) }}" placeholder="Nama penanggung jawab" required class="editorial-input">
                 </div>
                 <div>
                     <label for="phone" class="mb-1 block text-xs font-semibold text-charcoal">Nomor Telepon / WhatsApp</label>

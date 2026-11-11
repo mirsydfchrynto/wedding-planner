@@ -1,17 +1,17 @@
-@extends('layouts.app', ['title' => 'Jadwalkan Milestone'])
+@extends('layouts.app', ['title' => 'Jadwalkan Agenda'])
 
 @section('content')
     <x-ui.section-header
-        title="Jadwalkan Milestone Linimasa"
+        title="Jadwalkan Agenda Pra Acara"
         subtitle="Tambahkan agenda penting ke dalam fase persiapan."
     >
         <x-slot:actions>
-            <a href="{{ route('timeline.index') }}" class="editorial-btn-secondary">Kembali</a>
+            <a href="{{ route('rundown.index') }}" class="editorial-btn-secondary">Kembali</a>
         </x-slot:actions>
     </x-ui.section-header>
 
     <section class="mt-6 editorial-card rounded-lg p-6">
-        <form method="POST" action="{{ route('timeline.store') }}" class="space-y-5">
+        <form method="POST" action="{{ route('rundown.store') }}" class="space-y-5">
             @csrf
 
             <div>
@@ -57,7 +57,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="assigned_to" class="mb-1 block text-xs font-semibold text-charcoal">PIC</label>
+                    <label for="assigned_to" class="mb-1 block text-xs font-semibold text-charcoal">Penanggung Jawab</label>
                     <input id="assigned_to" type="text" name="assigned_to" value="{{ old('assigned_to', 'WO & Pasangan') }}" required class="editorial-input">
                 </div>
             </div>
@@ -75,8 +75,8 @@
             <input type="hidden" name="is_milestone" value="1">
 
             <div class="flex items-center justify-end gap-2.5 border-t border-stone-line pt-4">
-                <a href="{{ route('timeline.index') }}" class="editorial-btn-secondary">Batal</a>
-                <button type="submit" class="editorial-btn-primary">Simpan ke Linimasa</button>
+                <a href="{{ route('rundown.index') }}" class="editorial-btn-secondary">Batal</a>
+                <button type="submit" class="editorial-btn-primary">Simpan Agenda</button>
             </div>
         </form>
     </section>

@@ -41,7 +41,7 @@ final class WeddingPlannerSeeder extends Seeder
 
         User::query()->create([
             'name' => 'Testing User Pengantin',
-            'email' => 'user@ateliervow.id',
+            'email' => 'user@tatanikah.id',
             'password' => Hash::make('user'),
             'role' => 'customer',
             'google_id' => 'google-oauth-108292',
@@ -50,15 +50,15 @@ final class WeddingPlannerSeeder extends Seeder
 
         User::query()->create([
             'name' => 'M. Irsyad Fachryanto (Lead Admin)',
-            'email' => 'irsyad@ateliervow.id',
+            'email' => 'irsyad@tatanikah.id',
             'password' => Hash::make('admin'),
             'role' => 'admin',
             'email_verified_at' => now(),
         ]);
 
         User::query()->create([
-            'name' => 'Administrator Atelier Vow',
-            'email' => 'admin@ateliervow.id',
+            'name' => 'Administrator Tatanikah',
+            'email' => 'admin@tatanikah.id',
             'password' => Hash::make('admin'),
             'role' => 'admin',
             'email_verified_at' => now(),
@@ -190,7 +190,7 @@ final class WeddingPlannerSeeder extends Seeder
             'paid_amount' => 0,
             'booking_status' => VendorBookingStatus::Contacted,
             'payment_due_date' => $weddingDate->copy()->subDays(40)->toDateString(),
-            'notes' => 'Koordinasi 10 kru Hari-H, pengurusan berkas KUA Menteng, dan gladi bersih keluarga.',
+            'notes' => 'Koordinasi 10 kru hari pernikahan, pengurusan berkas KUA Menteng, dan gladi bersih keluarga.',
         ]);
 
         // 2. Budget & checklist come from the research master data, exactly like onboarding:
@@ -213,7 +213,7 @@ final class WeddingPlannerSeeder extends Seeder
         foreach ($vendorByCategory as $category => $vendor) {
             BudgetItem::query()->where('category', $category)->orderBy('id')->first()?->update(['vendor_id' => $vendor->id]);
         }
-        // 3. Seed Rundown Acara Hari-H (Minute-by-Minute Event Schedule)
+        // 3. Seed Susunan Acara Hari Pernikahan (Minute-by-Minute Event Schedule)
         $rundownRows = [
             [
                 'start_time' => '05:00',
@@ -310,7 +310,7 @@ final class WeddingPlannerSeeder extends Seeder
             ['vendor_id' => $vendorLotusDecor->id, 'payment_stage' => 'DP 50%', 'amount' => 25000000, 'paid_date' => $weddingDate->copy()->subDays(140)->toDateString(), 'receipt_ref' => 'SRY-DEC-441', 'notes' => 'DP dekorasi pelaminan Paes Ageng & Glasshouse'],
             ['vendor_id' => $vendorLotusDecor->id, 'payment_stage' => 'Termin 1 (50%)', 'amount' => 25000000, 'paid_date' => $weddingDate->copy()->subDays(70)->toDateString(), 'receipt_ref' => 'SRY-DEC-442', 'notes' => 'Pelunasan dekorasi & instalasi bunga segar'],
             ['vendor_id' => $vendorIluminen->id, 'payment_stage' => 'DP 40%', 'amount' => 15000000, 'paid_date' => $weddingDate->copy()->subDays(170)->toDateString(), 'receipt_ref' => 'AXO-PHOTO-09', 'notes' => 'DP pemesanan tim fotografer & videografer Axioo'],
-            ['vendor_id' => $vendorIluminen->id, 'payment_stage' => 'Pelunasan (60%)', 'amount' => 23000000, 'paid_date' => $weddingDate->copy()->subDays(45)->toDateString(), 'receipt_ref' => 'AXO-PHOTO-10', 'notes' => 'Pelunasan dokumentasi hari H & album teaser'],
+            ['vendor_id' => $vendorIluminen->id, 'payment_stage' => 'Pelunasan (60%)', 'amount' => 23000000, 'paid_date' => $weddingDate->copy()->subDays(45)->toDateString(), 'receipt_ref' => 'AXO-PHOTO-10', 'notes' => 'Pelunasan dokumentasi hari pernikahan & album teaser'],
         ];
 
         foreach ($paymentRows as $payment) {
