@@ -9,7 +9,7 @@
 <body class="bg-[#2B2520] text-white flex min-h-screen items-center justify-center p-4">
     <div class="w-full max-w-sm space-y-6">
         <div class="text-center">
-            <span class="text-xs uppercase tracking-widest text-[#B58A2B] font-bold">Portal Internal</span>
+            <span class="text-xs font-semibold text-[#B58A2B]">Portal Internal</span>
             <h1 class="text-2xl font-bold tracking-tight text-white mt-1">Konsol Administrator</h1>
             <p class="text-xs text-[#E7DBC7]/70 mt-1">Masuk dengan kredensial staf sistem.</p>
         </div>

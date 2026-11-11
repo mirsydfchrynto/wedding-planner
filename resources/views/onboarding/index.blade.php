@@ -267,7 +267,7 @@
 
                 {{-- Data Calon Pengantin --}}
                 <div class="space-y-3">
-                    <span class="text-xs font-semibold text-[#8C5835] block uppercase tracking-wider">Data Calon Mempelai:</span>
+                    <span class="text-xs font-semibold text-[#8C5835] block">Data Calon Mempelai:</span>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div>
                             <label for="groom_name" class="mb-1 block font-medium text-[#2B2520]">Nama Calon Mempelai Pria</label>
@@ -282,7 +282,7 @@
 
                 {{-- Format Rangkaian Acara --}}
                 <div class="space-y-2 pt-2 border-t border-[#F0ECE4]">
-                    <span class="text-xs font-semibold text-[#8C5835] block uppercase tracking-wider">Format Rangkaian Acara:</span>
+                    <span class="text-xs font-semibold text-[#8C5835] block">Format Rangkaian Acara:</span>
                     <input type="hidden" name="event_type" :value="eventType">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                         <button

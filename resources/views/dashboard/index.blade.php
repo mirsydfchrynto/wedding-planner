@@ -46,8 +46,8 @@
     <section class="rounded-2xl border-2 border-[#8C5835]/30 bg-gradient-to-br from-white to-[#FAF8F5] p-6 shadow-sm space-y-4">
         <div class="flex items-center justify-between text-xs">
             <div class="flex items-center gap-2">
-                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#8C5835] animate-pulse"></span>
-                <span class="font-bold uppercase tracking-wider text-[#8C5835]">Langkah Prioritas Anda Hari Ini</span>
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-[#8C5835]"></span>
+                <span class="font-semibold text-xs text-[#8C5835]">Langkah Prioritas Hari Ini</span>
             </div>
             @if($summary['next_task'])
                 <span class="text-xs text-[#6E665E]">
@@ -101,7 +101,6 @@
             </div>
         @else
             <div class="py-4 text-center space-y-1">
-                <span class="text-2xl">🎉</span>
                 <h3 class="text-lg font-bold text-[#2B2520]">Semua Tugas Terdekat Sudah Beres</h3>
                 <p class="text-xs text-[#6E665E]">Tidak ada kebutuhan mendesak saat ini. Persiapan berjalan sesuai rencana.</p>
                 <div class="pt-2">
