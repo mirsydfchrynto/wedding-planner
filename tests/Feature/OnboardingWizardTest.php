@@ -118,4 +118,34 @@ final class OnboardingWizardTest extends TestCase
         $this->assertGreaterThan(50000000, $budgetSum);
         $this->assertLessThanOrEqual(75000000, $budgetSum);
     }
+
+    public function test_onboarding_wizard_supports_10jt_budget_preset_and_gabung_event(): void
+    {
+        $user = User::factory()->create(['role' => 'customer']);
+
+        $response = $this->actingAs($user)->post('/onboarding', [
+            'event_type' => 'akad_resepsi_gabung',
+            'wedding_date' => now()->addDays(90)->toDateString(),
+            'city' => 'Surabaya',
+            'venue_name' => 'Masjid Al-Akbar',
+            'wedding_time' => '08:00 – 13:00 WIB',
+            'total_budget' => 10000000,
+            'guest_target' => 100,
+            'bride_name' => 'Fadhilah',
+            'groom_name' => 'Rizky',
+            'helper_mode' => 'self',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+
+        $profile = $user->fresh()->weddingProfile;
+        $this->assertNotNull($profile);
+        $this->assertSame(10000000, $profile->total_budget);
+        $this->assertSame('akad_resepsi_gabung', $profile->event_type);
+
+        // Anggaran terhitung proporsional pada skala 10 juta
+        $budgetSum = (int) BudgetItem::query()->where('wedding_profile_id', $profile->id)->sum('estimated_cost');
+        $this->assertGreaterThan(7000000, $budgetSum);
+        $this->assertLessThanOrEqual(11000000, $budgetSum);
+    }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Masuk'])
+@extends('layouts.app', ['title' => 'Login'])
 
 @section('content')
     <div class="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center py-10 px-2 sm:px-0">
@@ -6,10 +6,10 @@
             <div>
                 <p class="text-xs font-semibold text-[#8C5835]">Portal Pengantin</p>
                 <h1 class="mt-3 text-2xl font-semibold text-[#2B2520] tracking-tight">
-                    Masuk ke Buku Kerja
+                    Login Pengantin
                 </h1>
                 <p class="mt-2 text-xs text-[#6E665E] leading-relaxed">
-                    Satu ruang kerja terpadu untuk pagu anggaran, catatan tugas adat, susunan acara hari-H, dan kwitansi vendor Anda.
+                    Satu ruang kerja terpadu untuk total anggaran, catatan tugas persiapan, dan kwitansi vendor Anda.
                 </p>
             </div>
 
@@ -19,11 +19,11 @@
                     class="inline-flex items-center justify-center gap-2.5 w-full rounded-xl bg-[#2B2520] px-4 py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-[#1C1815] cursor-pointer"
                 >
                     <x-ui.google-icon class="h-4 w-4 shrink-0" />
-                    <span>Lanjutkan dengan Akun Google</span>
+                    <span>Login dengan Akun Google</span>
                 </a>
 
                 <p class="text-center text-[11px] text-[#6E665E] leading-relaxed">
-                    Masuk aman menggunakan akun Google Anda. Pengguna baru otomatis dibuatkan buku kerja perencanaan pernikahan.
+                    Login aman menggunakan akun Google Anda. Pengguna baru otomatis dibuatkan buku kerja perencanaan pernikahan.
                 </p>
             </div>
 

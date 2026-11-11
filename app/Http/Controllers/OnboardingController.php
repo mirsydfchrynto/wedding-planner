@@ -19,9 +19,9 @@ final class OnboardingController extends Controller
 {
     public const GUEST_PRESETS = ['100', '200', '300', '500', '800', '1000', 'custom'];
 
-    public const BUDGET_PRESETS = ['35000000', '50000000', '70000000', '100000000', '150000000', '250000000', '350000000', '500000000', '750000000', '1000000000', 'custom'];
+    public const BUDGET_PRESETS = ['10000000', '25000000', '35000000', '50000000', '70000000', '100000000', '150000000', '250000000', '350000000', '500000000', '750000000', '1000000000', 'custom'];
 
-    public const EVENT_TYPES = ['akad_only', 'akad_resepsi', 'jawa_inti', 'jawa_lengkap'];
+    public const EVENT_TYPES = ['akad_only', 'akad_resepsi', 'akad_resepsi_gabung', 'jawa_inti', 'jawa_lengkap', 'custom'];
 
     public const HELPER_MODES = ['self', 'family', 'wo'];
 
@@ -47,16 +47,23 @@ final class OnboardingController extends Controller
     public function store(Request $request): RedirectResponse
     {
         // Kompatibilitas dengan input lama (akad_time, venue_type) dan input wizard baru
-        $defaultEventType = $request->input('adat_tradition') === 'jawa' ? 'jawa_inti' : 'akad_resepsi';
-        $defaultVenueName = $request->input('venue_name') ?: $request->input('venue_type', 'Gedung / Ballroom');
-        $defaultWeddingTime = $request->input('wedding_time') ?: (
-            'Akad ' . $request->input('akad_time', '08:00') . ' · Resepsi ' . $request->input('resepsi_time', '11:00') . ' WIB'
+        $eventType = $request->input('event_type', 'akad_resepsi');
+        $defaultVenueName = $request->input('venue_name') ?: $request->input('venue_type', 'Gedung / Tempat Acara');
+        
+        $akadTime = $request->input('akad_time', '08:00');
+        $resepsiTime = $request->input('resepsi_time', '11:00');
+        $weddingTime = $request->input('wedding_time') ?: (
+            $eventType === 'akad_resepsi_gabung'
+                ? 'Akad & Resepsi Sekaligus (' . $akadTime . ' – ' . $resepsiTime . ' WIB)'
+                : ($eventType === 'akad_only'
+                    ? 'Akad Nikah (' . $akadTime . ' WIB)'
+                    : 'Akad ' . $akadTime . ' WIB · Resepsi ' . $resepsiTime . ' WIB')
         );
 
         $request->merge([
-            'event_type' => $request->input('event_type', $defaultEventType),
+            'event_type' => $request->input('event_type', $eventType),
             'venue_name' => $defaultVenueName,
-            'wedding_time' => $defaultWeddingTime,
+            'wedding_time' => $weddingTime,
             'helper_mode' => $request->input('helper_mode', 'self'),
         ]);
 

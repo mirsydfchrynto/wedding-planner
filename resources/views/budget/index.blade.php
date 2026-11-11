@@ -18,7 +18,7 @@
                 @click="capModalOpen = true"
                 class="inline-flex items-center rounded-lg border border-[#E7E4DF] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#2B2520] transition hover:bg-[#F5F2EB] cursor-pointer"
             >
-                Ubah Pagu Anggaran
+                Ubah Target Anggaran
             </button>
             <a href="{{ route('budget.create') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-[#2B2520] px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-[#1C1815]">
                 + Tambah Pos Anggaran
@@ -29,7 +29,7 @@
     {{-- Visual Financial Ratio Cards --}}
     <section aria-label="Ringkasan kas" class="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div class="rounded-xl border border-[#E7E4DF] bg-white p-5 shadow-sm text-center space-y-1">
-            <p class="text-xs font-medium text-[#6E665E]">Pagu Induk</p>
+            <p class="text-xs font-medium text-[#6E665E]">Total Anggaran</p>
             <p class="text-xl sm:text-2xl font-semibold text-[#2B2520] tabular-nums">{{ format_idr($summary['total_budget_cap']) }}</p>
             <p class="text-xs text-[#6E665E]">Target {{ number_format($profile->guest_target, 0, ',', '.') }} tamu</p>
         </div>
@@ -59,21 +59,21 @@
         <div class="flex items-center justify-between border-b border-[#F0ECE4] pb-3">
             <div>
                 <h2 class="text-base font-semibold text-[#2B2520]">Peta Alokasi Proporsional</h2>
-                <p class="text-xs text-[#6E665E]">Distribusi pembagian pagu anggaran otomatis berbasis standar pernikahan nasional.</p>
+                <p class="text-xs text-[#6E665E]">Distribusi pembagian anggaran otomatis berbasis standar pernikahan nasional.</p>
             </div>
-            <span class="text-xs text-[#6E665E] hidden sm:inline">Pagu: {{ format_idr($summary['total_budget_cap']) }}</span>
+            <span class="text-xs text-[#6E665E] hidden sm:inline">Anggaran: {{ format_idr($summary['total_budget_cap']) }}</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
             <div class="p-4 rounded-lg bg-[#FAF8F5] border border-[#E7E4DF] space-y-1">
-                <span class="text-[#6E665E] block font-medium">1. Pagu Anggaran Induk</span>
+                <span class="text-[#6E665E] block font-medium">1. Total Target Anggaran</span>
                 <span class="text-xl font-bold text-[#2B2520] tabular-nums block">{{ format_idr($summary['total_budget_cap']) }}</span>
-                <span class="text-xs text-[#6E665E] block">Batas pagu disepakati bersama keluarga</span>
+                <span class="text-xs text-[#6E665E] block">Batas anggaran disepakati bersama pasangan</span>
             </div>
             <div class="p-4 rounded-lg bg-[#FAF8F5] border border-[#E7E4DF] space-y-1">
                 <span class="text-[#6E665E] block font-medium">2. Komitmen Deal Vendor</span>
                 <span class="text-xl font-bold text-[#8C5835] tabular-nums block">{{ format_idr($summary['total_actual']) }}</span>
-                <span class="text-xs text-[#6E665E] block">{{ $summary['budget_utilization_percent'] }}% dari total pagu dialokasikan</span>
+                <span class="text-xs text-[#6E665E] block">{{ $summary['budget_utilization_percent'] }}% dari total anggaran dialokasikan</span>
             </div>
             <div class="p-4 rounded-lg bg-[#FAF8F5] border border-[#E7E4DF] space-y-1">
                 <span class="text-[#6E665E] block font-medium">3. Sisa Dana Aman</span>
@@ -349,7 +349,7 @@
         <div class="relative z-10 w-full max-w-md rounded-xl border border-[#E7E4DF] bg-white p-6 shadow-md">
             <div class="flex items-start justify-between border-b border-[#F0ECE4] pb-3">
                 <div>
-                    <h2 class="text-lg font-semibold text-[#2B2520]">Ubah Batas Anggaran</h2>
+                    <h2 class="text-lg font-semibold text-[#2B2520]">Ubah Target Total Anggaran</h2>
                 </div>
                 <button type="button" @click="capModalOpen = false" class="rounded border border-[#E7E4DF] bg-white p-1 text-sm font-semibold text-[#6E665E] hover:text-[#2B2520] cursor-pointer">✕</button>
             </div>
@@ -373,7 +373,7 @@
                         required
                         class="editorial-input tabular-nums"
                     >
-                    <p class="mt-1.5 text-xs text-[#6E665E]">Pagu saat ini: <span class="font-semibold text-[#2B2520] tabular-nums">{{ format_idr($profile->total_budget) }}</span></p>
+                    <p class="mt-1.5 text-xs text-[#6E665E]">Target saat ini: <span class="font-semibold text-[#2B2520] tabular-nums">{{ format_idr($profile->total_budget) }}</span></p>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-[#F0ECE4]">
@@ -381,7 +381,7 @@
                         Batal
                     </button>
                     <button type="submit" class="inline-flex items-center rounded-lg bg-[#2B2520] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#1C1815]">
-                        Simpan Batas Pagu
+                        Simpan Target Anggaran
                     </button>
                 </div>
             </form>

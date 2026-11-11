@@ -25,7 +25,7 @@
 
             <div class="flex items-center gap-3">
                 <a href="{{ route('login') }}" class="inline-flex items-center justify-center rounded-lg bg-[#2B2520] px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-[#1C1815]">
-                    Masuk Akun Demo
+                    Login
                 </a>
             </div>
         </div>
@@ -41,14 +41,14 @@
                     Rencana Pernikahan Terorganisir, Tenang, dan Sederhana.
                 </h1>
                 <p class="text-sm sm:text-base text-[#6E665E] leading-relaxed max-w-2xl font-normal">
-                    Rencana pernikahan yang jelas, dari batas anggaran sampai hari pernikahan. Tatanikah hadir sebagai buku kerja digital pengantin Indonesia: kelola pagu anggaran, kontrol tenggat mundur checklist, kwitansi pembayaran vendor, dan susunan acara hari-H secara terpadu. Gratis, dan tetap gratis. Fleksibel untuk kapan pun Anda memulai, baik 6 bulan lagi, 1 bulan lagi, maupun minggu depan.
+                    Rencana pernikahan yang jelas, dari batas anggaran sampai hari pernikahan. Tatanikah hadir sebagai buku kerja digital pengantin Indonesia: kelola total anggaran, kontrol tenggat mundur checklist, kwitansi pembayaran vendor, dan jadwal persiapan secara terpadu. Gratis, dan tetap gratis. Fleksibel untuk kapan pun Anda memulai, baik 6 bulan lagi, 1 bulan lagi, maupun minggu depan.
                 </p>
                 <div class="pt-2 flex flex-wrap items-center gap-4">
                     <a href="{{ route('login') }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#2B2520] px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-[#1C1815]">
                         <span>Buka Buku Kerja</span>
                         <span aria-hidden="true">&rarr;</span>
                     </a>
-                    <span class="text-xs text-[#6E665E]">Akses instan tanpa pendaftaran melalui akun demo contoh.</span>
+                    <span class="text-xs text-[#6E665E]">Mulai susun rencana pernikahan Anda secara tenang dan terorganisir.</span>
                 </div>
             </div>
 
@@ -66,12 +66,11 @@
                         <line x1="80" y1="40" x2="680" y2="40" stroke="#E7E4DF" stroke-width="2" stroke-dasharray="4 4" />
                         <line x1="80" y1="40" x2="480" y2="40" stroke="#8C5835" stroke-width="2" />
 
-                        <!-- Node 1: Pagu Induk -->
+                        <!-- Node 1: Target Anggaran -->
                         <circle cx="80" cy="40" r="16" fill="#FAF8F5" stroke="#8C5835" stroke-width="2" />
                         <text x="80" y="44" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" fill="#8C5835">1</text>
-                        <text x="80" y="74" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600" fill="#2B2520">Pagu Anggaran</text>
+                        <text x="80" y="74" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600" fill="#2B2520">Target Anggaran</text>
                         <text x="80" y="90" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#6E665E">Batas &amp; Alokasi Pos</text>
-
                         <!-- Node 2: Checklist & Adat -->
                         <circle cx="280" cy="40" r="16" fill="#FAF8F5" stroke="#8C5835" stroke-width="2" />
                         <text x="280" y="44" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" fill="#8C5835">2</text>
@@ -147,7 +146,7 @@
                     <div class="space-y-2.5">
                         <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-[#D3E6DA]">
                             <span class="text-[#2E5E3E] font-bold text-xs shrink-0">✓</span>
-                            <span class="text-xs text-[#2B2520] font-medium">Buku Kas &amp; Pagu Induk</span>
+                            <span class="text-xs text-[#2B2520] font-medium">Buku Kas &amp; Total Anggaran</span>
                             <span class="text-[11px] text-[#2E5E3E] ml-auto shrink-0">Terkontrol</span>
                         </div>
                         <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-[#D3E6DA]">
@@ -204,7 +203,7 @@
                 <!-- Budget Pill Selector -->
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-[#F0ECE4]">
                     <div>
-                        <span class="text-xs text-[#6E665E] block">Pagu Anggaran Induk:</span>
+                        <span class="text-xs text-[#6E665E] block">Target Total Anggaran:</span>
                         <span class="text-2xl font-semibold text-[#2B2520] tabular-nums" x-text="formatRupiah(budget)"></span>
                     </div>
                     <div class="flex flex-wrap gap-2">
@@ -329,9 +328,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
                     <div class="space-y-2">
                         <span class="text-xs font-semibold text-[#8C5835]">Langkah 01</span>
-                        <h3 class="text-base font-semibold text-[#2B2520]">Tentukan Tanggal &amp; Pagu</h3>
+                        <h3 class="text-base font-semibold text-[#2B2520]">Tentukan Tanggal &amp; Anggaran</h3>
                         <p class="text-xs text-[#6E665E] leading-relaxed">
-                            Masukkan perkiraan batas biaya. Sistem langsung mengunci pagu dan membagi batas aman pos katering, gedung, dan dekorasi.
+                            Masukkan perkiraan batas biaya. Sistem langsung mengunci target anggaran dan membagi batas aman pos katering, gedung, dan dekorasi.
                         </p>
                     </div>
 
@@ -380,7 +379,7 @@
                 <div class="p-5 space-y-1">
                     <h3 class="text-sm font-semibold text-[#2B2520]">Bagaimana jika kami memakai jasa Wedding Organizer (WO)?</h3>
                     <p class="text-xs text-[#6E665E] leading-relaxed">
-                        Tatanikah sangat cocok berdampingan dengan tim WO. Anda memiliki kontrol penuh atas pagu anggaran dan kepastian linimasa persiapan.
+                        Tatanikah sangat cocok berdampingan dengan tim WO. Anda memiliki kontrol penuh atas anggaran dan kepastian linimasa persiapan.
                     </p>
                 </div>
                 <div class="p-5 space-y-1">

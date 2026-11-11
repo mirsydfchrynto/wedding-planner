@@ -124,7 +124,7 @@
                     <h2 class="text-base font-bold text-[#2B2520]">Kondisi Anggaran</h2>
                 </div>
                 <span class="rounded-md px-2 py-0.5 text-xs font-semibold {{ $summary['remaining_budget'] >= 0 ? 'bg-[#EAF4EE] text-[#2E5E3E]' : 'bg-[#FDF2F0] text-[#9E352B]' }}">
-                    {{ $summary['remaining_budget'] >= 0 ? 'Terkendali' : 'Defisit / Lewat Pagu' }}
+                    {{ $summary['remaining_budget'] >= 0 ? 'Terkendali' : 'Defisit / Lewat Budget' }}
                 </span>
             </div>
 

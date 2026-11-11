@@ -83,7 +83,7 @@
                     @endif
                 @else
                     <a href="{{ route('login') }}" class="inline-flex items-center justify-center rounded-lg bg-[#2B2520] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[#1C1815] shadow-xs">
-                        Masuk
+                        Login
                     </a>
                 @endauth
             </div>
