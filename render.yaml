@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: tatanikah-wedding-planner
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: Tatanikah
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /var/www/database/database.sqlite
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        sync: false
+      - key: GOOGLE_DEMO_LOGIN
+        value: "true"
