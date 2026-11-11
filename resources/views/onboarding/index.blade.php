@@ -165,6 +165,7 @@
                 {{-- Preset Chips Anggaran (Default: 10 Juta, 50 Juta, 100 Juta, Custom) --}}
                 <div class="space-y-2">
                     <span class="text-xs font-medium text-[#2B2520] block">Pilihan Target Anggaran:</span>
+                    <input type="hidden" name="total_budget" :value="budgetChoice">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         @foreach([
                             '10000000' => 'Rp 10 Juta (Sederhana)',
@@ -176,10 +177,14 @@
                             '250000000' => 'Rp 250 Juta',
                             'custom' => 'Isi Sendiri (Custom)'
                         ] as $val => $label)
-                            <label class="flex items-center justify-center rounded-lg border p-2.5 text-xs font-medium cursor-pointer transition text-center" :class="budgetChoice === '{{ $val }}' ? 'border-[#2B2520] bg-[#2B2520] text-white font-semibold' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'">
-                                <input type="radio" name="total_budget" value="{{ $val }}" x-model="budgetChoice" class="sr-only">
-                                <span>{{ $label }}</span>
-                            </label>
+                            <button
+                                type="button"
+                                @click="budgetChoice = '{{ $val }}'; if ('{{ $val }}' === 'custom') $nextTick(() => document.getElementById('budget_custom')?.focus())"
+                                class="flex items-center justify-center rounded-lg border p-2.5 text-xs font-medium transition text-center cursor-pointer select-none"
+                                :class="budgetChoice === '{{ $val }}' ? 'border-[#2B2520] bg-[#2B2520] text-white font-semibold shadow-xs' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'"
+                            >
+                                {{ $label }}
+                            </button>
                         @endforeach
                     </div>
 
@@ -194,6 +199,7 @@
                 {{-- Pilihan Tamu Undangan --}}
                 <div class="space-y-2 pt-2 border-t border-[#F0ECE4]">
                     <span class="text-xs font-medium text-[#2B2520] block">Perkiraan Jumlah Tamu Undangan:</span>
+                    <input type="hidden" name="guest_target" :value="guestChoice">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         @foreach([
                             '100' => '100 Tamu (Intimate)',
@@ -201,10 +207,14 @@
                             '500' => '500 Tamu (Standar)',
                             '800' => '800+ Tamu'
                         ] as $val => $label)
-                            <label class="flex items-center justify-center rounded-lg border p-2.5 text-xs font-medium cursor-pointer transition text-center" :class="guestChoice === '{{ $val }}' ? 'border-[#2B2520] bg-[#2B2520] text-white font-semibold' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'">
-                                <input type="radio" name="guest_target" value="{{ $val }}" x-model="guestChoice" class="sr-only">
-                                <span>{{ $label }}</span>
-                            </label>
+                            <button
+                                type="button"
+                                @click="guestChoice = '{{ $val }}'"
+                                class="flex items-center justify-center rounded-lg border p-2.5 text-xs font-medium transition text-center cursor-pointer select-none"
+                                :class="guestChoice === '{{ $val }}' ? 'border-[#2B2520] bg-[#2B2520] text-white font-semibold shadow-xs' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'"
+                            >
+                                {{ $label }}
+                            </button>
                         @endforeach
                     </div>
                 </div>
@@ -266,23 +276,52 @@
                 {{-- Format Rangkaian Acara --}}
                 <div class="space-y-2 pt-2 border-t border-[#F0ECE4]">
                     <span class="text-xs font-semibold text-[#8C5835] block uppercase tracking-wider">Format Rangkaian Acara:</span>
+                    <input type="hidden" name="event_type" :value="eventType">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <label class="flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition" :class="eventType === 'akad_resepsi_gabung' ? 'border-[#8C5835] bg-[#F4ECE4]/30 font-semibold text-[#2B2520]' : 'border-[#E7E4DF] bg-white text-[#6E665E]'">
-                            <input type="radio" name="event_type" value="akad_resepsi_gabung" x-model="eventType" class="text-[#8C5835]">
+                        <button
+                            type="button"
+                            @click="eventType = 'akad_resepsi_gabung'"
+                            class="flex items-center gap-2.5 p-3 rounded-lg border text-left cursor-pointer transition select-none"
+                            :class="eventType === 'akad_resepsi_gabung' ? 'border-[#8C5835] bg-[#F4ECE4]/40 font-semibold text-[#2B2520] shadow-xs' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'"
+                        >
+                            <span class="h-3.5 w-3.5 rounded-full border flex items-center justify-center shrink-0" :class="eventType === 'akad_resepsi_gabung' ? 'border-[#8C5835] bg-[#8C5835]' : 'border-[#E7E4DF] bg-white'">
+                                <span x-show="eventType === 'akad_resepsi_gabung'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                            </span>
                             <span>Akad &amp; Resepsi Jadi Satu Hari (Sekaligus)</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition" :class="eventType === 'akad_resepsi' ? 'border-[#8C5835] bg-[#F4ECE4]/30 font-semibold text-[#2B2520]' : 'border-[#E7E4DF] bg-white text-[#6E665E]'">
-                            <input type="radio" name="event_type" value="akad_resepsi" x-model="eventType" class="text-[#8C5835]">
+                        </button>
+                        <button
+                            type="button"
+                            @click="eventType = 'akad_resepsi'"
+                            class="flex items-center gap-2.5 p-3 rounded-lg border text-left cursor-pointer transition select-none"
+                            :class="eventType === 'akad_resepsi' ? 'border-[#8C5835] bg-[#F4ECE4]/40 font-semibold text-[#2B2520] shadow-xs' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'"
+                        >
+                            <span class="h-3.5 w-3.5 rounded-full border flex items-center justify-center shrink-0" :class="eventType === 'akad_resepsi' ? 'border-[#8C5835] bg-[#8C5835]' : 'border-[#E7E4DF] bg-white'">
+                                <span x-show="eventType === 'akad_resepsi'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                            </span>
                             <span>Akad &amp; Resepsi Terpisah (Beda Sesi/Jam)</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition" :class="eventType === 'akad_only' ? 'border-[#8C5835] bg-[#F4ECE4]/30 font-semibold text-[#2B2520]' : 'border-[#E7E4DF] bg-white text-[#6E665E]'">
-                            <input type="radio" name="event_type" value="akad_only" x-model="eventType" class="text-[#8C5835]">
+                        </button>
+                        <button
+                            type="button"
+                            @click="eventType = 'akad_only'"
+                            class="flex items-center gap-2.5 p-3 rounded-lg border text-left cursor-pointer transition select-none"
+                            :class="eventType === 'akad_only' ? 'border-[#8C5835] bg-[#F4ECE4]/40 font-semibold text-[#2B2520] shadow-xs' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'"
+                        >
+                            <span class="h-3.5 w-3.5 rounded-full border flex items-center justify-center shrink-0" :class="eventType === 'akad_only' ? 'border-[#8C5835] bg-[#8C5835]' : 'border-[#E7E4DF] bg-white'">
+                                <span x-show="eventType === 'akad_only'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                            </span>
                             <span>Akad Nikah Saja (Khidmat)</span>
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition" :class="eventType === 'jawa_lengkap' ? 'border-[#8C5835] bg-[#F4ECE4]/30 font-semibold text-[#2B2520]' : 'border-[#E7E4DF] bg-white text-[#6E665E]'">
-                            <input type="radio" name="event_type" value="jawa_lengkap" x-model="eventType" class="text-[#8C5835]">
+                        </button>
+                        <button
+                            type="button"
+                            @click="eventType = 'jawa_lengkap'"
+                            class="flex items-center gap-2.5 p-3 rounded-lg border text-left cursor-pointer transition select-none"
+                            :class="eventType === 'jawa_lengkap' ? 'border-[#8C5835] bg-[#F4ECE4]/40 font-semibold text-[#2B2520] shadow-xs' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'"
+                        >
+                            <span class="h-3.5 w-3.5 rounded-full border flex items-center justify-center shrink-0" :class="eventType === 'jawa_lengkap' ? 'border-[#8C5835] bg-[#8C5835]' : 'border-[#E7E4DF] bg-white'">
+                                <span x-show="eventType === 'jawa_lengkap'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                            </span>
                             <span>Rangkaian Tradisi Adat Lengkap</span>
-                        </label>
+                        </button>
                     </div>
                 </div>
 
