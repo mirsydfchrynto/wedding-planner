@@ -69,6 +69,8 @@ RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.
     && echo "opcache.revalidate_freq=2" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
     && echo "opcache.fast_shutdown=1" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
-EXPOSE 9000
+EXPOSE 8000
 
-CMD ["php-fpm"]
+RUN chmod +x /var/www/docker/start.sh
+
+CMD ["/var/www/docker/start.sh"]
