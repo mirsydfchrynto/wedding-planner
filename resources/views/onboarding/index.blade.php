@@ -205,17 +205,24 @@
                             '100' => '100 Tamu (Intimate)',
                             '300' => '300 Tamu (Keluarga)',
                             '500' => '500 Tamu (Standar)',
-                            '800' => '800+ Tamu'
+                            'custom' => 'Isi Sendiri (Custom)'
                         ] as $val => $label)
                             <button
                                 type="button"
-                                @click="guestChoice = '{{ $val }}'"
+                                @click="guestChoice = '{{ $val }}'; if ('{{ $val }}' === 'custom') $nextTick(() => document.getElementById('guest_custom')?.focus())"
                                 class="flex items-center justify-center rounded-lg border p-2.5 text-xs font-medium transition text-center cursor-pointer select-none"
                                 :class="guestChoice === '{{ $val }}' ? 'border-[#2B2520] bg-[#2B2520] text-white font-semibold shadow-xs' : 'border-[#E7E4DF] bg-white text-[#6E665E] hover:bg-[#F5F2EB]'"
                             >
                                 {{ $label }}
                             </button>
                         @endforeach
+                    </div>
+
+                    {{-- Input Bebas / Custom Jumlah Tamu --}}
+                    <div x-show="guestChoice === 'custom'" class="pt-2 rounded-lg bg-[#FAF8F5] border border-[#E7E4DF] p-3 space-y-1">
+                        <label for="guest_custom" class="block text-xs font-semibold text-[#2B2520]">Ketikkan Perkiraan Jumlah Tamu Undangan (Orang)</label>
+                        <input id="guest_custom" type="number" name="guest_custom" min="10" max="10000" step="10" placeholder="Contoh: 850 (Tamu)" class="editorial-input tabular-nums font-semibold">
+                        <span class="text-[11px] text-[#6E665E] block">Bebas masukkan perkiraan jumlah undangan sesuai rencana Anda.</span>
                     </div>
                 </div>
 

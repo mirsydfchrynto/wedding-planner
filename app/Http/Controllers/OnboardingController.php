@@ -78,7 +78,7 @@ final class OnboardingController extends Controller
             'total_budget' => ['required', Rule::in(self::BUDGET_PRESETS)],
             'budget_custom' => ['nullable', 'integer', 'min:1000000'],
             'guest_target' => ['required', Rule::in(self::GUEST_PRESETS)],
-            'guest_custom' => ['nullable', 'integer', 'min:10', 'max:5000'],
+            'guest_custom' => ['nullable', 'integer', 'min:10', 'max:10000'],
             'bride_name' => ['required', 'string', 'max:120'],
             'groom_name' => ['required', 'string', 'max:120'],
             'helper_mode' => ['required', Rule::in(self::HELPER_MODES)],
