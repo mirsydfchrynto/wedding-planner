@@ -67,4 +67,24 @@ final class AdminConsoleTest extends TestCase
         $response->assertRedirect('/admin/login');
         $this->assertGuest();
     }
+
+    public function test_customer_opening_admin_login_page_can_see_form_and_switches_session(): void
+    {
+        $customer = User::query()->where('role', 'customer')->firstOrFail();
+
+        $response = $this->actingAs($customer)->get('/admin/login');
+        $response->assertOk();
+        $response->assertSee('Konsol Administrator');
+    }
+
+    public function test_admin_can_delete_wedding_profile(): void
+    {
+        $admin = User::query()->where('role', 'admin')->firstOrFail();
+        $profile = WeddingProfile::query()->firstOrFail();
+        $profileId = $profile->id;
+
+        $response = $this->actingAs($admin)->delete("/admin/profiles/{$profileId}");
+        $response->assertRedirect('/admin');
+        $this->assertDatabaseMissing('wedding_profiles', ['id' => $profileId]);
+    }
 }

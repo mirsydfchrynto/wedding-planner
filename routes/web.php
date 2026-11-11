@@ -33,6 +33,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/login', [AdminController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminController::class, 'login'])->name('login.submit');
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::delete('/profiles/{profile}', [AdminController::class, 'destroyProfile'])->name('profiles.destroy');
     Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 });
 Route::middleware('auth')->group(function (): void {

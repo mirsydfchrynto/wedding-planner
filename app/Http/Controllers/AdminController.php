@@ -16,13 +16,17 @@ use Illuminate\View\View;
 
 final class AdminController extends Controller
 {
-    public function showLogin(): View|RedirectResponse
+    public function showLogin(Request $request): View|RedirectResponse
     {
         if (Auth::check()) {
             if (Auth::user()->isAdmin()) {
                 return redirect()->route('admin.dashboard');
             }
-            abort(403, 'Akses terbatas khusus Administrator.');
+
+            // Jika sedang login sebagai pengguna biasa, akhiri sesi agar form login admin dapat terbuka:
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
         }
 
         return view('admin.login');
@@ -56,10 +60,15 @@ final class AdminController extends Controller
         ])->onlyInput('email');
     }
 
-    public function dashboard(): View
+    public function dashboard(): View|RedirectResponse
     {
-        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403, 'Akses terbatas khusus Administrator.');
+        if (! Auth::check()) {
+            return redirect()
+                ->route('admin.login')
+                ->withErrors(['Akses khusus Administrator. Silakan login menggunakan akun staf admin.']);
+        }
 
+        abort_unless(Auth::user()->isAdmin(), 403, 'Akses terbatas khusus Administrator.');
         $totalUsers = User::query()->where('role', 'customer')->count();
         $totalProfiles = WeddingProfile::query()->count();
         $totalBudgetManaged = (int) WeddingProfile::query()->sum('total_budget');
@@ -79,6 +88,18 @@ final class AdminController extends Controller
             'totalTasks' => $totalTasks,
             'profiles' => $profiles,
         ]);
+    }
+
+    public function destroyProfile(WeddingProfile $profile): RedirectResponse
+    {
+        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403);
+
+        $names = $profile->couple_names;
+        $profile->delete();
+
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('success', 'Buku kerja pengantin "' . $names . '" berhasil dihapus dari platform.');
     }
 
     public function logout(Request $request): RedirectResponse

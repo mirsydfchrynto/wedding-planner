@@ -71,9 +71,10 @@
                             <th scope="col" class="py-2.5 px-3">Nama Pasangan</th>
                             <th scope="col" class="py-2.5 px-3">Tanggal Hari-H</th>
                             <th scope="col" class="py-2.5 px-3">Kota</th>
-                            <th scope="col" class="py-2.5 px-3 text-right">Pagu Anggaran</th>
+                            <th scope="col" class="py-2.5 px-3 text-right">Total Anggaran</th>
                             <th scope="col" class="py-2.5 px-3 text-right">Target Tamu</th>
                             <th scope="col" class="py-2.5 px-3 text-center">Mode Pelaksanaan</th>
+                            <th scope="col" class="py-2.5 px-3 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#F0ECE4]">
@@ -97,10 +98,19 @@
                                         {{ $p->helper_mode === 'wo' ? 'Dengan WO' : ($p->helper_mode === 'family' ? 'Keluarga' : 'Mandiri') }}
                                     </span>
                                 </td>
+                                <td class="py-3 px-3 text-right">
+                                    <form method="POST" action="{{ route('admin.profiles.destroy', $p) }}" onsubmit="return confirm('Hapus data pengantin {{ $p->couple_names }}?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-xs font-semibold text-[#9E352B] hover:underline cursor-pointer">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="py-8 text-center text-xs text-[#6E665E]">Belum ada pasangan terdaftar.</td>
+                                <td colspan="7" class="py-8 text-center text-xs text-[#6E665E]">Belum ada pasangan terdaftar.</td>
                             </tr>
                         @endforelse
                     </tbody>
