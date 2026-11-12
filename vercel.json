@@ -1,0 +1,1 @@
+{"buildCommand":"npm run build","framework":null,"functions":{"api/index.php":{"maxDuration":60,"runtime":"vercel-php@0.8.0"}},"outputDirectory":"public","regions":["sin1"],"rewrites":[{"destination":"/api/index.php","source":"/(.*)"}],"version":2}
