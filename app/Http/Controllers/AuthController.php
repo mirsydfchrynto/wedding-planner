@@ -30,13 +30,13 @@ final class AuthController extends Controller
             return redirect()->route('login')->with('info', 'Google OAuth credentials belum terpasang. Gunakan Akses Instan.');
         }
 
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     public function handleGoogleCallback(): RedirectResponse
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
         } catch (\Throwable $e) {
             return redirect()->route('login')->withErrors(['Gagal terhubung dengan server Google: ' . $e->getMessage()]);
         }

@@ -25,6 +25,17 @@
                 <p class="text-center text-[11px] text-[#6E665E] leading-relaxed">
                     Login aman menggunakan akun Google Anda. Pengguna baru otomatis dibuatkan buku kerja perencanaan pernikahan.
                 </p>
+                @if (config('services.google.demo_login'))
+                    <form method="POST" action="{{ route('auth.google') }}" class="pt-1">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="inline-flex items-center justify-center gap-2 w-full rounded-xl border border-[#D5CDBE] bg-[#F7F5F0] px-4 py-2.5 text-xs font-semibold text-[#5C5346] shadow-xs transition hover:bg-[#EFECE4] cursor-pointer"
+                        >
+                            <span>Masuk Cepat Mode Demo (Presentasi) &rarr;</span>
+                        </button>
+                    </form>
+                @endif
             </div>
 
             <div class="flex items-center justify-between text-xs text-[#6E665E] pt-2">
